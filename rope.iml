@@ -9,24 +9,6 @@
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="scala-2.11" level="application" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../opengl/libs/lwjgl.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lwjgl-2.9.1/jar/lwjgl_util.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="scalatest_2.10-2.2.2" level="project" />
     <orderEntry type="library" name="scalatest_2.10-2.2.2-javadoc" level="project" />
     <orderEntry type="library" name="lib" level="project" />
@@ -41,18 +23,36 @@
     </orderEntry>
     <orderEntry type="library" name="scala-sdk-2.10.4" level="application" />
     <orderEntry type="module-library">
-      <library name="lwjgl_util">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lwjgl-2.9.1/jar/lwjgl_util.jar!/" />
+          <root url="jar://$MODULE_DIR$/../libs/lwjgl-3.0/jar/lwjgl.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="lwjgl">
+      <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/lwjgl-2.9.1/jar/lwjgl.jar!/" />
+          <root url="file://$MODULE_DIR$/../libs/lwjgl-3.0/native/macosx" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/linux" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../libs/lwjgl-3.0/native/windows" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
