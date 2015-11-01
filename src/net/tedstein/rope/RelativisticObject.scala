@@ -1,7 +1,8 @@
 package net.tedstein.rope
 
+import net.tedstein.rope.Dimensions.{Position, Velocity}
+
 import scala.math.{pow, sqrt}
-import net.tedstein.rope.Dimensions.{Velocity, Position}
 
 
 /**
