@@ -1,14 +1,12 @@
 package net.tedstein.rope
 
 
-import org.lwjgl.BufferUtils
+import java.io.FileInputStream
+
+import org.lwjgl.opengl.GL11.{GL_FALSE, GL_TRUE}
+import org.lwjgl.opengl.GL20.{GL_COMPILE_STATUS, GL_LINK_STATUS, glAttachShader, glCompileShader, glCreateProgram, glCreateShader, glDeleteShader, glGetProgramInfoLog, glGetProgrami, glGetShaderInfoLog, glGetShaderi, glLinkProgram, glShaderSource}
 
 import scala.io.Source
-import java.io.FileInputStream
-import org.lwjgl.opengl.GL20.{glCreateShader, glShaderSource, glCompileShader, glGetShaderi,glGetShaderInfoLog, glAttachShader}
-import org.lwjgl.opengl.GL20.{GL_COMPILE_STATUS, GL_LINK_STATUS, glCreateProgram, glDeleteShader, glLinkProgram, glGetProgrami, glGetProgramInfoLog}
-import org.lwjgl.opengl.GL11.{GL_FALSE, GL_TRUE}
-
 
 /**
  * Created by ruba on 11/1/15.
@@ -22,16 +20,10 @@ object Shader {
     }
 
     val shaderSrc: String = readFileAsString(shaderFile)
-
     glShaderSource(shader, shaderSrc)
     glCompileShader(shader)
 
-
-    //whatever the info log says just print it
-    System.out.print(glGetShaderInfoLog(shader, 512))
-
     val success: Int = glGetShaderi(shader, GL_COMPILE_STATUS)
-
     //check if shader compilation failed
     if (success == GL_FALSE) {
       System.out.println("Failed in compiling shader")
@@ -70,9 +62,10 @@ object Shader {
     glAttachShader(shaderProgram, fragmentShader)
     glLinkProgram(shaderProgram)
 
+    //keeps returning empty strings.. this may be a bug
+    System.out.println(glGetShaderInfoLog(vertexShader, 512).length())
     //print out info log
     System.out.println(glGetProgramInfoLog(shaderProgram, 512))
-
 
     //check if linking failed
     val success = glGetProgrami(shaderProgram, GL_LINK_STATUS)

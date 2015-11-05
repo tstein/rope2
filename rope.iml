@@ -23,5 +23,14 @@
     <orderEntry type="library" name="scala-sdk-2.10.4" level="application" />
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="lwjgl" level="application" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/lwjgl3-tutorial/src/silvertiger/tutorial/lwjgl/math" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

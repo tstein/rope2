@@ -1,19 +1,16 @@
 package net.tedstein.rope
 
 import java.nio.FloatBuffer
-import net.tedstein.rope.Shader.{createShaderObject, compileShaderProgram}
 
-import org.lwjgl.glfw.GLFW.{GLFW_CONTEXT_VERSION_MAJOR, GLFW_CONTEXT_VERSION_MINOR, GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_FORWARD_COMPAT, GLFW_OPENGL_PROFILE}
+import net.tedstein.rope.Shader.{compileShaderProgram, createShaderObject}
+import org.lwjgl.glfw.GLFW.{GLFW_CONTEXT_VERSION_MAJOR, GLFW_CONTEXT_VERSION_MINOR, GLFW_KEY_ESCAPE, GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_FORWARD_COMPAT, GLFW_OPENGL_PROFILE, GLFW_PRESS, GLFW_RESIZABLE, GLFW_VISIBLE, glfwCreateWindow, glfwGetKey, glfwGetPrimaryMonitor, glfwGetVideoMode, glfwInit, glfwMakeContextCurrent, glfwPollEvents, glfwSetErrorCallback, glfwSetWindowPos, glfwShowWindow, glfwSwapBuffers, glfwTerminate, glfwWindowHint, glfwWindowShouldClose}
 import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, GLFWvidmode}
+import org.lwjgl.opengl.GL11.{GL_COLOR_BUFFER_BIT, GL_FALSE, GL_FLOAT, GL_TRUE, glClear, glClearColor}
+import org.lwjgl.opengl.GL15.{GL_ARRAY_BUFFER, GL_STATIC_DRAW, glBindBuffer, glBufferData, glGenBuffers}
+import org.lwjgl.opengl.GL20.{GL_FRAGMENT_SHADER, GL_VERTEX_SHADER, glUseProgram}
 import org.lwjgl.opengl._
-
-import org.lwjgl.glfw.GLFW.{GLFW_KEY_ESCAPE, GLFW_RELEASE, GLFW_RESIZABLE, GLFW_VISIBLE, glfwCreateWindow, glfwGetPrimaryMonitor, glfwGetVideoMode, glfwInit, glfwMakeContextCurrent, glfwPollEvents, glfwSetErrorCallback, glfwSetWindowPos, glfwSetWindowShouldClose, glfwShowWindow, glfwSwapBuffers, glfwTerminate, glfwWindowHint, glfwWindowShouldClose}
-import org.lwjgl.opengl.GL11.{GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_FALSE, GL_FLOAT, GL_TRIANGLES, GL_TRUE, GL_VERTEX_ARRAY, glClear, glClearColor, glColorPointer, glDisableClientState, glDrawArrays, glEnableClientState, glRotatef, glVertexPointer}
-import org.lwjgl.opengl.GL20.{GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, glUseProgram}
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
-import org.lwjgl.glfw.GLFW.{glfwTerminate, glfwGetKey, GLFW_PRESS}
-import org.lwjgl.opengl.GL15.{glGenBuffers, glBindBuffer, glBufferData, GL_ARRAY_BUFFER, GL_STATIC_DRAW}
 
 class Rope {
   var errorCallback: GLFWErrorCallback = null
@@ -21,7 +18,7 @@ class Rope {
   var vertexPath: String = "/Users/ruba/code/rope2/src/net/tedstein/rope/vertex.shader"
   var fragmentPath: String = "/Users/ruba/code/rope2/src/net/tedstein/rope/fragment.shader"
   var scaleLocation: Int = 0
-
+  var gWorldLocation: Int = 0
 
 
   def run(): Unit = {
@@ -87,14 +84,21 @@ class Rope {
     val vs = createShaderObject(GL_VERTEX_SHADER, vertexPath)
     val fs = createShaderObject(GL_FRAGMENT_SHADER, fragmentPath)
     val program = compileShaderProgram(vs, fs)
-
-
     var scale: Float = 0.0f
+    var world = Matrix4f.setIdentity()
+
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == GL_FALSE) {
       glClear(GL_COLOR_BUFFER_BIT)
       glUseProgram(program)
       scale += 0.001f
-      GL20.glUniform1f(scaleLocation, scale)
+
+      Matrix4f.setRowColumnValue(world, 0, 0, math.cos(scale).toFloat)
+      Matrix4f.setRowColumnValue(world, 1, 1, math.cos(scale).toFloat)
+      Matrix4f.setRowColumnValue(world, 1, 0, math.sin(scale).toFloat)
+      Matrix4f.setRowColumnValue(world, 0, 1, -math.sin(scale).toFloat)
+
+      val worldBuffer = Matrix4f.getFloatBuffer(world)
+      GL20.glUniformMatrix4fv(gWorldLocation, true, worldBuffer)
 
 
       GL30.glBindVertexArray(vertexArrayID)
@@ -103,7 +107,7 @@ class Rope {
       GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboiId)
       GL11.glDrawElements(GL11.GL_TRIANGLES, 36, GL11.GL_UNSIGNED_BYTE, 0)
 
-     // val dudes = Universe.region(Dimensions.Position(0, 0, 0), 10, 1)
+      // val dudes = Universe.region(Dimensions.Position(0, 0, 0), 10, 1)
 
       GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0)
       GL20.glDisableVertexAttribArray(0)
