@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="disruptor">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/disruptor.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lwjgl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/scalatest_2.10-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
