@@ -15,10 +15,10 @@ import org.lwjgl.{BufferUtils, Sys}
 class Rope {
   var errorCallback: GLFWErrorCallback = null
   var keyCallback: GLFWKeyCallback = null
-  var vertexPath: String = "/Users/ruba/code/rope2/src/net/tedstein/rope/vertex.shader"
-  var fragmentPath: String = "/Users/ruba/code/rope2/src/net/tedstein/rope/fragment.shader"
-  var scaleLocation: Int = 0
-  var gWorldLocation: Int = 0
+  var vertexPath = "./src/net/tedstein/rope/vertex.shader"
+  var fragmentPath = "./src/net/tedstein/rope/fragment.shader"
+  var scaleLocation = 0
+  var gWorldLocation = 0
 
 
   def run(): Unit = {
