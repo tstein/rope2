@@ -26,10 +26,10 @@ object Shader {
     val success: Int = glGetShaderi(shader, GL_COMPILE_STATUS)
     //check if shader compilation failed
     if (success == GL_FALSE) {
-      System.out.println("Failed in compiling shader")
+      System.out.println("Failed in compiling shader" + shaderFile)
       sys.exit() //this is maybe not a good idea
     } else if (success == GL_TRUE) {
-      System.out.println("Succeeded in compiling shader " + shader)
+      System.out.println("Succeeded in compiling shader " + shaderFile)
     }
 
     return shader
@@ -60,12 +60,14 @@ object Shader {
 
     glAttachShader(shaderProgram, vertexShader)
     glAttachShader(shaderProgram, fragmentShader)
+
     glLinkProgram(shaderProgram)
 
     //keeps returning empty strings.. this may be a bug
     System.out.println(glGetShaderInfoLog(vertexShader, 512).length())
     //print out info log
     System.out.println(glGetProgramInfoLog(shaderProgram, 512))
+
 
     //check if linking failed
     val success = glGetProgrami(shaderProgram, GL_LINK_STATUS)

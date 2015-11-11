@@ -25,7 +25,7 @@ case class Vector4f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f, w: Float 
   }
 
   def divide(scalar: Float): Vector4f = {
-    scale(1 / scalar)
+    Vector4f(x / scalar, y / scalar, z / scalar, w / scalar)
   }
 
   def negate(): Vector4f = {
@@ -39,7 +39,6 @@ case class Vector4f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f, w: Float 
   def dot(other: Vector4f): Float = {
     x * other.x + y * other.y + z * other.z + w * other.z
   }
-
 
   def lerp(other: Vector4f, value: Float): Vector4f = {
     this.scale(1.0f - value).add(other.scale(value))
