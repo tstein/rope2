@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
 
 
+
 class Rope {
   var errorCallback: GLFWErrorCallback = null
   var keyCallback: GLFWKeyCallback = null
@@ -109,6 +110,7 @@ class Rope {
     glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo)
     GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, elems, GL15.GL_STATIC_DRAW)
 
+
     val posAttrib = GL20.glGetAttribLocation(program, "position")
     GL20.glEnableVertexAttribArray(posAttrib)
     GL20.glVertexAttribPointer(posAttrib, 3, GL_FLOAT, false, 0, 0) // last two parameters:
@@ -123,16 +125,21 @@ class Rope {
       glClear(GL_COLOR_BUFFER_BIT)
       scale += 0.01f
 
-      val world = Matrix4f()
-      world.matrix(0)(0) = Math.cos(scale).toFloat
-      world.matrix(1)(1) = 1.0f
-      world.matrix(2)(2) = Math.cos(scale).toFloat
-      world.matrix(3)(3) = 1.0f
-      world.matrix(0)(2) = -Math.sin(scale).toFloat
-      world.matrix(2)(0) = Math.sin(scale).toFloat
+      var world = Matrix4f()
+
+      /*   p.Scale(sinf(Scale * 0.1f), sinf(Scale * 0.1f), sinf(Scale * 0.1f));
+    p.WorldPos(sinf(Scale), 0.0f, 0.0f);
+    p.Rotate(sinf(Scale) * 90.0f, sinf(Scale) * 90.0f, sinf(Scale) * 90.0f);*/
+
+      val translate = Transformations.translate(Math.sin(scale).toFloat, 0.0f, 0.0f)
+      val rotate = Transformations.rotate(0.0f, 0.0f, 0.0f, 0.0f)
+      val scaling = Transformations.scale(1.0f, 1.0f, 1.0f)
 
 
-      val worldbuffer: FloatBuffer = world.getFloatBuffer()
+      world = Transformations.getModelTransformMatrix(translate, rotate, scaling)
+
+      val worldbuffer: FloatBuffer = Matrix4f.getFloatBuffer(world)
+
       GL20.glUniformMatrix4fv(gWorldLocation, true, worldbuffer)
 
       GL11.glDrawElements(GL11.GL_TRIANGLES, 12, GL11.GL_UNSIGNED_INT, 0)
@@ -141,8 +148,6 @@ class Rope {
       glfwPollEvents()
     }
 
-    val x = Matrix4f()
-    x.matrix(0)(0) = 0
 
 
     GL20.glDeleteProgram(program)
