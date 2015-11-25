@@ -146,32 +146,32 @@ object Matrix4f {
     Vector4f(x, y, z, w)
   }
 
-  def multiply(current: Matrix4f, right: Matrix4f): Matrix4f = {
+  def multiply(left: Matrix4f, right: Matrix4f): Matrix4f = {
 
     val result = Matrix4f()
 
-    result.matrix(0)(0) = current.matrix(0)(0) * right.matrix(0)(0) + current.matrix(1)(0) * right.matrix(0)(1) + current.matrix(2)(0) * right.matrix(0)(2) + current.matrix(3)(0) * right.matrix(0)(3)
-    result.matrix(0)(1) = current.matrix(0)(1) * right.matrix(0)(0) + current.matrix(1)(1) * right.matrix(0)(1) + current.matrix(2)(1) * right.matrix(0)(2) + current.matrix(3)(1) * right.matrix(0)(3)
-    result.matrix(0)(2) = current.matrix(0)(2) * right.matrix(0)(0) + current.matrix(2)(1) * right.matrix(0)(1) + current.matrix(2)(2) * right.matrix(0)(2) + current.matrix(3)(2) * right.matrix(0)(3)
-    result.matrix(0)(3) = current.matrix(0)(3) * right.matrix(0)(0) + current.matrix(3)(1) * right.matrix(0)(1) + current.matrix(2)(3) * right.matrix(0)(2) + current.matrix(3)(3) * right.matrix(0)(3)
+    result.matrix(0)(0) = left.matrix(0)(0) * right.matrix(0)(0) + left.matrix(1)(0) * right.matrix(0)(1) + left.matrix(2)(0) * right.matrix(0)(2) + left.matrix(3)(0) * right.matrix(0)(3)
+    result.matrix(0)(1) = left.matrix(0)(1) * right.matrix(0)(0) + left.matrix(1)(1) * right.matrix(0)(1) + left.matrix(2)(1) * right.matrix(0)(2) + left.matrix(3)(1) * right.matrix(0)(3)
+    result.matrix(0)(2) = left.matrix(0)(2) * right.matrix(0)(0) + left.matrix(2)(1) * right.matrix(0)(1) + left.matrix(2)(2) * right.matrix(0)(2) + left.matrix(3)(2) * right.matrix(0)(3)
+    result.matrix(0)(3) = left.matrix(0)(3) * right.matrix(0)(0) + left.matrix(3)(1) * right.matrix(0)(1) + left.matrix(2)(3) * right.matrix(0)(2) + left.matrix(3)(3) * right.matrix(0)(3)
 
 
-    result.matrix(1)(0) = current.matrix(0)(0) * right.matrix(1)(0) + current.matrix(1)(0) * right.matrix(1)(1) + current.matrix(2)(0) * right.matrix(1)(2) + current.matrix(3)(0) * right.matrix(1)(3)
-    result.matrix(1)(1) = current.matrix(0)(1) * right.matrix(1)(0) + current.matrix(1)(1) * right.matrix(1)(1) + current.matrix(2)(1) * right.matrix(1)(2) + current.matrix(3)(1) * right.matrix(1)(3)
-    result.matrix(1)(2) = current.matrix(0)(2) * right.matrix(1)(0) + current.matrix(2)(1) * right.matrix(1)(1) + current.matrix(2)(2) * right.matrix(1)(2) + current.matrix(3)(2) * right.matrix(1)(3)
-    result.matrix(1)(3) = current.matrix(0)(3) * right.matrix(1)(0) + current.matrix(3)(1) * right.matrix(1)(1) + current.matrix(2)(3) * right.matrix(1)(2) + current.matrix(3)(3) * right.matrix(1)(3)
+    result.matrix(1)(0) = left.matrix(0)(0) * right.matrix(1)(0) + left.matrix(1)(0) * right.matrix(1)(1) + left.matrix(2)(0) * right.matrix(1)(2) + left.matrix(3)(0) * right.matrix(1)(3)
+    result.matrix(1)(1) = left.matrix(0)(1) * right.matrix(1)(0) + left.matrix(1)(1) * right.matrix(1)(1) + left.matrix(2)(1) * right.matrix(1)(2) + left.matrix(3)(1) * right.matrix(1)(3)
+    result.matrix(1)(2) = left.matrix(0)(2) * right.matrix(1)(0) + left.matrix(2)(1) * right.matrix(1)(1) + left.matrix(2)(2) * right.matrix(1)(2) + left.matrix(3)(2) * right.matrix(1)(3)
+    result.matrix(1)(3) = left.matrix(0)(3) * right.matrix(1)(0) + left.matrix(3)(1) * right.matrix(1)(1) + left.matrix(2)(3) * right.matrix(1)(2) + left.matrix(3)(3) * right.matrix(1)(3)
 
 
-    result.matrix(2)(0) = current.matrix(0)(0) * right.matrix(2)(0) + current.matrix(1)(0) * right.matrix(2)(1) + current.matrix(2)(0) * right.matrix(2)(2) + current.matrix(3)(0) * right.matrix(2)(3)
-    result.matrix(2)(1) = current.matrix(0)(1) * right.matrix(2)(0) + current.matrix(1)(1) * right.matrix(2)(1) + current.matrix(2)(1) * right.matrix(2)(2) + current.matrix(3)(1) * right.matrix(2)(3)
-    result.matrix(2)(2) = current.matrix(0)(2) * right.matrix(2)(0) + current.matrix(2)(1) * right.matrix(2)(1) + current.matrix(2)(2) * right.matrix(2)(2) + current.matrix(3)(2) * right.matrix(2)(3)
-    result.matrix(2)(3) = current.matrix(0)(3) * right.matrix(2)(0) + current.matrix(3)(1) * right.matrix(2)(1) + current.matrix(2)(3) * right.matrix(2)(2) + current.matrix(3)(3) * right.matrix(2)(3)
+    result.matrix(2)(0) = left.matrix(0)(0) * right.matrix(2)(0) + left.matrix(1)(0) * right.matrix(2)(1) + left.matrix(2)(0) * right.matrix(2)(2) + left.matrix(3)(0) * right.matrix(2)(3)
+    result.matrix(2)(1) = left.matrix(0)(1) * right.matrix(2)(0) + left.matrix(1)(1) * right.matrix(2)(1) + left.matrix(2)(1) * right.matrix(2)(2) + left.matrix(3)(1) * right.matrix(2)(3)
+    result.matrix(2)(2) = left.matrix(0)(2) * right.matrix(2)(0) + left.matrix(2)(1) * right.matrix(2)(1) + left.matrix(2)(2) * right.matrix(2)(2) + left.matrix(3)(2) * right.matrix(2)(3)
+    result.matrix(2)(3) = left.matrix(0)(3) * right.matrix(2)(0) + left.matrix(3)(1) * right.matrix(2)(1) + left.matrix(2)(3) * right.matrix(2)(2) + left.matrix(3)(3) * right.matrix(2)(3)
 
 
-    result.matrix(3)(0) = current.matrix(0)(0) * right.matrix(3)(0) + current.matrix(1)(0) * right.matrix(3)(1) + current.matrix(2)(0) * right.matrix(3)(2) + current.matrix(3)(0) * right.matrix(3)(3)
-    result.matrix(3)(1) = current.matrix(0)(1) * right.matrix(3)(0) + current.matrix(1)(1) * right.matrix(3)(1) + current.matrix(2)(1) * right.matrix(3)(2) + current.matrix(3)(1) * right.matrix(3)(3)
-    result.matrix(3)(2) = current.matrix(0)(2) * right.matrix(3)(0) + current.matrix(2)(1) * right.matrix(3)(1) + current.matrix(2)(2) * right.matrix(3)(2) + current.matrix(3)(2) * right.matrix(3)(3)
-    result.matrix(3)(3) = current.matrix(0)(3) * right.matrix(3)(0) + current.matrix(3)(1) * right.matrix(3)(1) + current.matrix(2)(3) * right.matrix(3)(2) + current.matrix(3)(3) * right.matrix(3)(3)
+    result.matrix(3)(0) = left.matrix(0)(0) * right.matrix(3)(0) + left.matrix(1)(0) * right.matrix(3)(1) + left.matrix(2)(0) * right.matrix(3)(2) + left.matrix(3)(0) * right.matrix(3)(3)
+    result.matrix(3)(1) = left.matrix(0)(1) * right.matrix(3)(0) + left.matrix(1)(1) * right.matrix(3)(1) + left.matrix(2)(1) * right.matrix(3)(2) + left.matrix(3)(1) * right.matrix(3)(3)
+    result.matrix(3)(2) = left.matrix(0)(2) * right.matrix(3)(0) + left.matrix(2)(1) * right.matrix(3)(1) + left.matrix(2)(2) * right.matrix(3)(2) + left.matrix(3)(2) * right.matrix(3)(3)
+    result.matrix(3)(3) = left.matrix(0)(3) * right.matrix(3)(0) + left.matrix(3)(1) * right.matrix(3)(1) + left.matrix(2)(3) * right.matrix(3)(2) + left.matrix(3)(3) * right.matrix(3)(3)
 
     result
   }

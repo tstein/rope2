@@ -20,6 +20,8 @@ class Rope {
   var vertexPath = "./src/net/tedstein/rope/vertex.shader"
   var fragmentPath = "./src/net/tedstein/rope/fragment.shader"
   var scaleLocation = 0
+  val WIDTH = 1024
+  val HEIGHT = 768
 
   def run(): Unit = {
 
@@ -54,8 +56,7 @@ class Rope {
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE)
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE)
 
-    val WIDTH = 1024
-    val HEIGHT = 768
+
     val window: Long = glfwCreateWindow(WIDTH, HEIGHT, "Rope", MemoryUtil.NULL, MemoryUtil.NULL)
 
     if (window < 0)
@@ -91,9 +92,10 @@ class Rope {
     val vbo: Int = GL15.glGenBuffers()
 
     val verts: FloatBuffer = BufferUtils.createFloatBuffer(12)
-    val v = Array(-1.0f, -1.0f, 0.0f,
-    0.0f, -1.0f, 1.0f,
-    1.0f, -1.0f, 0.0f,
+
+    val v = Array(-1.0f, -1.0f, 0.5773f,
+    0.0f, -1.0f, -0.5743f,
+    1.0f, -1.0f, 0.5773f,
     0.0f, 1.0f, 0.0f)
 
     verts.put(v)
@@ -104,7 +106,12 @@ class Rope {
     //create Index Buffer Object that hold the indecies of the vertices so we can reuse them to draw our rectangle
     val ibo = GL15.glGenBuffers()
     val elems = BufferUtils.createIntBuffer(12)
-    val index = Array(0, 3, 1, 1, 3, 2, 2, 3, 0, 0, 1, 2)
+
+    val index = Array(0, 3, 1, //triangle one
+                      1, 3, 2, //triangle two
+                      2, 3, 0, // triangle three
+                      0, 1, 2) //triangle four
+
     elems.put(index)
     elems.flip()
     glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo)
@@ -123,22 +130,19 @@ class Rope {
 
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == GL_FALSE) {
       glClear(GL_COLOR_BUFFER_BIT)
-      scale += 0.01f
+      scale += 0.1f
 
-      var world = Matrix4f()
-
-      /*   p.Scale(sinf(Scale * 0.1f), sinf(Scale * 0.1f), sinf(Scale * 0.1f));
-    p.WorldPos(sinf(Scale), 0.0f, 0.0f);
-    p.Rotate(sinf(Scale) * 90.0f, sinf(Scale) * 90.0f, sinf(Scale) * 90.0f);*/
-
-      val translate = Transformations.translate(Math.sin(scale).toFloat, 0.0f, 0.0f)
-      val rotate = Transformations.rotate(0.0f, 0.0f, 0.0f, 0.0f)
+      //val translate = Transformations.translate(Math.sin(scale).toFloat, 0.0f, 0.0f)
+      val translate = Transformations.translate(0.0f, 0.0f, 5.0f)
+      val rotate = Transformations.rotate(scale, 0.0f, 1.0f, 0.0f)
       val scaling = Transformations.scale(1.0f, 1.0f, 1.0f)
 
+      val world = Transformations.getModelTransformMatrix(translate, rotate, scaling)
+      val persp = Transformations.setPerspectiveProjection(50.0f, WIDTH, HEIGHT, 1.0f, 100.0f)
 
-      world = Transformations.getModelTransformMatrix(translate, rotate, scaling)
+      val wp = Transformations.getWorldPerspectiveTransformation(persp, world)
 
-      val worldbuffer: FloatBuffer = Matrix4f.getFloatBuffer(world)
+      val worldbuffer: FloatBuffer = Matrix4f.getFloatBuffer(wp)
 
       GL20.glUniformMatrix4fv(gWorldLocation, true, worldbuffer)
 
