@@ -23,5 +23,7 @@
     <orderEntry type="library" name="disruptor" level="project" />
     <orderEntry type="library" name="lwjgl" level="project" />
     <orderEntry type="library" name="scala-sdk-2.10.5-osx" level="application" />
+    <orderEntry type="library" name="slick-util" level="project" />
+    <orderEntry type="library" name="TWL" level="project" />
   </component>
 </module>

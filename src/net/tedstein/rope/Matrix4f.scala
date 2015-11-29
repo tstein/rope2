@@ -105,11 +105,29 @@ object Matrix4f {
 
   def getFloatBuffer(m: Matrix4f): FloatBuffer   = {
     val floatBuffer = BufferUtils.createFloatBuffer(16)
-    floatBuffer.put(m.matrix(0)(0)).put(m.matrix(0)(1)).put(m.matrix(0)(2)).put(m.matrix(0)(3)) //column 1
-    floatBuffer.put(m.matrix(1)(0)).put(m.matrix(1)(1)).put(m.matrix(1)(2)).put(m.matrix(1)(3)) //column 2
-    floatBuffer.put(m.matrix(2)(0)).put(m.matrix(2)(1)).put(m.matrix(2)(2)).put(m.matrix(2)(3)) //column 3
-    floatBuffer.put(m.matrix(3)(0)).put(m.matrix(3)(1)).put(m.matrix(3)(2)).put(m.matrix(3)(3)) //column 4
-    floatBuffer.flip()
+    val start: Int = floatBuffer.position()
+    floatBuffer.put(m.matrix(0)(0))
+    floatBuffer.put(m.matrix(0)(1))
+    floatBuffer.put(m.matrix(0)(2))
+    floatBuffer.put(m.matrix(0)(3)) //column 1
+
+
+    floatBuffer.put(m.matrix(1)(0))
+    floatBuffer.put(m.matrix(1)(1))
+    floatBuffer.put(m.matrix(1)(2))
+    floatBuffer.put(m.matrix(1)(3)) //column 2
+
+    floatBuffer.put(m.matrix(2)(0))
+    floatBuffer.put(m.matrix(2)(1))
+    floatBuffer.put(m.matrix(2)(2))
+    floatBuffer.put(m.matrix(2)(3)) //column 3
+
+    floatBuffer.put(m.matrix(3)(0))
+    floatBuffer.put(m.matrix(3)(1))
+    floatBuffer.put(m.matrix(3)(2))
+    floatBuffer.put(m.matrix(3)(3)) //column 4
+
+    floatBuffer.position(start)
     floatBuffer
   }
 

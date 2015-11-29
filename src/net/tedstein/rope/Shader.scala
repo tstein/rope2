@@ -1,16 +1,11 @@
 package net.tedstein.rope
 
 
-import java.io.FileInputStream
-
 import org.lwjgl.opengl.GL11.{GL_FALSE, GL_TRUE}
 import org.lwjgl.opengl.GL20.{GL_COMPILE_STATUS, GL_LINK_STATUS, glAttachShader, glCompileShader, glCreateProgram, glCreateShader, glDeleteShader, glGetProgramInfoLog, glGetProgrami, glGetShaderInfoLog, glGetShaderi, glLinkProgram, glShaderSource}
 
 import scala.io.Source
 
-/**
- * Created by ruba on 11/1/15.
- */
 object Shader {
 
   def createShaderObject(shaderType: Int, shaderFile: String): Int = {
@@ -32,13 +27,13 @@ object Shader {
       System.out.println("Succeeded in compiling shader " + shaderFile)
     }
 
-    return shader
+    shader
   }
 
   def readFileAsString(filename: String): String = {
     //TODO: add error checking!
     val source: StringBuilder = new StringBuilder()
-    val in: FileInputStream = new FileInputStream(filename)
+    //val in: FileInputStream = new FileInputStream(filename)
 
     try {
       for (line <- Source.fromFile(filename).getLines()) {
@@ -48,7 +43,7 @@ object Shader {
       case ex: Exception => throw ex
     }
 
-    return source.toString()
+    source.toString()
   }
 
   //one program for all shaders so this needs fixing
@@ -84,7 +79,7 @@ object Shader {
       glDeleteShader(vertexShader)
       glDeleteShader(fragmentShader)
 
-      return shaderProgram
+      shaderProgram
   }
 
 

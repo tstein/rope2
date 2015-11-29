@@ -82,25 +82,36 @@ object Transformations {
     scaling
   }
 
-  def getModelTransformMatrix(translate: Matrix4f, rotate: Matrix4f, scale: Matrix4f): Matrix4f = {
+  def getModelTransformation(translate: Matrix4f, rotate: Matrix4f, scale: Matrix4f): Matrix4f = {
     var transform = Matrix4f()
     transform = Matrix4f.multiply(translate, Matrix4f.multiply(rotate, scale)) //translate * rotate * scale
     transform
   }
 
-  def setPerspectiveProjection(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
-    val halfFovyRadians: Float = Math.toRadians(fovy / 2).toFloat
-    val range = zNear - zFar
-    val aspectRatio = width / height
+  def getProjectionTransformation(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
+    val h = Math.tan(Math.toRadians(fovy) / 2).toFloat * zNear
+    val w = h * width / height
+    val persp = Matrix4f(zNear / w, 0.0f, 0.0f, 0.0f,
+                      0.0f, zNear / h, 0.0f, 0.0f,
+                      0.0f, 0.0f,  -(zFar + zNear) / (zFar - zNear), -1.0f,
+                      0.0f, 0.0f, -2.0f * zFar * zNear / (zFar - zNear), 0.0f)
 
-    val persp = Matrix4f(1.0f / (halfFovyRadians * aspectRatio), 0.0f, 0.0f, 0.0f,
-      0.0f, 1.0f / halfFovyRadians, 0.0f, 0.0f,
-      0.0f, 0.0f, -(zNear + zFar) / range, -2.0f * zFar * zNear / range,
-      0.0f, 0.0f, -1.0f, 0.0f)
     persp
   }
 
-  def getWorldPerspectiveTransformation(persp: Matrix4f, world: Matrix4f): Matrix4f = {
-    Matrix4f.multiply(persp, world)
-  }
+  def getViewTransformation(eye: Vector3f, center: Vector3f, up: Vector3f): Matrix4f = {
+    val f: Vector3f = center.subtract(eye).normalize()
+    var u = up.normalize()
+    val s = f.cross(u).normalize()
+    u = s.cross(f)
+
+    Matrix4f(
+        s.x, u.x, -f.x, 0.0f,
+        s.y, u.y, -f.y, 0.0f,
+        s.z, u.z, -f.z, 0.0f,
+        -s.dot(eye), -u.dot(eye), f.dot(eye), 1.0f
+      )
+    }
+
+
 }
