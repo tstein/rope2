@@ -17,7 +17,7 @@ class Rope {
   var keyCallback: GLFWKeyCallback = null
   var vertexPath = "./src/net/tedstein/rope/vertex.shader"
   var fragmentPath = "./src/net/tedstein/rope/fragment.shader"
-  var imagePath = "./lib/300px-Companion_Cube.png"
+  var imagePath = "./lib/300px-tex.png"
 
   val WIDTH = 1024
   val HEIGHT = 768
