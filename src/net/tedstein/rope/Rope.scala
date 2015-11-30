@@ -103,6 +103,7 @@ class Rope {
     GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
 
     GL11.glEnable(GL11.GL_TEXTURE_2D)
+    GL11.glBindTexture(GL11.GL_TEXTURE_2D, loadTexture())
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == GL_FALSE) {
@@ -119,7 +120,6 @@ class Rope {
       GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
 
       GL13.glActiveTexture(GL13.GL_TEXTURE0)
-      GL11.glBindTexture(GL11.GL_TEXTURE_2D, loadTexture())
       GL20.glUniform1i(texLocation, 0)
 
       GL30.glBindVertexArray(gVAO)
