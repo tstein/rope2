@@ -55,7 +55,6 @@ object Shader {
 
     glAttachShader(shaderProgram, vertexShader)
     glAttachShader(shaderProgram, fragmentShader)
-
     glLinkProgram(shaderProgram)
 
     //keeps returning empty strings.. this may be a bug
@@ -74,8 +73,6 @@ object Shader {
       System.out.println("Succeeded in linking program!")
 
     }
-
-
       glDeleteShader(vertexShader)
       glDeleteShader(fragmentShader)
 

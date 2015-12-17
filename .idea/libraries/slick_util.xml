@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="joml">
+  <library name="slick-util">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/joml.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slick-util.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

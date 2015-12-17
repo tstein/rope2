@@ -13,6 +13,7 @@ object Transformations {
     translation.matrix(2)(2) = 1.0f
     translation.matrix(3)(3) = 1.0f
 
+
     translation
 
   }
@@ -20,8 +21,7 @@ object Transformations {
   /* Create rotation matrix */
   //not good
 
-  def rotate(angleInDegrees: Float, x: Float, y: Float, z: Float): Matrix4f = {
-    val rotation = Matrix4f()
+  def rotate(rotation: Matrix4f, angleInDegrees: Float, x: Float, y: Float, z: Float): Matrix4f = {
     val rcos: Float = Math.cos(Math.toRadians(angleInDegrees)).toFloat
     val rsin: Float = Math.sin(Math.toRadians(angleInDegrees)).toFloat
 
@@ -45,32 +45,33 @@ object Transformations {
     rotation.matrix(3)(2) = 0.0f
     rotation.matrix(3)(3) = 1.0f
 
-
-    /* a better way!:
-    Matrix4f rx, ry, rz;
-
-    const float x = ToRadian(RotateX);
-    const float y = ToRadian(RotateY);
-    const float z = ToRadian(RotateZ);
-
-    rx.m[0][0] = 1.0f; rx.m[0][1] = 0.0f   ; rx.m[0][2] = 0.0f    ; rx.m[0][3] = 0.0f;
-    rx.m[1][0] = 0.0f; rx.m[1][1] = cosf(x); rx.m[1][2] = -sinf(x); rx.m[1][3] = 0.0f;
-    rx.m[2][0] = 0.0f; rx.m[2][1] = sinf(x); rx.m[2][2] = cosf(x) ; rx.m[2][3] = 0.0f;
-    rx.m[3][0] = 0.0f; rx.m[3][1] = 0.0f   ; rx.m[3][2] = 0.0f    ; rx.m[3][3] = 1.0f;
-
-    ry.m[0][0] = cosf(y); ry.m[0][1] = 0.0f; ry.m[0][2] = -sinf(y); ry.m[0][3] = 0.0f;
-    ry.m[1][0] = 0.0f   ; ry.m[1][1] = 1.0f; ry.m[1][2] = 0.0f    ; ry.m[1][3] = 0.0f;
-    ry.m[2][0] = sinf(y); ry.m[2][1] = 0.0f; ry.m[2][2] = cosf(y) ; ry.m[2][3] = 0.0f;
-    ry.m[3][0] = 0.0f   ; ry.m[3][1] = 0.0f; ry.m[3][2] = 0.0f    ; ry.m[3][3] = 1.0f;
-
-    rz.m[0][0] = cosf(z); rz.m[0][1] = -sinf(z); rz.m[0][2] = 0.0f; rz.m[0][3] = 0.0f;
-    rz.m[1][0] = sinf(z); rz.m[1][1] = cosf(z) ; rz.m[1][2] = 0.0f; rz.m[1][3] = 0.0f;
-    rz.m[2][0] = 0.0f   ; rz.m[2][1] = 0.0f    ; rz.m[2][2] = 1.0f; rz.m[2][3] = 0.0f;
-    rz.m[3][0] = 0.0f   ; rz.m[3][1] = 0.0f    ; rz.m[3][2] = 0.0f; rz.m[3][3] = 1.0f;
-
-    *this = rz * ry * rx;                       */
     rotation
   }
+
+  def rotate(angleX: Float, angleY: Float, angleZ: Float): Matrix4f = {
+    val x: Float = Math.toRadians(angleX).toFloat
+    val y: Float = Math.toRadians(angleY).toFloat
+    val z: Float = Math.toRadians(angleZ).toFloat
+
+    val rotX = Matrix4f(1.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f, Math.cos(x).toFloat, -Math.sin(x).toFloat, 0.0f,
+                        0.0f, Math.sin(x).toFloat, Math.cos(x).toFloat, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f)
+
+    val rotY = Matrix4f(Math.cos(y).toFloat, 0.0f, -Math.sin(y).toFloat, 0.0f,
+                        0.0f, 1.0f, 0.0f, 0.0f,
+                        Math.sin(y).toFloat, 0.0f, Math.cos(y).toFloat, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f)
+
+    val rotZ = Matrix4f(Math.cos(z).toFloat, -Math.sin(z).toFloat, 0.0f, 0.0f,
+                        Math.sin(z).toFloat, Math.cos(z).toFloat, 0.0f, 0.0f,
+                        0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f)
+
+    Matrix4f.multiply(rotZ, Matrix4f.multiply(rotY, rotX))
+  }
+
+
 
   /* Create scaling matrix */
   def scale(x: Float, y: Float, z: Float): Matrix4f = {
@@ -89,6 +90,7 @@ object Transformations {
   }
 
   def getProjectionTransformation(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
+    println("W/H " + width/height)
     val h = Math.tan(Math.toRadians(fovy) / 2).toFloat * zNear
     val w = h * width / height
     val persp = Matrix4f(zNear / w, 0.0f, 0.0f, 0.0f,

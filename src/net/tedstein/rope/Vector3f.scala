@@ -2,12 +2,12 @@ package net.tedstein.rope
 
 case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
 
-  def lengthSquared(): Float = {
+  def lengthSquared: Float = {
     x * x + y * y + z * z
   }
 
-  def length(): Float = {
-    Math.sqrt(lengthSquared()).toFloat
+  def length: Float = {
+    Math.sqrt(lengthSquared).toFloat
   }
 
   def add(other: Vector3f): Vector3f = {
@@ -28,12 +28,12 @@ case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
     Vector3f(x / scalar, y / scalar, z / scalar)
   }
 
-  def negate(): Vector3f = {
+  def negate: Vector3f = {
     scale(-1.0f)
   }
 
-  def normalize(): Vector3f = {
-    divide(length())
+  def normalize: Vector3f = {
+    divide(length)
   }
 
   def dot(other: Vector3f): Float = {
@@ -49,5 +49,10 @@ case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
   }
 
 }
+
+object Vector3f {
+  val Zero = Vector3f(0.0f, 0.0f, 0.0f)
+}
+
 
 

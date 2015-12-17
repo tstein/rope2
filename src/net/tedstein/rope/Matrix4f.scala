@@ -18,12 +18,12 @@ import org.lwjgl.BufferUtils
  * */
 case class Matrix4f() {
   val matrix = Array.ofDim[Float](4, 4)
-
 }
 
 object Matrix4f {
   val mat4 = Matrix4f()
   val scalingMat = Matrix4f(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f)
+  val floatBuffer = BufferUtils.createFloatBuffer(16)
 
   def apply(m00: Float = 0.0f, m01: Float = 0.0f, m02: Float = 0.0f, m03: Float = 0.0f,
             m10: Float = 0.0f, m11: Float = 0.0f, m12: Float = 0.0f, m13: Float = 0.0f,
@@ -104,8 +104,8 @@ object Matrix4f {
   }
 
   def getFloatBuffer(m: Matrix4f): FloatBuffer   = {
-    val floatBuffer = BufferUtils.createFloatBuffer(16)
-    val start: Int = floatBuffer.position()
+    //val floatBuffer = BufferUtils.createFloatBuffer(16)
+  //  val start: Int = floatBuffer.position()
     floatBuffer.put(m.matrix(0)(0))
     floatBuffer.put(m.matrix(0)(1))
     floatBuffer.put(m.matrix(0)(2))
@@ -126,8 +126,8 @@ object Matrix4f {
     floatBuffer.put(m.matrix(3)(1))
     floatBuffer.put(m.matrix(3)(2))
     floatBuffer.put(m.matrix(3)(3)) //column 4
-
-    floatBuffer.position(start)
+    floatBuffer.flip()
+   // floatBuffer.position(start)
     floatBuffer
   }
 
@@ -219,6 +219,44 @@ object Matrix4f {
     result
   }
 
+  def invert(m: Matrix4f): Matrix4f = {
+    val a: Float = m.matrix(0)(0) * m.matrix(1)(1) - m.matrix(0)(1) * m.matrix(1)(0)
+    val b: Float  = m.matrix(0)(0) * m.matrix(1)(2) - m.matrix(0)(2) * m.matrix(1)(0)
+    val c: Float = m.matrix(0)(0) * m.matrix(1)(3) - m.matrix(0)(3) * m.matrix(1)(0)
+
+    val d: Float = m.matrix(0)(1) * m.matrix(1)(2) - m.matrix(0)(2) * m.matrix(1)(1)
+    val e: Float = m.matrix(0)(1) * m.matrix(1)(3) - m.matrix(0)(3) * m.matrix(1)(2)
+    val f: Float = m.matrix(0)(2) * m.matrix(1)(3) - m.matrix(0)(3) * m.matrix(1)(2)
+    val g: Float = m.matrix(2)(0) * m.matrix(3)(1) - m.matrix(2)(1) * m.matrix(3)(0)
+    val h: Float = m.matrix(2)(1) * m.matrix(3)(2) - m.matrix(2)(2) * m.matrix(3)(0)
+
+    val i: Float = m.matrix(2)(0) * m.matrix(3)(3) - m.matrix(2)(3) * m.matrix(3)(0)
+    val j: Float = m.matrix(2)(1) * m.matrix(3)(2) - m.matrix(2)(2) * m.matrix(3)(1)
+    val k: Float = m.matrix(2)(1) * m.matrix(3)(3) - m.matrix(2)(3) * m.matrix(3)(1)
+    val l: Float = m.matrix(2)(2) * m.matrix(3)(3) - m.matrix(2)(3) * m.matrix(3)(2)
+
+    var det: Float = a * l - b * k + c * j + d * i - e * h + f * g
+
+    det = 1.0f / det
+
+    Matrix4f((m.matrix(1)(1) * l - m.matrix(1)(2) * k + m.matrix(1)(3) * j) * det,
+      (-m.matrix(0)(1) * l + m.matrix(0)(2) * k - m.matrix(1)(3) * j) * det,
+      (m.matrix(3)(1) * f - m.matrix(3)(2) * 2 + m.matrix(3)(3) * d) * det,
+      (-m.matrix(2)(1) * f + m.matrix(2)(2) * e - m.matrix(2)(3) * d) * det,
+      (-m.matrix(1)(0) * l + m.matrix(1)(2) * i - m.matrix(1)(3) * h) * det,
+      (m.matrix(0)(0) * l - m.matrix(0)(2) * i + m.matrix(0)(3) * h) * det,
+      (-m.matrix(3)(0) * f + m.matrix(3)(2) * c - m.matrix(3)(3) * b) * det,
+      (m.matrix(2)(0) * f - m.matrix(2)(2) * c + m.matrix(2)(3) * b) * det,
+      (m.matrix(1)(0) * k - m.matrix(1)(1) * i + m.matrix(1)(3) * g) * det,
+      (-m.matrix(0)(0) * k + m.matrix(0)(1) * i - m.matrix(0)(3) * g) * det,
+      (m.matrix(3)(0) * e - m.matrix(3)(1) * c + m.matrix(3)(3) * a) * det,
+      (-m.matrix(2)(0) * e + m.matrix(2)(1) * c - m.matrix(2)(3) * a) * det,
+      (-m.matrix(1)(0) * j + m.matrix(1)(1) * h - m.matrix(1)(2) * g) * det,
+      (m.matrix(0)(0) * j - m.matrix(0)(1) * h + m.matrix(0)(2) * g) * det,
+      (-m.matrix(3)(0) * d + m.matrix(3)(1) * b - m.matrix(3)(2) * a) * det,
+      (m.matrix(2)(0) * d - m.matrix(2)(1) * b + m.matrix(2)(2) * a) * det)
+
+  }
 
 
 }

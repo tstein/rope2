@@ -27,6 +27,7 @@ class Rope {
   var gVAO: Int = 0
   var gVBO: Int = 0
   var program: Int = 0
+  val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
 
   def run(): Unit = {
 
@@ -38,6 +39,14 @@ class Rope {
     try {
       val window = createOpenglWindow()
       System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
+      GL11.glEnable(GL11.GL_DEPTH_TEST)
+      GL11.glDepthFunc(GL11.GL_LESS)
+      GL11.glEnable(GL11.GL_BLEND)
+      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+      GL11.glEnable(GL11.GL_TEXTURE_2D)
+      GL11.glCullFace(GL11.GL_BACK)
+      GL11.glEnable(GL11.GL_CULL_FACE)
+
       loadShaders()
       texID = loadTexture()
       loadCube()
@@ -85,14 +94,14 @@ class Rope {
 
   def renderScene(window: Long): Unit = {
 
-
     var scale: Float = 0.0f
 
     //set uniform values
     val texLocation = GL20.glGetUniformLocation(program, "tex")
 
     val camLocation = GL20.glGetUniformLocation(program, "camera")
-    val camera = Transformations.getViewTransformation(Vector3f(3.0f, 3.0f, 3.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f))
+    val camera = gCamera.lookAt(Vector3f(3.0f, 3.0f, 3.0f), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.0f, 1.0f, 0.0f))
+
     val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
     GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
@@ -101,38 +110,40 @@ class Rope {
     val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
     GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
 
-    GL11.glEnable(GL11.GL_DEPTH_TEST)
-    GL11.glDepthFunc(GL11.GL_LESS)
-    GL11.glEnable(GL11.GL_BLEND)
-    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-    GL11.glEnable(GL11.GL_TEXTURE_2D)
 
-    GL11.glBindTexture(GL11.GL_TEXTURE_2D, loadTexture())
+    GL13.glActiveTexture(GL13.GL_TEXTURE0)
+    GL20.glUniform1i(texLocation, 0)
+
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == GL_FALSE) {
+
       glClear(GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
       scale += 0.5f
 
-      val translate = Transformations.translate(0.0f, 0.0f, 0.0f)
-      val rotate = Transformations.rotate(scale, 0.0f, 1.0f, 0.0f)
-      val scaling = Transformations.scale(1.0f, 1.0f, 1.0f)
+      val rot = Matrix4f()
+      val translate = Transformations.translate(-2.0f, 0.0f, 0.0f)
+      val rotate = Transformations.rotate(rot, scale, 0.0f, 1.0f, 0.0f)
+      val scaling = Transformations.scale(0.5f, 0.5f, 0.5f)
 
       val modelLocation = GL20.glGetUniformLocation(program, "model")
       val model = Transformations.getModelTransformation(translate, rotate, scaling)
       val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
       GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
 
-      GL13.glActiveTexture(GL13.GL_TEXTURE0)
+
+
+
+
       GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID)
-      GL20.glUniform1i(texLocation, 0)
 
       GL30.glBindVertexArray(gVAO)
       GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6 * 2 * 3)
+
       GL30.glBindVertexArray(0)
       GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
-
       GL20.glDeleteProgram(program)
+
       glfwSwapBuffers(window)
 
       glfwPollEvents()
@@ -157,6 +168,7 @@ class Rope {
 
     val verts: FloatBuffer = BufferUtils.createFloatBuffer(30 * 6)
     val v = Array( // bottom
+
       -1.0f,-1.0f,-1.0f,   0.0f, 0.0f,
       1.0f,-1.0f,-1.0f,   1.0f, 0.0f,
       -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
@@ -203,6 +215,50 @@ class Rope {
       1.0f,-1.0f, 1.0f,   1.0f, 1.0f,
       1.0f, 1.0f,-1.0f,   0.0f, 0.0f,
       1.0f, 1.0f, 1.0f,   0.0f, 1.0f
+
+    /*
+        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+      0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+      0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+      0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+      -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+      -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+      0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+      0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+      -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+      -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+      -0.5f,  0.5f,  0.5f,   1.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+      -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+      -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+      0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+      0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+      0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+      0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+      0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+      0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+
+      -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+      0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+      0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+      0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+      -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+      0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+      0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+      0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+      */
     )
     verts.put(v)
     verts.flip()
@@ -237,7 +293,6 @@ class Rope {
   def loadTexture(): Int = {
     try {
       val texture = Texture.loadPNGTexture(imagePath, GL13.GL_TEXTURE0)
-
       texture
     } catch {
       case ex: Exception => throw ex
