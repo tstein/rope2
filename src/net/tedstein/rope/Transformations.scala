@@ -19,7 +19,6 @@ object Transformations {
   }
 
   /* Create rotation matrix */
-  //not good
 
   def rotate(rotation: Matrix4f, angleInDegrees: Float, x: Float, y: Float, z: Float): Matrix4f = {
     val rcos: Float = Math.cos(Math.toRadians(angleInDegrees)).toFloat
@@ -102,9 +101,9 @@ object Transformations {
   }
 
   def getViewTransformation(eye: Vector3f, center: Vector3f, up: Vector3f): Matrix4f = {
-    val f: Vector3f = center.subtract(eye).normalize()
-    var u = up.normalize()
-    val s = f.cross(u).normalize()
+    val f: Vector3f = center.subtract(eye).normalize
+    var u = up.normalize
+    val s = f.cross(u).normalize
     u = s.cross(f)
 
     Matrix4f(

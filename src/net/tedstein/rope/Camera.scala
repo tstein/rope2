@@ -14,8 +14,6 @@ case class Camera() {
   var mouseSensitivity = Camera.DefaultSensitivity
   var zoom = Camera.DefaultZoom
 
-
-
   def lookAt(eye: Vector3f, target: Vector3f, worldUp: Vector3f): Matrix4f = {
     val f: Vector3f = target.subtract(eye).normalize
     var u: Vector3f = worldUp.normalize
@@ -25,7 +23,6 @@ case class Camera() {
             s.y, u.y, -f.y, 0.0f,
             s.z, u.z, -f.z, 0.0f,
             -s.dot(eye), -u.dot(eye), f.dot(eye), 1.0f)
-
   }
 
   def updateCameraVectors(): Unit = {
@@ -39,11 +36,9 @@ case class Camera() {
     // Also re-calculate the Right and Up vector
     this.right = this.front.cross(this.worldUp).normalize  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
     this.cameraUp = this.right.cross(this.front).normalize
-
   }
 
 }
-
 
 object Camera {
   val DefaultYaw = -90.0f
