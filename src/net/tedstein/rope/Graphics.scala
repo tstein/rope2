@@ -12,7 +12,7 @@ import org.lwjgl.opengl._
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
 
-class Graphics {
+class Graphics(val universe: Universe) {
   var errorCallback: GLFWErrorCallback = null
   var keyCallback: GLFWKeyCallback = null
   var vertexPath = "./src/net/tedstein/rope/vertex.shader"

@@ -8,7 +8,7 @@ import scala.math.{pow, sqrt}
 /**
  * An actor in our little universe.
  */
-class RelativisticObject(val pos: Position, val vel: Velocity, val time: Double) {
+case class RelativisticObject(pos: Position, vel: Velocity, time: Double) {
   def velrms: Double = {
     sqrt(List(vel.x, vel.y, vel.z).map(pow(_, 2)).sum / 3)
   }
