@@ -1,20 +1,21 @@
 package net.tedstein.rope
 
-import net.tedstein.rope.Dimensions.Position
+import net.tedstein.rope.physics.Engineer
 
 
 object Rope {
   def main(args: Array[String]) = {
-    val sphere = RelativisticObject(Dimensions.Origin, Dimensions.Stationary, 0.0)
-    val cubes = (for (i <- -1 to 1; j <- -1 to 1; k <- -1 to 1)
-      yield RelativisticObject(Position(i.toDouble, j.toDouble, k.toDouble), Dimensions.Stationary, 0.0)
-      ).toSet
     // Let there be light.
-    val universe = new Universe(sphere, cubes)
+    val universe = Universe.demo
+
+    val engineer = new Engineer(universe)
+    engineer.start()
 
     val graphics = new Graphics(universe)
+    // Block on the graphics loop.
     graphics.run()
 
-    println("Up and running!")
+    // Regardless of the reason, if graphics.run() returns, we need to shut down.
+    engineer.shutdown()
   }
 }

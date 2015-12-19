@@ -10,19 +10,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="scalatest_2.10-2.2.2" level="project" />
     <orderEntry type="library" name="scalatest_2.10-2.2.2-javadoc" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file:///usr/local/share/scala-2.10.4" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="scala-sdk-2.10.4-linux" level="application" />
     <orderEntry type="library" name="disruptor" level="project" />
     <orderEntry type="library" name="lwjgl" level="project" />
-    <orderEntry type="library" name="scala-sdk-2.10.5-osx" level="application" />
     <orderEntry type="library" name="TWL" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.10.4-linux" level="application" />
+    <orderEntry type="library" name="scala-sdk-2.10.5-osx" level="application" />
   </component>
 </module>

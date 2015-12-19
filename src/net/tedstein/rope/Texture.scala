@@ -10,7 +10,7 @@ object Texture {
 
   def loadPNGTexture(imagePath: String, textureUnit: Int): Int = {
     var tWidth: Int = 0
-    var tHeight:Int = 0
+    var tHeight: Int = 0
     var buf: ByteBuffer = null
 
     try {
@@ -19,12 +19,11 @@ object Texture {
       // Link the PNG decoder to this stream
       val decoder: PNGDecoder = new PNGDecoder(in)
       // Get the width and height of the texture
-      tWidth = decoder.getWidth()
-      tHeight = decoder.getHeight()
+      tWidth = decoder.getWidth
+      tHeight = decoder.getHeight
       // Decode the PNG file in a ByteBuffer
-      buf = ByteBuffer.allocateDirect(
-        4 * decoder.getWidth() * decoder.getHeight())
-      decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA)
+      buf = ByteBuffer.allocateDirect(4 * decoder.getWidth * decoder.getHeight)
+      decoder.decode(buf, decoder.getWidth * 4, PNGDecoder.Format.RGBA)
       buf.flip()
       in.close()
     } catch {
@@ -55,9 +54,6 @@ object Texture {
       GL11.GL_LINEAR_MIPMAP_LINEAR)
 
     GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
-    return texId
+    texId
   }
-
-
-
 }
