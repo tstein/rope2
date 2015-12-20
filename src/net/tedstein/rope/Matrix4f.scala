@@ -16,20 +16,30 @@ import org.lwjgl.BufferUtils
  * | D H L P |   | m03 m13 m23 m33 |
  */
  * */
-case class Matrix4f() {
+class Matrix4f() {
   val matrix = Array.ofDim[Float](4, 4)
+
+  override def toString: String = {
+    val s = new StringBuilder
+    s.append("{")
+    for (i <- 0 to 3) {
+      for (j <- 0 to 3) {
+        s.append(s" ${matrix(j)(i)},")
+      }
+      if (i < 3) s.append{"\n "} else s.append("}\n")
+    }
+    s.toString()
+  }
 }
 
 object Matrix4f {
-  val mat4 = Matrix4f()
-  val scalingMat = Matrix4f(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f)
-  val floatBuffer = BufferUtils.createFloatBuffer(16)
 
-  def apply(m00: Float = 0.0f, m01: Float = 0.0f, m02: Float = 0.0f, m03: Float = 0.0f,
-            m10: Float = 0.0f, m11: Float = 0.0f, m12: Float = 0.0f, m13: Float = 0.0f,
-            m20: Float = 0.0f, m21: Float = 0.0f, m22: Float = 0.0f, m23: Float = 0.0f,
-            m30: Float = 0.0f, m31: Float = 0.0f, m32: Float = 0.0f, m33: Float = 0.0f): Matrix4f = {
+  def apply(m00: Float = 1.0f, m01: Float = 0.0f, m02: Float = 0.0f, m03: Float = 0.0f,
+            m10: Float = 0.0f, m11: Float = 1.0f, m12: Float = 0.0f, m13: Float = 0.0f,
+            m20: Float = 0.0f, m21: Float = 0.0f, m22: Float = 1.0f, m23: Float = 0.0f,
+            m30: Float = 0.0f, m31: Float = 0.0f, m32: Float = 0.0f, m33: Float = 1.0f): Matrix4f = {
 
+    val mat4 = new Matrix4f()
     mat4.matrix(0)(0) = m00
     mat4.matrix(0)(1) = m01
     mat4.matrix(0)(2) = m02
@@ -55,6 +65,8 @@ object Matrix4f {
 
 
   def apply(col0: Vector4f, col1: Vector4f, col2: Vector4f, col3: Vector4f): Matrix4f = {
+
+    val mat4 = Matrix4f()
     mat4.matrix(0)(0) = col0.x
     mat4.matrix(0)(1) = col0.y
     mat4.matrix(0)(2) = col0.z
@@ -79,6 +91,8 @@ object Matrix4f {
   }
 
   def apply(diagonalValue: Float): Matrix4f = {
+
+    val mat4 = Matrix4f()
     mat4.matrix(0)(0) = diagonalValue
     mat4.matrix(1)(1) = diagonalValue
     mat4.matrix(2)(2) = diagonalValue
@@ -104,7 +118,8 @@ object Matrix4f {
   }
 
   def getFloatBuffer(m: Matrix4f): FloatBuffer   = {
-    //val floatBuffer = BufferUtils.createFloatBuffer(16)
+
+    val floatBuffer = BufferUtils.createFloatBuffer(16)
   //  val start: Int = floatBuffer.position()
     floatBuffer.put(m.matrix(0)(0))
     floatBuffer.put(m.matrix(0)(1))
@@ -165,33 +180,27 @@ object Matrix4f {
   }
 
   def multiply(left: Matrix4f, right: Matrix4f): Matrix4f = {
+    val nm00 = left.matrix(0)(0) * right.matrix(0)(0) + left.matrix(1)(0) * right.matrix(0)(1) + left.matrix(2)(0) * right.matrix(0)(2) + left.matrix(3)(0) * right.matrix(0)(3)
+    val nm01 = left.matrix(0)(1) * right.matrix(0)(0) + left.matrix(1)(1) * right.matrix(0)(1) + left.matrix(2)(1) * right.matrix(0)(2) + left.matrix(3)(1) * right.matrix(0)(3)
+    val nm02 = left.matrix(0)(2) * right.matrix(0)(0) + left.matrix(1)(2) * right.matrix(0)(1) + left.matrix(2)(2) * right.matrix(0)(2) + left.matrix(3)(2) * right.matrix(0)(3)
+    val nm03 = left.matrix(0)(3) * right.matrix(0)(0) + left.matrix(1)(3) * right.matrix(0)(1) + left.matrix(2)(3) * right.matrix(0)(2) + left.matrix(3)(3) * right.matrix(0)(3)
+    val nm10 = left.matrix(0)(0) * right.matrix(1)(0) + left.matrix(1)(0) * right.matrix(1)(1) + left.matrix(2)(0) * right.matrix(1)(2) + left.matrix(3)(0) * right.matrix(1)(3)
+    val nm11 = left.matrix(0)(1) * right.matrix(1)(0) + left.matrix(1)(1) * right.matrix(1)(1) + left.matrix(2)(1) * right.matrix(1)(2) + left.matrix(3)(1) * right.matrix(1)(3)
+    val nm12 = left.matrix(0)(2) * right.matrix(1)(0) + left.matrix(1)(2) * right.matrix(1)(1) + left.matrix(2)(2) * right.matrix(1)(2) + left.matrix(3)(2) * right.matrix(1)(3)
+    val nm13 = left.matrix(0)(3) * right.matrix(1)(0) + left.matrix(1)(3) * right.matrix(1)(1) + left.matrix(2)(3) * right.matrix(1)(2) + left.matrix(3)(3) * right.matrix(1)(3)
+    val nm20 = left.matrix(0)(0) * right.matrix(2)(0) + left.matrix(1)(0) * right.matrix(2)(1) + left.matrix(2)(0) * right.matrix(2)(2) + left.matrix(3)(0) * right.matrix(2)(3)
+    val nm21 = left.matrix(0)(1) * right.matrix(2)(0) + left.matrix(1)(1) * right.matrix(2)(1) + left.matrix(2)(1) * right.matrix(2)(2) + left.matrix(3)(1) * right.matrix(2)(3)
+    val nm22 = left.matrix(0)(2) * right.matrix(2)(0) + left.matrix(1)(2) * right.matrix(2)(1) + left.matrix(2)(2) * right.matrix(2)(2) + left.matrix(3)(2) * right.matrix(2)(3)
+    val nm23 = left.matrix(0)(3) * right.matrix(2)(0) + left.matrix(1)(3) * right.matrix(2)(1) + left.matrix(2)(3) * right.matrix(2)(2) + left.matrix(3)(3) * right.matrix(2)(3)
+    val nm30 = left.matrix(0)(0) * right.matrix(3)(0) + left.matrix(1)(0) * right.matrix(3)(1) + left.matrix(2)(0) * right.matrix(3)(2) + left.matrix(3)(0) * right.matrix(3)(3)
+    val nm31 = left.matrix(0)(1) * right.matrix(3)(0) + left.matrix(1)(1) * right.matrix(3)(1) + left.matrix(2)(1) * right.matrix(3)(2) + left.matrix(3)(1) * right.matrix(3)(3)
+    val nm32 = left.matrix(0)(2) * right.matrix(3)(0) + left.matrix(1)(2) * right.matrix(3)(1) + left.matrix(2)(2) * right.matrix(3)(2) + left.matrix(3)(2) * right.matrix(3)(3)
+    val nm33 = left.matrix(0)(3) * right.matrix(3)(0) + left.matrix(1)(3) * right.matrix(3)(1) + left.matrix(2)(3) * right.matrix(3)(2) + left.matrix(3)(3) * right.matrix(3)(3)
 
-    val result = Matrix4f()
-
-    result.matrix(0)(0) = left.matrix(0)(0) * right.matrix(0)(0) + left.matrix(1)(0) * right.matrix(0)(1) + left.matrix(2)(0) * right.matrix(0)(2) + left.matrix(3)(0) * right.matrix(0)(3)
-    result.matrix(0)(1) = left.matrix(0)(1) * right.matrix(0)(0) + left.matrix(1)(1) * right.matrix(0)(1) + left.matrix(2)(1) * right.matrix(0)(2) + left.matrix(3)(1) * right.matrix(0)(3)
-    result.matrix(0)(2) = left.matrix(0)(2) * right.matrix(0)(0) + left.matrix(2)(1) * right.matrix(0)(1) + left.matrix(2)(2) * right.matrix(0)(2) + left.matrix(3)(2) * right.matrix(0)(3)
-    result.matrix(0)(3) = left.matrix(0)(3) * right.matrix(0)(0) + left.matrix(3)(1) * right.matrix(0)(1) + left.matrix(2)(3) * right.matrix(0)(2) + left.matrix(3)(3) * right.matrix(0)(3)
-
-
-    result.matrix(1)(0) = left.matrix(0)(0) * right.matrix(1)(0) + left.matrix(1)(0) * right.matrix(1)(1) + left.matrix(2)(0) * right.matrix(1)(2) + left.matrix(3)(0) * right.matrix(1)(3)
-    result.matrix(1)(1) = left.matrix(0)(1) * right.matrix(1)(0) + left.matrix(1)(1) * right.matrix(1)(1) + left.matrix(2)(1) * right.matrix(1)(2) + left.matrix(3)(1) * right.matrix(1)(3)
-    result.matrix(1)(2) = left.matrix(0)(2) * right.matrix(1)(0) + left.matrix(2)(1) * right.matrix(1)(1) + left.matrix(2)(2) * right.matrix(1)(2) + left.matrix(3)(2) * right.matrix(1)(3)
-    result.matrix(1)(3) = left.matrix(0)(3) * right.matrix(1)(0) + left.matrix(3)(1) * right.matrix(1)(1) + left.matrix(2)(3) * right.matrix(1)(2) + left.matrix(3)(3) * right.matrix(1)(3)
-
-
-    result.matrix(2)(0) = left.matrix(0)(0) * right.matrix(2)(0) + left.matrix(1)(0) * right.matrix(2)(1) + left.matrix(2)(0) * right.matrix(2)(2) + left.matrix(3)(0) * right.matrix(2)(3)
-    result.matrix(2)(1) = left.matrix(0)(1) * right.matrix(2)(0) + left.matrix(1)(1) * right.matrix(2)(1) + left.matrix(2)(1) * right.matrix(2)(2) + left.matrix(3)(1) * right.matrix(2)(3)
-    result.matrix(2)(2) = left.matrix(0)(2) * right.matrix(2)(0) + left.matrix(2)(1) * right.matrix(2)(1) + left.matrix(2)(2) * right.matrix(2)(2) + left.matrix(3)(2) * right.matrix(2)(3)
-    result.matrix(2)(3) = left.matrix(0)(3) * right.matrix(2)(0) + left.matrix(3)(1) * right.matrix(2)(1) + left.matrix(2)(3) * right.matrix(2)(2) + left.matrix(3)(3) * right.matrix(2)(3)
-
-
-    result.matrix(3)(0) = left.matrix(0)(0) * right.matrix(3)(0) + left.matrix(1)(0) * right.matrix(3)(1) + left.matrix(2)(0) * right.matrix(3)(2) + left.matrix(3)(0) * right.matrix(3)(3)
-    result.matrix(3)(1) = left.matrix(0)(1) * right.matrix(3)(0) + left.matrix(1)(1) * right.matrix(3)(1) + left.matrix(2)(1) * right.matrix(3)(2) + left.matrix(3)(1) * right.matrix(3)(3)
-    result.matrix(3)(2) = left.matrix(0)(2) * right.matrix(3)(0) + left.matrix(2)(1) * right.matrix(3)(1) + left.matrix(2)(2) * right.matrix(3)(2) + left.matrix(3)(2) * right.matrix(3)(3)
-    result.matrix(3)(3) = left.matrix(0)(3) * right.matrix(3)(0) + left.matrix(3)(1) * right.matrix(3)(1) + left.matrix(2)(3) * right.matrix(3)(2) + left.matrix(3)(3) * right.matrix(3)(3)
-
-    result
+    Matrix4f(nm00, nm01, nm02, nm03,
+             nm10, nm11, nm12, nm13,
+             nm20, nm21, nm22, nm23,
+             nm30, nm31, nm32, nm33)
   }
 
   def transpose(m: Matrix4f): Matrix4f = {
@@ -221,7 +230,7 @@ object Matrix4f {
 
   def invert(m: Matrix4f): Matrix4f = {
     val a: Float = m.matrix(0)(0) * m.matrix(1)(1) - m.matrix(0)(1) * m.matrix(1)(0)
-    val b: Float  = m.matrix(0)(0) * m.matrix(1)(2) - m.matrix(0)(2) * m.matrix(1)(0)
+    val b: Float = m.matrix(0)(0) * m.matrix(1)(2) - m.matrix(0)(2) * m.matrix(1)(0)
     val c: Float = m.matrix(0)(0) * m.matrix(1)(3) - m.matrix(0)(3) * m.matrix(1)(0)
 
     val d: Float = m.matrix(0)(1) * m.matrix(1)(2) - m.matrix(0)(2) * m.matrix(1)(1)
