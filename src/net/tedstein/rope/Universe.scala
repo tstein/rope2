@@ -1,6 +1,7 @@
 package net.tedstein.rope
 
-import net.tedstein.rope.Dimensions.{Velocity, Position}
+import net.tedstein.rope.physics.{RelativisticObject, Dimensions}
+import Dimensions.{Velocity, Position}
 
 
 class Universe(val player: RelativisticObject, val squares: Set[RelativisticObject])

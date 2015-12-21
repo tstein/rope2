@@ -1,6 +1,7 @@
-package net.tedstein.rope
+package net.tedstein.rope.physics
 
-import net.tedstein.rope.Dimensions.{Velocity, Position}
+import net.tedstein.rope.RopeSuite
+import net.tedstein.rope.physics.Dimensions.{Position, Velocity}
 
 
 class RelativisticObjectSuite extends RopeSuite {

@@ -1,4 +1,4 @@
-package net.tedstein.rope
+package net.tedstein.rope.graphics
 
 import java.io.{FileInputStream, InputStream}
 import java.nio.ByteBuffer

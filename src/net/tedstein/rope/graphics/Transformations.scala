@@ -1,4 +1,4 @@
-package net.tedstein.rope
+package net.tedstein.rope.graphics
 
 object Transformations {
   /* Create translation matrix */

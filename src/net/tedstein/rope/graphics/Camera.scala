@@ -1,5 +1,4 @@
-package net.tedstein.rope
-
+package net.tedstein.rope.graphics
 
 case class Camera() {
   var position = Vector3f(0.0f, 0.0f, 3.0f)

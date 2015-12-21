@@ -1,8 +1,9 @@
-package net.tedstein.rope
+package net.tedstein.rope.graphics
 
 import java.nio.FloatBuffer
 
-import net.tedstein.rope.Shader.{compileShaderProgram, createShaderObject}
+import Shader.{compileShaderProgram, createShaderObject}
+import net.tedstein.rope._
 import org.lwjgl.glfw.GLFW.{GLFW_CONTEXT_VERSION_MAJOR, GLFW_CONTEXT_VERSION_MINOR, GLFW_KEY_ESCAPE, GLFW_OPENGL_CORE_PROFILE, GLFW_OPENGL_FORWARD_COMPAT, GLFW_OPENGL_PROFILE, GLFW_PRESS, GLFW_RESIZABLE, GLFW_VISIBLE, glfwCreateWindow, glfwGetKey, glfwGetPrimaryMonitor, glfwGetVideoMode, glfwInit, glfwMakeContextCurrent, glfwPollEvents, glfwSetErrorCallback, glfwSetWindowPos, glfwShowWindow, glfwSwapBuffers, glfwTerminate, glfwWindowHint, glfwWindowShouldClose}
 import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, GLFWvidmode}
 import org.lwjgl.opengl.GL11.{GL_COLOR_BUFFER_BIT, GL_FALSE, GL_FLOAT, GL_TRUE, glClear, glClearColor}
@@ -15,8 +16,9 @@ import org.lwjgl.{BufferUtils, Sys}
 class Graphics(val universe: Universe) {
   var errorCallback: GLFWErrorCallback = null
   var keyCallback: GLFWKeyCallback = null
-  var vertexPath = "./src/net/tedstein/rope/vertex.shader"
-  var fragmentPath = "./src/net/tedstein/rope/fragment.shader"
+  val ShaderRoot = "./src/net/tedstein/rope/graphics/shaders/"
+  var vertexPath = ShaderRoot + "vertex.shader"
+  var fragmentPath = ShaderRoot + "fragment.shader"
   var imagePath = "./lib/300px-tex.png"
   var vertexShader = 0
   var fragmentShader = 0

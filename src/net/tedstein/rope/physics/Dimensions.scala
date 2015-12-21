@@ -1,5 +1,4 @@
-package net.tedstein.rope
-
+package net.tedstein.rope.physics
 
 object Dimensions {
   case class Position(x: Double, y: Double, z: Double) {

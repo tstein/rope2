@@ -1,6 +1,6 @@
 package net.tedstein.rope.physics
 
-import net.tedstein.rope.{RelativisticObject, Universe}
+import net.tedstein.rope.Universe
 
 class Engineer(universe: Universe) extends Thread {
   val Thousand = 1000L

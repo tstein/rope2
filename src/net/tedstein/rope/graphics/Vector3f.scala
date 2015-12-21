@@ -1,4 +1,4 @@
-package net.tedstein.rope
+package net.tedstein.rope.graphics
 
 case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
 

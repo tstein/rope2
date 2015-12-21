@@ -1,5 +1,4 @@
-package net.tedstein.rope
-
+package net.tedstein.rope.graphics
 
 import org.lwjgl.opengl.GL11.{GL_FALSE, GL_TRUE}
 import org.lwjgl.opengl.GL20.{GL_COMPILE_STATUS, GL_LINK_STATUS, glAttachShader, glCompileShader, glCreateProgram, glCreateShader, glDeleteShader, glGetProgramInfoLog, glGetProgrami, glGetShaderInfoLog, glGetShaderi, glLinkProgram, glShaderSource}
