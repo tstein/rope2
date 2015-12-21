@@ -11,9 +11,7 @@ case class Vector4f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f, w: Float 
   }
 
   def add(other: Vector4f): Vector4f = {
-    val res = Vector4f(x + other.x, y + other.y, z + other.z, w + other.w)
-    println(res.x)
-    res
+    Vector4f(x + other.x, y + other.y, z + other.z, w + other.w)
   }
 
   def subtract(other: Vector4f): Vector4f = {

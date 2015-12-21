@@ -2,6 +2,7 @@ package net.tedstein.rope.graphics
 
 import java.nio.FloatBuffer
 
+import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
 import net.tedstein.rope.graphics.Shader.{compileShaderProgram, createShaderObject}
 import org.lwjgl.glfw.GLFW.{GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_S, _}
@@ -13,7 +14,7 @@ import org.lwjgl.opengl._
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
 
-class Graphics(val universe: Universe) {
+class Graphics(val universe: Universe) extends StrictLogging {
   var errorCallback: GLFWErrorCallback = null
   var keyCallback: GLFWKeyCallback = null
   var mouseCallback: GLFWCursorPosCallback = null
@@ -38,15 +39,14 @@ class Graphics(val universe: Universe) {
   var lastFrame = 0.0f
 
   def run(): Unit = {
-
-    System.out.println("Hello LWJGL " + Sys.getVersion + "!")
-    System.out.println("OS: " + System.getProperty("os.name"))
-    System.out.println("OS Version: " + System.getProperty("os.version"))
-    System.out.println("LWJGL Version: " + org.lwjgl.Sys.getVersion)
+    logger.info("Hello LWJGL " + Sys.getVersion + "!")
+    logger.info("OS: " + System.getProperty("os.name"))
+    logger.info("OS Version: " + System.getProperty("os.version"))
+    logger.info("LWJGL Version: " + org.lwjgl.Sys.getVersion)
 
     try {
       val window = createOpenglWindow()
-      System.out.println("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
+      logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
       //GL11.glViewport(0, 0, WIDTH, HEIGHT)
       GL11.glEnable(GL11.GL_DEPTH_TEST)
       GL11.glDepthFunc(GL11.GL_LESS)

@@ -4,7 +4,6 @@ object Transformations {
   /* Create translation matrix */
 
   def translate(m: Matrix4f, translation: Vector3f): Matrix4f = {
-    print("m(0)(0): " + m.matrix(0)(1))
     val v0 = Vector4f(m.matrix(0)(0) * translation.x, m.matrix(0)(1) * translation.x,
                       m.matrix(0)(2) * translation.x, m.matrix(0)(3) * translation.x)
 
