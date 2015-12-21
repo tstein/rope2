@@ -1,8 +1,9 @@
 package net.tedstein.rope.physics
 
+import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope.Universe
 
-class Engineer(universe: Universe) extends Thread {
+class Engineer(universe: Universe) extends Thread with StrictLogging {
   val Thousand = 1000L
   val Million = Thousand * Thousand
   val Billion = Thousand * Million
@@ -15,7 +16,7 @@ class Engineer(universe: Universe) extends Thread {
   val TimeResolutionNanos = Billion / TargetPhysicsFrameRate
 
   override def run(): Unit = {
-    println(s"Engineer clocking in at ${System.nanoTime}")
+    logger.info(s"Engineer clocking in at ${System.nanoTime}")
     shouldRun = true
     lastFrameNanos = System.nanoTime
 
@@ -33,7 +34,7 @@ class Engineer(universe: Universe) extends Thread {
       Thread.sleep(nanosToMillis(SleepNanos))
     }
 
-    println(s"Engineer clocking out at ${System.nanoTime}")
+    logger.info(s"Engineer clocking out at ${System.nanoTime}")
   }
 
   def shutdown(): Unit = shouldRun = false
