@@ -25,6 +25,32 @@ case class Camera() {
              -s.dot(eye), -u.dot(eye), f.dot(eye), 1.0f)
   }
 
+
+  def processKeyboard(direction: CameraMovement, deltaTime: Float) {
+    val velocity = this.movementSpeed * deltaTime
+    if (direction == Forward) {
+      this.position = this.position.add(this.cameraFront.scale(velocity))
+    }
+    if (direction == Backward) {
+      this.position = this.position.subtract(this.cameraFront.scale(velocity))
+    }
+    if (direction == Left) {
+      this.position = this.position.subtract(this.right.scale(velocity))
+    }
+    if (direction == Right) {
+      this.position = this.position.add(this.right.scale(velocity))
+    }
+    if (direction == RightYaw) {
+      //for now: 30 is a magic number
+      this.yaw = this.yaw + 30 * deltaTime
+      updateCameraVectors
+    }
+    if (direction == LeftYaw) {
+      this.yaw = this.yaw - 30 * deltaTime
+      updateCameraVectors
+    }
+  }
+
   def updateCameraVectors: Unit = {
     // Calculate the new Front vector
     val frontx = (Math.cos(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch))).toFloat
@@ -39,6 +65,7 @@ case class Camera() {
   }
 
   def getViewMatrix(): Matrix4f = {
+
     lookAt(this.position, this.position.add(this.cameraFront), this.cameraUp)
   }
 }

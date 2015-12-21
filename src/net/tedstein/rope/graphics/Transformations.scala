@@ -110,8 +110,6 @@ object Transformations {
     Matrix4f.multiply(rotZ, Matrix4f.multiply(rotY, rotX))
   }
 
-
-
   /* Create scaling matrix */
   def scale(transform: Matrix4f, x: Float, y: Float, z: Float): Matrix4f = {
 
@@ -123,57 +121,22 @@ object Transformations {
     Matrix4f.multiply(transform, scaling)
   }
 
-  def getModelTransformation(translate: Matrix4f, rotate: Matrix4f, scale: Matrix4f): Matrix4f = {
+  def modelTransformation(translate: Matrix4f, rotate: Matrix4f, scale: Matrix4f): Matrix4f = {
     var transform = Matrix4f()
     transform = Matrix4f.multiply(translate, Matrix4f.multiply(rotate, scale)) //translate * rotate * scale
     transform
   }
 
-  def getProjectionTransformation(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
-    println("W/H " + width/height)
+  def projectionTransformation(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
     val ar = width / height
     val h = (Math.tan(Math.toRadians(fovy) * 0.5f) * zNear).toFloat
     val w = h * ar.toFloat
-    val persp = Matrix4f(zNear / w, 0.0f, 0.0f, 0.0f,
+    Matrix4f(zNear / w, 0.0f, 0.0f, 0.0f,
                       0.0f, zNear / h, 0.0f, 0.0f,
                       0.0f, 0.0f,  -(zFar + zNear) / (zFar - zNear), -1.0f,
                       0.0f, 0.0f, -2.0f * zFar * zNear / (zFar - zNear), 0.0f)
 
-    persp
   }
-
-
-  def perspectiveProjection(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
-    val halfFovyRadians = Math.toRadians(fovy / 2.0f).toFloat
-    val range = (Math.tan(halfFovyRadians) * zNear).toFloat
-    val aspect = width / height
-    val left = -range * aspect
-    val right = range * aspect
-    val bottom = -range
-    val top = range
-    Matrix4f((2f * zNear) / (right - left), 0.0f, 0.0f, 0.0f,
-              0.0f, (2.0f * zNear) / (top - bottom), 0.0f, 0.0f,
-              0.0f, 0.0f, -(zFar + zNear) / (zFar - zNear), -1.0f,
-              0.0f, 0.0f, -(2.0f * zFar * zNear) / (zFar - zNear), 0.0f)
-
-
-  }
-
-  def perspective(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
-    val ar = width/height
-    val halfFovyRadians = Math.toRadians(fovy / 2.0f).toFloat
-    val range = (Math.tan(halfFovyRadians) * zNear).toFloat
-    val left = -range * ar
-    val right = range * ar
-    val bottom = -range
-    val top = range
-
-    Matrix4f((2.0f * zNear) / (right - left), 0.0f, 0.0f, 0.0f,
-            0.0f, (2.0f * zNear) / (top - bottom), 0.0f, 0.0f,
-            0.0f, 0.0f, (-zFar + zNear) / (zFar - zNear), -1.0f,
-            0.0f, 0.0f, -(2.0f * zFar * zNear) / (zFar - zNear), 0.0f)
-  }
-
 
   def getViewTransformation(eye: Vector3f, center: Vector3f, up: Vector3f): Matrix4f = {
     val f: Vector3f = center.subtract(eye).normalize

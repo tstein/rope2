@@ -1,6 +1,11 @@
 package net.tedstein.rope.graphics
 
 case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
+  override def toString(): String = {
+    val s = new StringBuilder
+    s.append("(" + this.x + ", " + this.y + ", " + this.z + ")")
+    s.toString()
+  }
 
   def lengthSquared: Float = {
     x * x + y * y + z * z
@@ -11,9 +16,7 @@ case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
   }
 
   def add(other: Vector3f): Vector3f = {
-    val res = Vector3f(x + other.x, y + other.y, z + other.z)
-    println(res.x)
-    res
+    Vector3f(x + other.x, y + other.y, z + other.z)
   }
 
   def subtract(other: Vector3f): Vector3f = {

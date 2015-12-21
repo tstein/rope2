@@ -57,9 +57,9 @@ object Shader {
     glLinkProgram(shaderProgram)
 
     //keeps returning empty strings.. this may be a bug
-    System.out.println(glGetShaderInfoLog(vertexShader, 512).length())
+    System.out.println("Shader Info Log length: " + glGetShaderInfoLog(vertexShader, 512).length())
     //print out info log
-    System.out.println(glGetProgramInfoLog(shaderProgram, 512))
+    System.out.println("Shader Info Log:" + glGetProgramInfoLog(shaderProgram, 512))
 
 
     //check if linking failed
