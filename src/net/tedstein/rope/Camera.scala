@@ -6,7 +6,7 @@ case class Camera() {
   var worldUp = Vector3f(0.0f, 1.0f, 0.0f)
   var cameraUp = Vector3f.Zero
   var right = Vector3f.Zero
-  var front = Vector3f(0.0f, 0.0f, -1.0f)
+  var cameraFront = Vector3f(0.0f, 0.0f, -1.0f)
 
   var pitch = Camera.DefaultPitch
   var yaw = Camera.DefaultYaw
@@ -31,16 +31,16 @@ case class Camera() {
     val frontx = (Math.cos(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch))).toFloat
     val fronty = Math.sin(Math.toRadians(this.pitch)).toFloat
     val frontz = (Math.sin(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch))).toFloat
-    this.front = Vector3f(frontx, fronty, frontz)
-    this.front.normalize
+    this.cameraFront = Vector3f(frontx, fronty, frontz)
+    this.cameraFront.normalize
 
     // Also re-calculate the Right and Up vector
-    this.right = this.front.cross(this.worldUp).normalize  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    this.cameraUp = this.right.cross(this.front).normalize
+    this.right = this.cameraFront.cross(this.worldUp).normalize  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+    this.cameraUp = this.right.cross(this.cameraFront).normalize
   }
 
   def getViewMatrix(): Matrix4f = {
-    lookAt(this.position, this.position.add(this.front), this.cameraUp)
+    lookAt(this.position, this.position.add(this.cameraFront), this.cameraUp)
   }
 }
 

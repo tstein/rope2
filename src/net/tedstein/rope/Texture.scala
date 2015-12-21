@@ -4,7 +4,7 @@ import java.io.{FileInputStream, InputStream}
 import java.nio.ByteBuffer
 
 import de.matthiasmann.twl.utils.PNGDecoder
-import org.lwjgl.opengl.{GL11, GL13, GL30}
+import org.lwjgl.opengl._
 
 object Texture {
 
@@ -44,8 +44,8 @@ object Texture {
     GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D)
 
     // Setup the ST coordinate system
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT)
-    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT)
+    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL14.GL_MIRRORED_REPEAT)
+    GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL14.GL_MIRRORED_REPEAT)
 
     // Setup what to do when the texture has to be scaled
     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER,

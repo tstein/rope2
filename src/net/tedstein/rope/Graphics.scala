@@ -28,7 +28,6 @@ class Graphics(val universe: Universe) {
   var gVBO = 0
   var program = 0
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
-
   def run(): Unit = {
 
     System.out.println("Hello LWJGL " + Sys.getVersion + "!")
@@ -101,7 +100,7 @@ class Graphics(val universe: Universe) {
     val texLocation = GL20.glGetUniformLocation(program, "tex")
 
     val camLocation = GL20.glGetUniformLocation(program, "camera")
-    val camera = gCamera.lookAt(Vector3f(0.0f, 0.0f, 5.0f), Vector3f(0.0f, 0.0f, -1.0f), Vector3f(0.0f, 1.0f, 0.0f))
+    val camera = gCamera.lookAt(Vector3f(0.0f, 4.0f, 5.0f), Vector3f(0.0f, 0.0f, -1.0f), Vector3f(0.0f, 1.0f, 0.0f))
 
     val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
     GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
@@ -170,6 +169,7 @@ class Graphics(val universe: Universe) {
       1.0f,-1.0f, 1.0f,   1.0f, 1.0f,
       -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
 
+
       // top
       -1.0f, 1.0f,-1.0f,   0.0f, 0.0f,
       -1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
@@ -177,6 +177,8 @@ class Graphics(val universe: Universe) {
       1.0f, 1.0f,-1.0f,   1.0f, 0.0f,
       -1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
       1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
+
+
 
       // front
       -1.0f,-1.0f, 1.0f,   1.0f, 0.0f,
