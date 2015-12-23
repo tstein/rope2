@@ -6,7 +6,7 @@ import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
 import net.tedstein.rope.graphics.Shader.{compileShaderProgram, createShaderObject}
 import org.lwjgl.glfw.GLFW.{GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_S, _}
-import org.lwjgl.glfw.{GLFWCursorPosCallback, GLFWErrorCallback, GLFWKeyCallback, GLFWScrollCallback, _}
+import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, _}
 import org.lwjgl.opengl.GL11.{GL_COLOR_BUFFER_BIT, GL_FALSE, GL_FLOAT, GL_TRUE, glClear, glClearColor}
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
 import org.lwjgl.opengl.GL20.{GL_FRAGMENT_SHADER, GL_VERTEX_SHADER, glUseProgram}
@@ -15,10 +15,32 @@ import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
 
 class Graphics(val universe: Universe) extends StrictLogging {
-  var errorCallback: GLFWErrorCallback = null
-  var keyCallback: GLFWKeyCallback = null
-  var mouseCallback: GLFWCursorPosCallback = null
-  var scrollCallback: GLFWScrollCallback = null
+  val errorCallback = new GLFWErrorCallback {
+    override def invoke(i: Int, l: Long): Unit = {
+      logger.error(l.toString)
+    }
+  }
+  val keyCallback = new GLFWKeyCallback() {
+    override def invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int): Unit = {
+      if (!(0 to 1024).contains(key)) { return }
+
+      (key, action) match {
+        case (GLFW_KEY_ESCAPE, GLFW_PRESS) =>
+          glfwSetWindowShouldClose(window, GL_TRUE)
+        case (_, GLFW_PRESS) =>
+          keys(key) = true
+        case (_, GLFW_RELEASE) =>
+          keys(key) = false
+        case _ =>
+      }
+    }
+  }
+  val resizeCallback = new GLFWWindowSizeCallback {
+    override def invoke(window: Long, width: Int, height: Int): Unit = {
+      WIDTH = width
+      HEIGHT = height
+    }
+  }
   var keys = Array.ofDim[Boolean](1024)
 
   val ShaderRoot = "./src/net/tedstein/rope/graphics/shaders/"
@@ -29,8 +51,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var fragmentShader = 0
   var texID = 0
 
-  val WIDTH = 800
-  val HEIGHT = 600
+  var WIDTH = 800
+  var HEIGHT = 600
   var gVAO = 0
   var gVBO = 0
   var program = 0
@@ -47,7 +69,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
     try {
       val window = createOpenglWindow()
       logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
-      //GL11.glViewport(0, 0, WIDTH, HEIGHT)
       GL11.glEnable(GL11.GL_DEPTH_TEST)
       GL11.glDepthFunc(GL11.GL_LESS)
       GL11.glEnable(GL11.GL_BLEND)
@@ -67,10 +88,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
   }
 
   def createOpenglWindow(): Long = {
-    errorCallback = new GLFWErrorCallback {
-      override def invoke(i: Int, l: Long): Unit = {}
-    }
-
     if (glfwInit() != GL11.GL_TRUE)
       throw new IllegalStateException("Unable to initialize GLFW")
 
@@ -98,32 +115,14 @@ class Graphics(val universe: Universe) extends StrictLogging {
     GLContext.createFromCurrent()
     glfwSetErrorCallback(errorCallback)
     glfwSetKeyCallback(window, keyCallback)
-    glfwSetCursorPosCallback(window, mouseCallback)
-    glfwSetScrollCallback(window, scrollCallback)
-
+    glfwSetWindowSizeCallback(window, resizeCallback)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
-  //  GL11.glViewport(0, 0, WIDTH, HEIGHT)
-
     glfwShowWindow(window)
     window
   }
 
   def renderScene(window: Long): Unit = {
-    val keyCallback = new GLFWKeyCallback() {
-      override def invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int): Unit = {
-        if (!(0 to 1024).contains(key)) { return }
 
-        (key, action) match {
-          case (GLFW_KEY_ESCAPE, GLFW_PRESS) =>
-            glfwSetWindowShouldClose(window, GL_TRUE)
-          case (_, GLFW_PRESS) =>
-            keys(key) = true
-          case (_, GLFW_RELEASE) =>
-            keys(key) = false
-          case _ =>
-        }
-      }
-    }
     glfwSetKeyCallback(window, keyCallback)
 
     val scale = 0.0f
@@ -133,10 +132,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
     val camLocation = GL20.glGetUniformLocation(program, "camera")
     val projLocation = GL20.glGetUniformLocation(program, "projection")
 
-
-    val persp = Transformations.projectionTransformation(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
-    val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
-    GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
     GL20.glUniform1i(texLocation, 0)
@@ -151,6 +146,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
       glClear(GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
       GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID)
       GL30.glBindVertexArray(gVAO)
+
+      val persp = Transformations.projectionTransformation(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
+      val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
+      GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
 
       val camera = gCamera.getViewMatrix()
       val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
@@ -302,5 +301,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
       case ex: Exception => throw ex
     }
   }
+
 
 }
