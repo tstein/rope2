@@ -11,8 +11,7 @@
     <orderEntry type="library" name="lwjgl" level="project" />
     <orderEntry type="library" name="TWL" level="project" />
     <orderEntry type="library" name="scalatest_2.11-2.2.4" level="project" />
-    <orderEntry type="library" name="scala-sdk-2.10.4-linux" level="application" />
-    <orderEntry type="library" name="scala-sdk-2.11.7-ossix" level="project" />
     <orderEntry type="library" name="scala-logging_2.11-3.1.0" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.11.7" level="project" />
   </component>
 </module>
