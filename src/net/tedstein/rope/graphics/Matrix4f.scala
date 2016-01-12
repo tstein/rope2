@@ -120,7 +120,6 @@ object Matrix4f {
   def getFloatBuffer(m: Matrix4f): FloatBuffer   = {
 
     val floatBuffer = BufferUtils.createFloatBuffer(16)
-  //  val start: Int = floatBuffer.position()
     floatBuffer.put(m.matrix(0)(0))
     floatBuffer.put(m.matrix(0)(1))
     floatBuffer.put(m.matrix(0)(2))
@@ -142,7 +141,6 @@ object Matrix4f {
     floatBuffer.put(m.matrix(3)(2))
     floatBuffer.put(m.matrix(3)(3)) //column 4
     floatBuffer.flip()
-   // floatBuffer.position(start)
     floatBuffer
   }
 

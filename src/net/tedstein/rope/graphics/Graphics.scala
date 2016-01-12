@@ -44,7 +44,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var keys = Array.ofDim[Boolean](1024)
 
   val ShaderRoot = "./src/net/tedstein/rope/graphics/shaders/"
-  var vertexPath = ShaderRoot + "vertex.shader"
+  var vertexPath = ShaderRoot + "instance.vs"
   var fragmentPath = ShaderRoot + "fragment.shader"
   var imagePath = "./lib/300px-tex.png"
   var vertexShader = 0
@@ -59,6 +59,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
   var lastFrame = 0.0f
+  val SizeOfVec4 = 4 * 4
+  val SizeOfMat4 = 16 * 4
 
   def run(): Unit = {
     logger.info("Hello LWJGL " + Sys.getVersion + "!")
@@ -128,10 +130,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
     val scale = 0.0f
     //set uniform values
     val texLocation = GL20.glGetUniformLocation(program, "tex")
-    val modelLocation = GL20.glGetUniformLocation(program, "model")
+    val modelLocation = GL20.glGetAttribLocation(program, "model")
     val camLocation = GL20.glGetUniformLocation(program, "camera")
     val projLocation = GL20.glGetUniformLocation(program, "projection")
-
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
     GL20.glUniform1i(texLocation, 0)
@@ -155,15 +156,30 @@ class Graphics(val universe: Universe) extends StrictLogging {
       val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
+      val instanceVBO = GL15.glGenBuffers()
+      GL15.glBindBuffer(GL_ARRAY_BUFFER, instanceVBO)
+
+      for (i <- 0 to 3) {
+        GL20.glEnableVertexAttribArray(modelLocation + i)
+        GL20.glVertexAttribPointer(modelLocation + i, 4, GL_FLOAT, false, SizeOfMat4, SizeOfVec4 * i)
+        GL33.glVertexAttribDivisor(modelLocation + i, 1) // Tell OpenGL this is an instanced vertex attribute.
+      }
+
+      val modelFloatBuffer = BufferUtils.createFloatBuffer(16  * 4 * universe.squares.size)
       for (i <- universe.squares) {
         var model = Matrix4f()
         model = Transformations.translate(model, i.pos.x.toFloat, i.pos.y.toFloat, i.pos.z.toFloat)
         model = Transformations.rotate(model, scale, 0.0f, 0.0f, 0.0f)
         model = Transformations.scale(model, 0.2f, 0.2f, 0.2f)
-        val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
-        GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
-        GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6 * 2 * 3)
+        val modelBuffer = Matrix4f.getFloatBuffer(model)
+        for (j <- 0 to 15) {
+          modelFloatBuffer.put(modelBuffer.get())
+        }
       }
+      modelFloatBuffer.flip()
+      GL15.glBufferData(GL_ARRAY_BUFFER, modelFloatBuffer, GL15.GL_STATIC_DRAW)
+      
+      GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 6 * 2 * 3, universe.squares.size)
 
       GL30.glBindVertexArray(0)
       GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
@@ -208,11 +224,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
     gVAO = GL30.glGenVertexArrays()
     GL30.glBindVertexArray(gVAO)
 
-    //create Vertex Buffer Object that will hold information about vertices
-    //here it holds the position and color of each vertex
-    gVBO = GL15.glGenBuffers()
-    GL15.glBindBuffer(GL_ARRAY_BUFFER, gVBO)
-
     val verts: FloatBuffer = BufferUtils.createFloatBuffer(30 * 6)
     val v = Array( // bottom
       -1.0f,-1.0f,-1.0f,   0.0f, 0.0f,
@@ -222,7 +233,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
       1.0f,-1.0f, 1.0f,   1.0f, 1.0f,
       -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
 
-
       // top
       -1.0f, 1.0f,-1.0f,   0.0f, 0.0f,
       -1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
@@ -230,8 +240,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
       1.0f, 1.0f,-1.0f,   1.0f, 0.0f,
       -1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
       1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
-
-
 
       // front
       -1.0f,-1.0f, 1.0f,   1.0f, 0.0f,
@@ -268,6 +276,11 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
     verts.put(v)
     verts.flip()
+
+    //create Vertex Buffer Object that will hold information about vertices
+    //here it holds the position and uv value of each vertex
+    gVBO = GL15.glGenBuffers()
+    GL15.glBindBuffer(GL_ARRAY_BUFFER, gVBO)
     GL15.glBufferData(GL_ARRAY_BUFFER, verts, GL15.GL_STATIC_DRAW)
     // connect the xyz to the "vert" attribute of the vertex shader
 

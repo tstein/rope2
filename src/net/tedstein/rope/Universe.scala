@@ -9,7 +9,7 @@ class Universe(val player: RelativisticObject, val squares: Set[RelativisticObje
 object Universe {
   def demo: Universe = {
     val player = RelativisticObject(Dimensions.Origin, Dimensions.Stationary, 0.0)
-    val squares = (for (i <- -1 to 1; j <- -1 to 1; k <- -1 to 1)
+    val squares = (for (i <- -11 to 11; j <- -11 to 11; k <- -11 to 11)
       yield RelativisticObject(
         Position(i.toDouble, j.toDouble, k.toDouble),
         Velocity(i * .02, j * .02, k * .02),
