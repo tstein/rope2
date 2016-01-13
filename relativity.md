@@ -1,9 +1,9 @@
 Implementing a system to show an observer effects of relativity needs, different from classical physics:
 
 -Awknoledgement of the finite speed of light (set as a constant, accepting c=1, and distances in light-seconds).
--Changes to photons hitting the observer in frequency (doppler shift), intensity (name???), and incoming angle (Lorentz transformation).
--Changes to the photon emitters (using the time they are observed in the past light cone).
--Changes to how objects move and accelerate in special relativity (lorentz tranformation), including its effect on time (proper time and time dialation)
+-Changes to photons hitting the observer in frequency (doppler shift), intensity (name???), and incoming angle ([Lorentz transformation](https://en.wikipedia.org/wiki/Lorentz_transformation)).
+-Changes to the photon emitters position (using the time they are observed in the past light cone) and shape ([length contraction](https://en.wikipedia.org/wiki/Length_contraction), probably best with Lorentz transformation of vertices).
+-Changes to how objects move and accelerate in special relativity (lorentz tranformation), including its effect on time (proper time and time dilation)
 ([GR](https://en.wikipedia.org/wiki/General_relativity#Consequences_of_Einstein.27s_theory))-Changes to the path, frequency, and path length (minor?) of photons (primarily black-holes & dense objects).
 (GR)-Time dilation in a gravitational potential (primarily black-holes & dense objects).
 (GR)-Changes to how objects move in general relativity (primarily black-holes & dense objects.  May require weird coordinates...)
