@@ -52,5 +52,6 @@ object Dimensions {
   val Origin = Position(0.0, 0.0, 0.0)
   val Stationary = Velocity(0.0, 0.0, 0.0)
   val Epoch = 0.0
+  val LightSecond = 1.0
   def Empty[T] = Set[T]()
 }

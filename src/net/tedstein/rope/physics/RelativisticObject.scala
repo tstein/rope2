@@ -14,10 +14,12 @@ import scala.math.{pow, sqrt}
 sealed class RelativisticObject(private val initialPos: Position,
                                 private val initialVel: Velocity,
                                 private val initialTime: Double,
+                                private val initialRadius: Double,
                                 private val initialSatellites: Set[RelativisticObject]) {
   var pos = initialPos
   var vel = initialVel
   var time = initialTime
+  val radius = initialRadius
   var satellites = initialSatellites
 
   def velrss: Double = vel.velrss
@@ -28,7 +30,11 @@ sealed class RelativisticObject(private val initialPos: Position,
 /**
   * The center of the Universe. Probably, like, a black hole.
   */
-object Center extends RelativisticObject(Dimensions.Origin, Dimensions.Stationary, Dimensions.Epoch, Dimensions.Empty)
+object Center extends RelativisticObject(Dimensions.Origin,
+  Dimensions.Stationary,
+  Dimensions.Epoch,
+  Dimensions.LightSecond,
+  Dimensions.Empty)
 
 
 /**
@@ -47,8 +53,9 @@ class SimpleOrbiter(primary: RelativisticObject,
                     private val initialPos: Position,
                     private val initialVel: Velocity,
                     private val initialTime: Double,
+                    private val initialRadius: Double,
                     private val initialSatellites: Set[RelativisticObject]
-                   ) extends RelativisticObject(initialPos, initialVel, initialTime, initialSatellites) {
+                   ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites) {
   def cosineOrbit(phaseOffset: Double, center: Double, amplitude: Double): Double = {
     center + amplitude * math.cos(phaseOffset)
   }
