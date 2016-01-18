@@ -47,6 +47,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
   var imagePath = "./lib/300px-tex.png"
+  val objPath = "./lib/planet.obj"
   var vertexShader = 0
   var fragmentShader = 0
   var texID = 0
@@ -65,7 +66,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     logger.info("OS: " + System.getProperty("os.name"))
     logger.info("OS Version: " + System.getProperty("os.version"))
     logger.info("LWJGL Version: " + org.lwjgl.Sys.getVersion)
-
+    OBJLoader.parseObjFile(objPath)
     try {
       val window = createOpenglWindow()
       logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
@@ -165,6 +166,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6 * 2 * 3)
       }
 
+      GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
       GL30.glBindVertexArray(0)
       GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
       GL20.glDeleteProgram(program)
