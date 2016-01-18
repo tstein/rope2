@@ -26,6 +26,7 @@ Showing special relativity in a consistent manner needs (with the "universe is s
 * (Physics?) Shift object apparent locations and shapes based on photons accelerating to the observer's frame of reference
 * (Physics) The tools to do these calculations:
   * (Physics) To be able to "rotate coordinates" between space and time: [Lorentz transformations](https://en.wikipedia.org/wiki/Lorentz_transformation)
+  * (Physics) [To add velocities](https://en.wikipedia.org/wiki/Velocity-addition_formula)
 * Independently track time on different objects (and possibly the universe itself), since their clocks will not necessarily synchronize (unless they are moving very slowly).
 * Try not to have things act too weird going really fast and/or being away from the origin (
 * (Graphics) Doppler shift all the things (color, brightness?).  Color temperature or a redshift parameter could be used.
