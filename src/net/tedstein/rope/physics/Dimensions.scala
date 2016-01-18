@@ -17,15 +17,13 @@ object Dimensions {
     //Relativistic velocity addition
     //https://en.wikipedia.org/wiki/Lorentz_transformation#Transformation_of_velocities
     //https://en.wikipedia.org/wiki/Velocity-addition_formula
-    def add(vel: Velocity): Velocity = {
-      val dotProduct = this.dot(vel)
-      var newX = vel.x + this.x / vel.gamma + dotProduct * vel.x * vel.gamma / (1 + vel.gamma)
-      newX /= (1 + dotProduct)
-      var newY = vel.y + this.y / vel.gamma + dotProduct * vel.y * vel.gamma / (1 + vel.gamma)
-      newY /= (1 + dotProduct)
-      var newZ = vel.z + this.z / vel.gamma + dotProduct * vel.z * vel.gamma / (1 + vel.gamma)
-      newZ /= (1 + dotProduct)
-      Velocity(newX, newY, newZ)
+    //Best way to think about the operation: take this and boost it by boostVel
+    def add(boostVel: Velocity): Velocity = {
+      val dotProduct = this.dot(boostVel)
+      def f(lhs: Double, rhs: Double): Double = {
+        return (rhs + lhs / boostVel.gamma + dotProduct * rhs * boostVel.gamma / (1 + boostVel.gamma))/(1 + dotProduct)
+      }
+      Velocity(f(this.x,boostVel.x),f(this.y,boostVel.y),f(this.z,boostVel.z))
       //Ideally, check that this velrss is less than 1 unless we are tacheoning
     }
     def dot(vel: Velocity): Double = {
