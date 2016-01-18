@@ -5,6 +5,13 @@ import scala.math.{pow, sqrt}
 
 object Dimensions {
   case class Position(x: Double, y: Double, z: Double) {
+    def add(pos: Position): Position = {
+      val newX = this.x + pos.x
+      val newY = this.y + pos.y
+      val newZ = this.z + pos.z
+      Position(newX, newY, newZ)
+    }
+
     def add(vel: Velocity, elapsed: Double): Position = {
       val newX = this.x + (vel.x * elapsed)
       val newY = this.y + (vel.y * elapsed)
@@ -41,6 +48,9 @@ object Dimensions {
       1 / sqrt(1 - pow(velrss, 2))
     }
   }
+
   val Origin = Position(0.0, 0.0, 0.0)
   val Stationary = Velocity(0.0, 0.0, 0.0)
+  val Epoch = 0.0
+  def Empty[T] = Set[T]()
 }

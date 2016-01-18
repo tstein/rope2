@@ -52,12 +52,16 @@ class Engineer(universe: Universe) extends Thread with StrictLogging {
   def shutdown(): Unit = shouldRun = false
 
   private def update(elapsed: Double): Unit = {
-    universe.squares.par.foreach(updateObject(_, universe.player, elapsed))
+    universe.bodies.par.foreach(updateObject(_, universe.player, elapsed))
   }
 
   private def updateObject(something: RelativisticObject, player: RelativisticObject, elapsed: Double): Unit = {
-    // For starters, let's just update positions based on local velocity.
-    something.pos = something.pos.add(something.vel, elapsed)
+    something match {
+      case orbiter: SimpleOrbiter =>
+        orbiter.time += elapsed
+        orbiter.pos = orbiter.computedPosition
+        orbiter.vel = orbiter.computedVelocity
+    }
   }
 
   private def nanosToMillis(nanos: Long): Long = nanos / Million

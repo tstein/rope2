@@ -155,7 +155,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
-      for (i <- universe.squares) {
+      for (i <- universe.bodies) {
         var model = Matrix4f()
         model = Transformations.translate(model, i.pos.x.toFloat, i.pos.y.toFloat, i.pos.z.toFloat)
         model = Transformations.rotate(model, scale, 0.0f, 0.0f, 0.0f)
