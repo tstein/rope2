@@ -18,6 +18,28 @@ object Dimensions {
       val newZ = this.z + (vel.z * elapsed)
       Position(newX, newY, newZ)
     }
+
+    //Lorentz Transform
+    //https://en.wikipedia.org/wiki/Lorentz_transformation#Vector_transformations
+    //Note: time is also affected by this.  It is left out here, but still an input.
+    def lorentzBoost(boostVel: Velocity, time: Double): Position = {
+      def f(lhs: Double, gamma: Double, dotProduct: Double, normal: Double, rhs: Double) = {
+        lhs + (gamma - 1) * dotProduct * normal - rhs
+      }
+      val gamma = boostVel.gamma
+      val dotProduct = this.dot(boostVel.direction)
+      Position(
+        f(this.x, gamma, dotProduct, boostVel.direction.x, gamma * time * boostVel.x),
+        f(this.y, gamma, dotProduct, boostVel.direction.y, gamma * time * boostVel.y),
+        f(this.z, gamma, dotProduct, boostVel.direction.z, gamma * time * boostVel.z)
+      )
+    }
+    def dot(pos: Position): Double = {
+      var ans = pos.x * this.x
+      ans += pos.y * this.y
+      ans += pos.z * this.z
+      ans
+    }
   }
 
   case class Velocity(x: Double, y: Double, z: Double) {
@@ -38,6 +60,15 @@ object Dimensions {
       ans += vel.y * this.y
       ans += vel.z * this.z
       ans
+    }
+
+    //Divide each component by velrss, and return
+    def direction: Position = {
+      //If length is zero, just return ANY vector
+      if(this.velrss==0)
+        Position(1,0,0)
+      else
+        Position(this.x/this.velrss,this.y/this.velrss,this.z/this.velrss)
     }
     //def toarray: Array[Double] = val Array[this.x, this.y, this.z]
     def velrss: Double = {
