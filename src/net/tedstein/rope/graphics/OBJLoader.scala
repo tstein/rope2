@@ -9,9 +9,10 @@ import scala.io.Source
   */
 
 object OBJLoader extends StrictLogging {
-  def parseObjFile(filename: String): Unit = {
-  val model = Mesh()
+  def parseObjFile(filename: String, model: Mesh): Unit = {
+
     var unorderedVertices = List[Float]()
+    var unorderedTexes = List[Float]()
     try {
       for (line <- Source.fromFile(filename).getLines()) {
         val prefix = line.split(" ")(0)
@@ -21,11 +22,12 @@ object OBJLoader extends StrictLogging {
         } else if (prefix == "vn") {
             model.normals ++= extractNormals(line)
         } else if (prefix == "vt") {
-            model.texCoords = extractTexCoords(line)
+          //  model.texCoords ++= extractTexCoords(line)
+            unorderedTexes ++= extractTexCoords(line)
         } else if (prefix == "f") {
             model.vertIndecies ++= extractVertexIndecies(line)
             model.texIndecies ++= extractTexCoordIndecies(line)
-            if (model.hasNormals()) {
+            if (model.hasNormals) {
               model.normalIndecies ++= extractNormalsIndecies(line)
             }
         } else if (prefix == "mtllib") {
@@ -33,51 +35,36 @@ object OBJLoader extends StrictLogging {
         }
       }
 
-      println("unordered vertices: " + unorderedVertices)
-      println("indecies: " + model.vertIndecies)
+      println(unorderedVertices.length + " unordered vertices: " + unorderedVertices)
+      model.vertices ++= unorderedVertices
 
-      model.vertices ++= reorderVertices(unorderedVertices, model.vertIndecies)
-      model.vertices = model.vertices
-      model.normals = model.normals.reverse
-
-      model.texCoords = model.texCoords
-      model.vertIndecies = model.vertIndecies
-      model.normalIndecies = model.normalIndecies.reverse
-
-
-      println("verts: " + model.vertices)
-     // println("normals: " + model.normals)
-      println("textCoords: " + model.texCoords)
-      println("vertIndecies: " + model.vertIndecies)
-      //println("normalIndecies: " + model.normalIndecies)
-      //println("texCoordIndecies: ")
+      model.texCoords ++= unorderedTexes
+      //model.texCoords ++= reorderTexes(unorderedTexes, model.texIndecies)
+      println("texes: " + model.texCoords)
     } catch {
       case ex: Exception => throw ex
     }
   }
 
-  def reorderVertices(unorderedVertices: List[Float], indecies: List[Int]): List[Float] = {
-    val orderedVertices = new Array[Float](unorderedVertices.length)
 
+  def reorderTexes(unorderedTexes: List[Float], indecies: List[Int]): List[Float] = {
+    val orderedTexes = new Array[Float](indecies.length * 2)
+    for (i <- 0 to unorderedTexes.length) {
+      val correctIndex = indecies(i) - 1
+      orderedTexes.update(2 * i, unorderedTexes(2 * correctIndex)) //order(2) =// e
+      orderedTexes.update(2 * i + 1, unorderedTexes(2 * correctIndex + 1)) //order (2) = 1
+    }
+    orderedTexes.toList
+  }
+  def reorderVertices(unorderedVertices: List[Float], indecies: List[Int]): List[Float] = {
+    val orderedVertices = new Array[Float](indecies.length * 3)
     //(e, f, a, b, c, d)
     //(3, 1, 2)
-    for (i <- 0 to indecies.length) {
-  //    println("index(" + i + "): " + indecies(i))
+    for (i <- 0 to unorderedVertices.length) {
       val correctIndex = indecies(i) - 1
-    //  println("correct " + i + "th vertex: " + unorderedVertices(3 * (correctIndex)))
-      var tempV1 = unorderedVertices(3 * i) //e //a
-    //  println("temp1: " + tempUV1)
-      var tempV2 = unorderedVertices(3 * i + 1) //f //b
-    //  println("temp2: " + tempUV2)
-      var tempV3 = unorderedVertices(3 * i + 2)
-     // println("un1: " + unorderedVertices(correctIndex))
-     // println("un2: " + unorderedVertices(correctIndex + 1))
-
-
       orderedVertices.update(3 * i, unorderedVertices(3 * correctIndex)) //order(2) =// e
       orderedVertices.update(3 * i + 1, unorderedVertices(3 * correctIndex + 1)) //order (2) = 1
       orderedVertices.update(3 * i + 2, unorderedVertices(3 * correctIndex + 2))
-    //  println("modified: " + unorderedVertices)
     }
     orderedVertices.toList
   }
@@ -90,15 +77,17 @@ object OBJLoader extends StrictLogging {
   }
 
   def graphicsFlatten(verts: List[Float], texes: List[Float]): List[Float] = {
+
     var output = ArrayBuffer[Float]()
     for (i <- 0 to (verts.length / 3) - 1) {
-      output += verts(3 * i)
-      output += verts(3 * i + 1)
-      output += verts(3 * i + 2)
+      output += verts(3 * i ) //0
+      output += verts(3 * i + 1) //1
+      output += verts(3 * i + 2) //2
 
-      output += texes(2 * i + 0)
-      output += texes(2 * i + 1)
+      output += texes(2 * i + 0) //0
+      output += texes(2 * i + 1) //1
     }
+
     output.toList
   }
 
@@ -128,7 +117,7 @@ object OBJLoader extends StrictLogging {
     val v1 = line.split(" ")(1).split("/")(0).toInt
     val v2 = line.split(" ")(2).split("/")(0).toInt
     val v3 = line.split(" ")(3).split("/")(0).toInt
-    Array(v1, v2, v3)
+    Array(v1 - 1, v2 - 1, v3 - 1)
   }
 
   def extractTexCoordIndecies(line: String): Array[Int] = {
