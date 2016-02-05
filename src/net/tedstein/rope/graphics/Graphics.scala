@@ -52,7 +52,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
   var imagePath = "./lib/300px-tex.png"
   var texPath = "./lib/planet_Quom1200.png"
-//  val objPath = "./lib/cube.obj"
   val objPath = "./lib/planet.obj"
   var vertexShader = 0
   var fragmentShader = 0
@@ -95,8 +94,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
      val m = Mesh(objPath)
      gVAO = m.setupMesh()
      val indexbuff = m.getVertIndexBuffer()
-     println(m.vertices.length)
-     println("indexbuff: " + util.printIntBuffer(indexbuff, m.getIndeciesCount()))
      renderScene(window, indexbuff, m)
     } finally {
       glfwTerminate()
@@ -177,7 +174,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
         var model = Matrix4f()
         model = Transformations.translate(model, i.pos.x.toFloat, i.pos.y.toFloat, i.pos.z.toFloat)
         model = Transformations.rotate(model, scale, 0.0f, 0.0f, 0.0f)
-        model = Transformations.scale(model, 0.2f, 0.2f, 0.2f)
+        model = Transformations.scale(model, 0.1f, 0.1f, 0.1f)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
         GL11.glDrawElements(GL11.GL_TRIANGLES, m.getIndeciesCount() , GL11.GL_UNSIGNED_INT,  0)

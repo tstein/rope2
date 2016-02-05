@@ -4,9 +4,6 @@ import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
-/**
-  * Created by ruba on 1/16/16.
-  */
 
 object OBJLoader extends StrictLogging {
   def parseObjFile(filename: String, model: Mesh): Unit = {
@@ -22,7 +19,6 @@ object OBJLoader extends StrictLogging {
         } else if (prefix == "vn") {
             model.normals ++= extractNormals(line)
         } else if (prefix == "vt") {
-          //  model.texCoords ++= extractTexCoords(line)
             unorderedTexes ++= extractTexCoords(line)
         } else if (prefix == "f") {
             model.vertIndecies ++= extractVertexIndecies(line)
@@ -30,17 +26,11 @@ object OBJLoader extends StrictLogging {
             if (model.hasNormals) {
               model.normalIndecies ++= extractNormalsIndecies(line)
             }
-        } else if (prefix == "mtllib") {
-          //TODO deal wid dis
         }
       }
 
-      println(unorderedVertices.length + " unordered vertices: " + unorderedVertices)
       model.vertices ++= unorderedVertices
-
-      model.texCoords ++= unorderedTexes
-      //model.texCoords ++= reorderTexes(unorderedTexes, model.texIndecies)
-      println("texes: " + model.texCoords)
+      model.texCoords ++= reorderTexes(unorderedTexes, model.texIndecies)
     } catch {
       case ex: Exception => throw ex
     }
@@ -51,8 +41,8 @@ object OBJLoader extends StrictLogging {
     val orderedTexes = new Array[Float](indecies.length * 2)
     for (i <- 0 to unorderedTexes.length) {
       val correctIndex = indecies(i) - 1
-      orderedTexes.update(2 * i, unorderedTexes(2 * correctIndex)) //order(2) =// e
-      orderedTexes.update(2 * i + 1, unorderedTexes(2 * correctIndex + 1)) //order (2) = 1
+      orderedTexes.update(2 * i, unorderedTexes(2 * correctIndex))
+      orderedTexes.update(2 * i + 1, unorderedTexes(2 * correctIndex + 1))
     }
     orderedTexes.toList
   }
@@ -62,8 +52,8 @@ object OBJLoader extends StrictLogging {
     //(3, 1, 2)
     for (i <- 0 to unorderedVertices.length) {
       val correctIndex = indecies(i) - 1
-      orderedVertices.update(3 * i, unorderedVertices(3 * correctIndex)) //order(2) =// e
-      orderedVertices.update(3 * i + 1, unorderedVertices(3 * correctIndex + 1)) //order (2) = 1
+      orderedVertices.update(3 * i, unorderedVertices(3 * correctIndex))
+      orderedVertices.update(3 * i + 1, unorderedVertices(3 * correctIndex + 1))
       orderedVertices.update(3 * i + 2, unorderedVertices(3 * correctIndex + 2))
     }
     orderedVertices.toList

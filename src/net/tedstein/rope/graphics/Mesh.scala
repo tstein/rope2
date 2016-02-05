@@ -54,7 +54,6 @@ case class Mesh(modelPath: String) {
     val outputArray = output.toArray
     buff.put(outputArray)
     buff.flip()
-    println("vertex buffer: \n" + util.printFloatBuffer(buff, output.length))
     buff
   }
 
@@ -83,7 +82,7 @@ case class Mesh(modelPath: String) {
     glEnableVertexAttribArray(1)
     glVertexAttribPointer(1, 2, GL11.GL_FLOAT, true, 3 * FLOATSIZE + 2 * FLOATSIZE,  3 * FLOATSIZE)
 
-   // glBindBuffer(GL_ARRAY_BUFFER, 0)
+    glBindBuffer(GL_ARRAY_BUFFER, 0)
     glBindVertexArray(0)
     VAO
   }
