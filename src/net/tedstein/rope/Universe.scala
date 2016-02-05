@@ -20,16 +20,16 @@ object Universe {
         Dimensions.Origin.add(Position(0, 0, 0)),
         Dimensions.Stationary,
         Dimensions.Epoch + 100 * random.nextFloat(),
-        0.2,
+        0.15,
         Dimensions.Empty)
       val planets = for (_ <- 0 to 3) yield {
         val planet = new SimpleOrbiter(star,
-          0.4 + .7 * random.nextFloat(),
+          0.7 + .7 * random.nextFloat(),
           0.5 + .1 * random.nextFloat(),
           star.pos.add(Position(.3, 0, 0)),
           Dimensions.Stationary,
           Dimensions.Epoch + 100 * random.nextFloat(),
-          0.09,
+          0.07,
           Dimensions.Empty)
         val moons = for (_ <- 0 to 2) yield {
           new SimpleOrbiter(planet,
