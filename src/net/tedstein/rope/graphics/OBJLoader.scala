@@ -15,7 +15,7 @@ object OBJLoader extends StrictLogging {
         val prefix = line.split(" ")(0)
         if (prefix == "#") {
         } else if (prefix == "v") {
-            unorderedVertices ++= extractVertices(line)
+            model.vertices ++= extractVertices(line)
         } else if (prefix == "vn") {
             model.normals ++= extractNormals(line)
         } else if (prefix == "vt") {
@@ -29,7 +29,6 @@ object OBJLoader extends StrictLogging {
         }
       }
 
-      model.vertices ++= unorderedVertices
       model.texCoords ++= reorderTexes(unorderedTexes, model.texIndecies)
     } catch {
       case ex: Exception => throw ex
@@ -103,6 +102,7 @@ object OBJLoader extends StrictLogging {
     //line looks like this:
     //#f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3
     //we want (v1, v2, v3)
+    //NOTE: indecies in obj files start from 1, so we must subtract 1 to get them starting from zero!
     //values.map(v => v.split("/")(0).toInt)
     val v1 = line.split(" ")(1).split("/")(0).toInt
     val v2 = line.split(" ")(2).split("/")(0).toInt

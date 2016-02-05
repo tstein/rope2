@@ -77,7 +77,7 @@ case class Mesh(modelPath: String) {
 
     glEnableVertexAttribArray(0)
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
-    glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE, 0)
+    glVertexAttribPointer(0, 3, GL11.GL_FLOAT, true, 3 * FLOATSIZE + 2 * FLOATSIZE, 0)
 
     glEnableVertexAttribArray(1)
     glVertexAttribPointer(1, 2, GL11.GL_FLOAT, true, 3 * FLOATSIZE + 2 * FLOATSIZE,  3 * FLOATSIZE)
