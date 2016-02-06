@@ -5,7 +5,7 @@ import java.nio.FloatBuffer
 import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
 import net.tedstein.rope.graphics.Shader.{compileShaderProgram, createShaderObject}
-import org.lwjgl.glfw.GLFW.{GLFW_KEY_A, GLFW_KEY_D, GLFW_KEY_S, _}
+import org.lwjgl.glfw.GLFW._
 import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, _}
 import org.lwjgl.opengl.GL11.{GL_FALSE, GL_FLOAT, GL_TRUE, glClearColor}
 import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
@@ -29,6 +29,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
       (key, action) match {
         case (GLFW_KEY_ESCAPE, GLFW_PRESS) =>
           glfwSetWindowShouldClose(window, GL_TRUE)
+        case (GLFW_KEY_X, GLFW_PRESS) => {
+          wireframe = !wireframe
+          toggleWireframe()
+        }
         case (_, GLFW_PRESS) =>
           keys(key) = true
         case (_, GLFW_RELEASE) =>
@@ -45,13 +49,13 @@ class Graphics(val universe: Universe) extends StrictLogging {
   }
   var keys = Array.ofDim[Boolean](1024)
 
-
   val ShaderRoot = "./src/net/tedstein/rope/graphics/shaders/"
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
 
   var texPath = "./lib/planet_Quom1200.png"
   val objPath = "./lib/planet.obj"
+//  val objPath = "./lib/cube.obj"
   var vertexShader = 0
   var fragmentShader = 0
   //var texID = 0
@@ -66,6 +70,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
   var lastFrame = 0.0f
+  var wireframe = false
 
   def run(): Unit = {
     logger.info("Hello LWJGL " + Sys.getVersion + "!")
@@ -84,6 +89,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
      GL11.glEnable(GL11.GL_TEXTURE_2D)
      GL11.glCullFace(GL11.GL_BACK)
      GL11.glEnable(GL11.GL_CULL_FACE)
+
 
      val program = loadShaders()
      val texID = loadTexture()
@@ -134,7 +140,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
     glfwSetKeyCallback(window, keyCallback)
 
-
     val scale = 0.0f
     //set uniform values
     val texLocation = GL20.glGetUniformLocation(program, "tex")
@@ -143,6 +148,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     val projLocation = GL20.glGetUniformLocation(program, "projection")
 
     glUseProgram(program)
+
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
     GL20.glUniform1i(texLocation, 0)
 
@@ -175,7 +181,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
         GL11.glDrawElements(GL11.GL_TRIANGLES, m.getIndeciesCount() , GL11.GL_UNSIGNED_INT,  0)
       }
 
-
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
       GL30.glBindVertexArray(0)
       GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
@@ -183,7 +188,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
       glfwSwapBuffers(window)
       glfwPollEvents()
       captureKeys()
-
     }
 
     GL20.glDeleteProgram(program)
@@ -201,17 +205,23 @@ class Graphics(val universe: Universe) extends StrictLogging {
     if(keys(GLFW_KEY_S)) {
       gCamera.processKeyboard(Backward, deltaTime)
     }
-    if(keys(GLFW_KEY_A)) {
+    if(keys(GLFW_KEY_LEFT)) {
      gCamera.processKeyboard(Left, deltaTime)
     }
-    if(keys(GLFW_KEY_D)) {
+    if(keys(GLFW_KEY_RIGHT)) {
       gCamera.processKeyboard(Right, deltaTime)
     }
     if(keys(GLFW_KEY_E)) {
       gCamera.processKeyboard(RightYaw, deltaTime)
     }
-    if(keys(GLFW_KEY_Q)){
+    if(keys(GLFW_KEY_Q)) {
       gCamera.processKeyboard(LeftYaw, deltaTime)
+    }
+    if(keys(GLFW_KEY_UP)) {
+      gCamera.processKeyboard(Up, deltaTime)
+    }
+    if(keys(GLFW_KEY_DOWN)) {
+      gCamera.processKeyboard(Down, deltaTime)
     }
   }
 
@@ -299,7 +309,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
     vertexShader = createShaderObject(GL_VERTEX_SHADER, vertexPath)
     fragmentShader = createShaderObject(GL_FRAGMENT_SHADER, fragmentPath)
     val program = compileShaderProgram(vertexShader, fragmentShader)
-
     program
   }
 
@@ -312,5 +321,12 @@ class Graphics(val universe: Universe) extends StrictLogging {
     }
   }
 
+  def toggleWireframe(): Unit = {
+    if (wireframe) {
+      GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
+    } else {
+      GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL)
+    }
+  }
 
 }

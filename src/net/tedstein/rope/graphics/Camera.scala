@@ -40,13 +40,21 @@ case class Camera() {
     if (direction == Right) {
       this.position = this.position.add(this.right.scale(velocity))
     }
-    if (direction == RightYaw) {
+    if (direction == RightYaw){
       //for now: 30 is a magic number
       this.yaw = this.yaw + 30 * deltaTime
       updateCameraVectors
     }
-    if (direction == LeftYaw) {
+    if (direction == LeftYaw){
       this.yaw = this.yaw - 30 * deltaTime
+      updateCameraVectors
+    }
+    if (direction == Up){
+      this.position = this.position.add(this.cameraUp.scale(velocity))
+      updateCameraVectors
+    }
+    if (direction == Down){
+      this.position = this.position.subtract(this.cameraUp.scale(velocity))
       updateCameraVectors
     }
   }

@@ -7,3 +7,5 @@ case object Left extends CameraMovement
 case object Right extends CameraMovement
 case object LeftYaw extends CameraMovement
 case object RightYaw extends CameraMovement
+case object Up extends CameraMovement
+case object Down extends CameraMovement
