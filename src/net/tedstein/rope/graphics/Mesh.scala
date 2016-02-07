@@ -23,6 +23,10 @@ object vertex {
 
 case class Mesh(modelPath: String) {
 
+  var newVerts = List[List[Float]]()
+  var newTexes = List[List[Float]]()
+
+  var packedverts = Array[Float]()
   var vertices =  List[Float]()
   var vertIndecies = List[Int]()
   var normals = List[Float]()
@@ -70,6 +74,8 @@ case class Mesh(modelPath: String) {
 
     var vertBuffer = BufferUtils.createFloatBuffer(vertices.length + texCoords.length)
     vertBuffer = graphicsFlatten(vertices, texCoords)
+   // vertBuffer = makeBuffer(packedverts)
+   // println(util.printFloatBuffer(vertBuffer, packedverts.length))
     GL15.glBufferData(GL_ARRAY_BUFFER, vertBuffer, GL15.GL_STATIC_DRAW)
 
     val indexBuffer = getVertIndexBuffer()
@@ -77,7 +83,7 @@ case class Mesh(modelPath: String) {
 
     glEnableVertexAttribArray(0)
     glBindBuffer(GL_ARRAY_BUFFER, VBO)
-    glVertexAttribPointer(0, 3, GL11.GL_FLOAT, true, 3 * FLOATSIZE + 2 * FLOATSIZE, 0)
+    glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE, 0)
 
     glEnableVertexAttribArray(1)
     glVertexAttribPointer(1, 2, GL11.GL_FLOAT, true, 3 * FLOATSIZE + 2 * FLOATSIZE,  3 * FLOATSIZE)
@@ -86,6 +92,14 @@ case class Mesh(modelPath: String) {
     glBindVertexArray(0)
     VAO
   }
+
+  def makeBuffer(in: Array[Float]): FloatBuffer = {
+    val buff = BufferUtils.createFloatBuffer(in.length)
+    buff.put(in)
+    buff.flip()
+    buff
+  }
+
 
   def getVertIndexBuffer(): IntBuffer = {
     val indexBuffer = BufferUtils.createIntBuffer(vertIndecies.length)

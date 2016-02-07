@@ -53,12 +53,15 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
 
+ // var texPath = "./lib/earth-large-with-ocean-mask.png"
+ //var texPath ="./lib/planet_3_d.png"
   var texPath = "./lib/planet_Quom1200.png"
+ // val objPath = "./lib/cube.obj"
+  //val objPath = "./lib/sphere-new.obj"
   val objPath = "./lib/planet.obj"
-//  val objPath = "./lib/cube.obj"
+
   var vertexShader = 0
   var fragmentShader = 0
-  //var texID = 0
 
   var WIDTH = 800
   var HEIGHT = 600
@@ -205,10 +208,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
     if(keys(GLFW_KEY_S)) {
       gCamera.processKeyboard(Backward, deltaTime)
     }
-    if(keys(GLFW_KEY_LEFT)) {
+    if(keys(GLFW_KEY_LEFT) || keys(GLFW_KEY_A)) {
      gCamera.processKeyboard(Left, deltaTime)
     }
-    if(keys(GLFW_KEY_RIGHT)) {
+    if(keys(GLFW_KEY_RIGHT) || keys(GLFW_KEY_D)) {
       gCamera.processKeyboard(Right, deltaTime)
     }
     if(keys(GLFW_KEY_E)) {
