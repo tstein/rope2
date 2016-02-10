@@ -22,17 +22,16 @@ class Graphics(val universe: Universe) extends StrictLogging {
       logger.error(l.toString)
     }
   }
-  val keyCallback = new GLFWKeyCallback() {
+  val keyCallback = new GLFWKeyCallback {
     override def invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int): Unit = {
       if (!(0 to 1024).contains(key)) { return }
 
       (key, action) match {
         case (GLFW_KEY_ESCAPE, GLFW_PRESS) =>
           glfwSetWindowShouldClose(window, GL_TRUE)
-        case (GLFW_KEY_X, GLFW_PRESS) => {
+        case (GLFW_KEY_X, GLFW_PRESS) =>
           wireframe = !wireframe
           toggleWireframe()
-        }
         case (_, GLFW_PRESS) =>
           keys(key) = true
         case (_, GLFW_RELEASE) =>
@@ -56,8 +55,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
  // var texPath = "./lib/earth-large-with-ocean-mask.png"
  //var texPath ="./lib/planet_3_d.png"
   var texPath = "./lib/planet_Quom1200.png"
- // val objPath = "./lib/cube.obj"
-  //val objPath = "./lib/sphere-new.obj"
   val objPath = "./lib/planet.obj"
 
   var vertexShader = 0
@@ -181,7 +178,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
         model = Transformations.scale(model, i.radius.toFloat, i.radius.toFloat, i.radius.toFloat)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
-        GL11.glDrawElements(GL11.GL_TRIANGLES, m.getIndeciesCount() , GL11.GL_UNSIGNED_INT,  0)
+        GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndices.length , GL11.GL_UNSIGNED_INT,  0)
+
       }
 
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
