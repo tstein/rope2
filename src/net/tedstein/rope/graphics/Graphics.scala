@@ -16,7 +16,6 @@ import org.lwjgl.{BufferUtils, Sys}
 
 class Graphics(val universe: Universe) extends StrictLogging {
 
-
   val errorCallback = new GLFWErrorCallback {
     override def invoke(i: Int, l: Long): Unit = {
       logger.error(l.toString)
@@ -53,7 +52,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var fragmentPath = ShaderRoot + "fragment.shader"
 
  // var texPath = "./lib/earth-large-with-ocean-mask.png"
- //var texPath ="./lib/planet_3_d.png"
   var texPath = "./lib/planet_Quom1200.png"
   val objPath = "./lib/planet.obj"
 
