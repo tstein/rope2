@@ -28,7 +28,7 @@ object Dimensions {
     def add(boostVel: Velocity): Velocity = {
       val dotProduct = this.dot(boostVel)
       def f(lhs: Double, rhs: Double): Double = {
-        return (rhs + lhs / boostVel.gamma + dotProduct * rhs * boostVel.gamma / (1 + boostVel.gamma))/(1 + dotProduct)
+        (rhs + lhs / boostVel.gamma + dotProduct * rhs * boostVel.gamma / (1 + boostVel.gamma)) / (1 + dotProduct)
       }
       Velocity(f(this.x,boostVel.x),f(this.y,boostVel.y),f(this.z,boostVel.z))
       //Ideally, check that this velrss is less than 1 unless we are tacheoning

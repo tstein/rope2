@@ -4,7 +4,7 @@ package net.tedstein.rope.graphics
   * Created by ruba on 1/21/16.
   */
 case class Vector2f(x: Float = 0.0f, y: Float = 0.0f) {
-  override def toString(): String = {
+  override def toString: String = {
     val s = new StringBuilder
     s.append("(" + this.x + ", " + this.y + ")")
     s.toString()

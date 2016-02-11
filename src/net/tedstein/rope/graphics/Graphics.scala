@@ -165,7 +165,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
       GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
 
-      val camera = gCamera.getViewMatrix()
+      val camera = gCamera.lookAt()
       val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 

@@ -43,23 +43,23 @@ case class Camera() {
     if (direction == RightYaw){
       //for now: 30 is a magic number
       this.yaw = this.yaw + 30 * deltaTime
-      updateCameraVectors
+      updateCameraVectors()
     }
     if (direction == LeftYaw){
       this.yaw = this.yaw - 30 * deltaTime
-      updateCameraVectors
+      updateCameraVectors()
     }
     if (direction == Up){
       this.position = this.position.add(this.cameraUp.scale(velocity))
-      updateCameraVectors
+      updateCameraVectors()
     }
     if (direction == Down){
       this.position = this.position.subtract(this.cameraUp.scale(velocity))
-      updateCameraVectors
+      updateCameraVectors()
     }
   }
 
-  def updateCameraVectors: Unit = {
+  def updateCameraVectors(): Unit = {
     // Calculate the new Front vector
     val frontx = (Math.cos(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch))).toFloat
     val fronty = Math.sin(Math.toRadians(this.pitch)).toFloat
@@ -72,8 +72,7 @@ case class Camera() {
     this.cameraUp = this.right.cross(this.cameraFront).normalize
   }
 
-  def getViewMatrix(): Matrix4f = {
-
+  def lookAt(): Matrix4f = {
     lookAt(this.position, this.position.add(this.cameraFront), this.cameraUp)
   }
 }
@@ -93,7 +92,7 @@ object Camera {
     camera.worldUp = worldUp
     camera.yaw = yaw
     camera.pitch = pitch
-    camera.updateCameraVectors
+    camera.updateCameraVectors()
 
     camera
   }
@@ -105,7 +104,7 @@ object Camera {
     camera.worldUp = Vector3f(upX, upY, upZ)
     camera.yaw = yaw
     camera.pitch = pitch
-    camera.updateCameraVectors
+    camera.updateCameraVectors()
 
     camera
   }

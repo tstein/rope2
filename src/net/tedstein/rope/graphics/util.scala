@@ -6,7 +6,7 @@ object util {
   def printFloatBuffer(buff: FloatBuffer, len: Int): String = {
     val s = new StringBuilder
     s.append("{")
-    for (i <- 0 to len - 1) {
+    for (i <- 0 until len) {
       if (i % 4 == 0 && i > 0) {
         s.append {
           "\n "}
@@ -20,7 +20,7 @@ object util {
   def printIntBuffer(buff: IntBuffer, len: Int): String = {
     val s = new StringBuilder
     s.append("\n{")
-    for (i <- 0 to len - 1){
+    for (i <- 0 until len){
       if (i % 5 == 0 && i > 0) {
         s.append {"\n "}
       }

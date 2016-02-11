@@ -43,7 +43,7 @@ object OBJLoader extends StrictLogging {
   def pack(verts: List[Float], texes: List[Float], vIndices: List[Int], tIndices: List[Int]): (List[Float], List[Int]) = {
     var packed = List[Array[Float]]()
     var newIndices = List[Int]()
-    for (i <- 0 to vIndices.length - 1) {
+    for (i <- vIndices.indices) {
       val squashed = new Array[Float](5)
       squashed.update(0, verts(3 * vIndices(i)))
       squashed.update(1, verts(3 * vIndices(i) + 1))
@@ -63,7 +63,7 @@ object OBJLoader extends StrictLogging {
   def normalizeTextures(texes: List[Float]): List[Float] = {
     println("texes: " + texes)
     val normalized = new Array[Float](texes.length)
-    for (i <- 0 to (texes.length / 2) - 1) {
+    for (i <- 0 until texes.length / 2) {
       normalized(2 * i) = texes(2 * i)
       normalized((2 * i) + 1) = 1 - texes((2 * i) + 1)
     }
@@ -73,7 +73,7 @@ object OBJLoader extends StrictLogging {
 
   def normalizeValues(vals: List[Float], avgx: Float, avgy: Float, avgz: Float): List[Float] = {
     val normalized = new Array[Float](vals.length)
-    for (i <- 0 to (vals.length / 3) - 1) {
+    for (i <- 0 until vals.length / 3) {
       normalized(3 * i) = vals(3 * i) - avgx
       normalized((3 * i) + 1) = vals((3 * i) + 1) - avgy
       normalized((3 * i) + 2) = vals((3 * i) + 2) - avgz

@@ -1,7 +1,7 @@
 package net.tedstein.rope.graphics
 
 case class Vector3f(x: Float = 0.0f, y: Float = 0.0f, z: Float = 0.0f) {
-  override def toString(): String = {
+  override def toString: String = {
     val s = new StringBuilder
     s.append("(" + this.x + ", " + this.y + ", " + this.z + ")")
     s.toString()

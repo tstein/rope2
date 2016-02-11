@@ -14,7 +14,7 @@ Implementing a system to show an observer effects of relativity needs, different
 * Acknowledgement of the finite speed of light (set as a constant, accepting c=1, and distances in light-seconds).
 * Changes to photons hitting the observer in frequency ([doppler shift](https://en.wikipedia.org/wiki/Relativistic_Doppler_effect)), [intensity](https://en.wikipedia.org/wiki/Relativistic_Doppler_effect#Doppler_effect_on_intensity), and incoming angle ([Lorentz transformation](https://en.wikipedia.org/wiki/Lorentz_transformation)).
 * Changes to the photon emitters position (using the time they are observed in the past light cone) and shape ([length contraction](https://en.wikipedia.org/wiki/Length_contraction), probably best with Lorentz transformation of vertices).
-* Changes to how objects move and accelerate in special relativity (lorentz tranformation), including its effect on time (proper time and time dilation)
+* Changes to how objects move and accelerate in special relativity (lorentz transformation), including its effect on time (proper time and time dilation)
 * ([GR](https://en.wikipedia.org/wiki/General_relativity#Consequences_of_Einstein.27s_theory))-Changes to the [path](https://en.wikipedia.org/wiki/Gravitational_lens#Explanation_in_terms_of_space.E2.80.93time_curvature), frequency, and path length (minor?) of photons (primarily black-holes & dense objects).
 * (GR)-Time dilation in a gravitational potential (primarily black-holes & dense objects).
 * (GR)-Changes to how objects move in general relativity (primarily black-holes & dense objects.  [May require weird coordinates...](https://en.wikipedia.org/wiki/Schwarzschild_metric#The_Schwarzschild_metric))

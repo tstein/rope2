@@ -8,8 +8,7 @@ import scala.math.{pow, sqrt}
 /**
   * An actor in our little universe.
   *
-  * @param satellites: Other <code>RelativisticObjects</code> orbiting this
-  *                  one.
+  * @param initialSatellites: Other <code>RelativisticObjects</code> orbiting this one.
   */
 sealed class RelativisticObject(private val initialPos: Position,
                                 private val initialVel: Velocity,
