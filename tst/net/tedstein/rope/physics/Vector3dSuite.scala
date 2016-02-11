@@ -11,6 +11,7 @@ class Vector3dSuite extends RopeSuite {
   //Add
   test("Addition"){
     assertAlmostEquals(a + b, Vector3d(8,8,8), tol)
+    assertAlmostEquals(a + b, a.add(b), tol)
   }
   //Subtract
   test("Subtraction"){
@@ -31,6 +32,7 @@ class Vector3dSuite extends RopeSuite {
   //Dot product
   test("Dot product"){
     assertAlmostEquals( a * a, 9 + 16 + 25, tol)
+    assertAlmostEquals( a * a, a.dot(a), tol)
   }
   //Cross product
   test("Cross product"){
