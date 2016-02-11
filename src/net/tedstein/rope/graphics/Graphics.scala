@@ -52,8 +52,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var fragmentPath = ShaderRoot + "fragment.shader"
 
  // var texPath = "./lib/earth-large-with-ocean-mask.png"
-  var texPath = "./lib/planet_Quom1200.png"
-  val objPath = "./lib/planet.obj"
+  var texPath = "./assets/planet_Quom1200.png"
+  val objPath = "./assets/planet.obj"
 
   var vertexShader = 0
   var fragmentShader = 0
