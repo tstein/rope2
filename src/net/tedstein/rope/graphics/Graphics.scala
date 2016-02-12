@@ -74,7 +74,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var wireframe = false
 
   def run(): Unit = {
-    val graphicsStartup = new Stopwatch
+    val graphicsStartup = new Stopwatch("graphics setup")
     logger.info("Hello LWJGL " + Sys.getVersion + "!")
     logger.info("OS: " + System.getProperty("os.name"))
     logger.info("OS Version: " + System.getProperty("os.version"))
@@ -94,7 +94,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
      GL11.glEnable(GL11.GL_TEXTURE_2D)
      GL11.glCullFace(GL11.GL_BACK)
      GL11.glEnable(GL11.GL_CULL_FACE)
-     graphicsStartup.lap("OpenGL ready to go")
+     graphicsStartup.lap("OpenGL ready")
 
      val program = loadShaders()
      graphicsStartup.lap("shaders loaded")
@@ -106,7 +106,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
      gVAO = m.setupMesh()
      graphicsStartup.lap("mesh setup")
 
-     logger.info("graphics setup complete: " + graphicsStartup)
+     logger.info(graphicsStartup.toString)
      renderScene(window, texID, program, m)
     } finally {
       glfwTerminate()

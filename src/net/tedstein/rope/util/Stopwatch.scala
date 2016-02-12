@@ -2,7 +2,7 @@ package net.tedstein.rope.util
 
 import scala.collection.mutable.ArrayBuffer
 
-class Stopwatch {
+class Stopwatch(val name: String) {
   val laps = new ArrayBuffer[(Long, String)]
   lap("start")
 
@@ -11,9 +11,10 @@ class Stopwatch {
   }
 
   override def toString: String = {
-    laps.tail.map { case (time, label) =>
+    s"Stopwatch($name): " + laps.zip(laps.tail).map { case ((lastLapTime, _), (time, label)) =>
       val millisSinceStart = (time - laps.head._1) / 1000000
-      s"$label @ +$millisSinceStart ms"
+      val millisSinceLastLap = (time - lastLapTime) / 1000000
+      s"$label @ $millisSinceStart ms (+$millisSinceLastLap)"
     }.mkString(", ")
   }
 }
