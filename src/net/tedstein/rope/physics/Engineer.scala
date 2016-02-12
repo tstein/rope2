@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope.Universe
 import net.tedstein.rope.util.Metrics
 
-class Engineer(universe: Universe) extends Thread with StrictLogging {
+class Engineer(universe: Universe) extends Thread("engineering") with StrictLogging {
   val Thousand = 1000L
   val Million = Thousand * Thousand
   val Billion = Thousand * Million
@@ -19,7 +19,7 @@ class Engineer(universe: Universe) extends Thread with StrictLogging {
   var framesEngineered = 0L
 
   override def run(): Unit = {
-    logger.info(s"Engineer clocking in at ${System.nanoTime}")
+    logger.info(s"clocking in at ${System.nanoTime}")
     shouldRun = true
     lastFrameNanos = System.nanoTime
 
@@ -46,7 +46,7 @@ class Engineer(universe: Universe) extends Thread with StrictLogging {
       Thread.sleep(nanosToMillis(SleepNanos))
     }
 
-    logger.info(s"Engineer clocking out at ${System.nanoTime}")
+    logger.info(s"clocking out at ${System.nanoTime}")
   }
 
   def shutdown(): Unit = shouldRun = false

@@ -74,6 +74,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var wireframe = false
 
   def run(): Unit = {
+    Thread.currentThread.setName("graphics")
     val graphicsStartup = new Stopwatch("graphics setup")
     logger.info("Hello LWJGL " + Sys.getVersion + "!")
     logger.info("OS: " + System.getProperty("os.name"))
