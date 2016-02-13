@@ -7,7 +7,11 @@ class Vector3dSuite extends RopeSuite {
   val a = Vector3d(3,4,5)
   val b = Vector3d(5,4,3)
   val tol = epsilon(8)
-
+  //Equaltiy / constructor
+  test("Equality and constructors"){
+    assert(a == a)
+    assert(Vector3d(1,2,3) == new Vector3d(1,2,3))
+  }
   //Add
   test("Addition"){
     assertAlmostEquals(a + b, Vector3d(8,8,8), tol)

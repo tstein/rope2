@@ -5,6 +5,21 @@ import net.tedstein.rope.physics.Dimensions._
 
 
 class DimensionsSuite extends RopeSuite {
+  test("Velocity constructors") {
+    val v1 = new Velocity(.2, .2, .2)
+    val v2 = Velocity(.2, .2, .2)
+    val v3 = Velocity(Vector3d(.2, .2, .2))
+    val v4 = Velocity(new Vector3d(.2, .2, .2))
+    val v5 = new Velocity(Vector3d(.2, .2, .2))
+    val v6 = new Velocity(new Vector3d(.2, .2, .2))
+    assert(v1 == v2)
+    assert(v1 == v3)
+    assert(v1 == v4)
+    assert(v1 == v5)
+    assert(v1 == v6)
+    assert(v2 == v6)
+  }
+
   test("zero velocity addition") {
     val v1 = new Velocity(0, 0, 0)
     val v2 = new Velocity(0, 0, 0)
