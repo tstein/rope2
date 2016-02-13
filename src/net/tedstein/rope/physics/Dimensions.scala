@@ -4,13 +4,13 @@ import scala.math.{pow, sqrt}
 //import Array._
 
 object Dimensions {
-  case class Position(x: Double, y: Double, z: Double) {
-    def add(pos: Position): Position = {
-      val newX = this.x + pos.x
-      val newY = this.y + pos.y
-      val newZ = this.z + pos.z
-      Position(newX, newY, newZ)
-    }
+  case class Position(v: Vector3d) {
+    def x: Double = this.v.x
+    def y: Double = this.v.y
+    def z: Double = this.v.z
+    def this(xc: Double, yc: Double, zc: Double) = this(Vector3d(xc, yc, zc))
+
+    def add(pos: Position): Position = Position(pos.v + v)
 
     def add(vel: Velocity, elapsed: Double): Position = {
       val newX = this.x + (vel.x * elapsed)
@@ -39,6 +39,12 @@ object Dimensions {
       ans += pos.y * this.y
       ans += pos.z * this.z
       ans
+    }
+  }
+  object Position{
+    def apply(xc: Double, yc: Double, zc: Double): Position = {
+      //Okay, this seems somewhat dumb
+      Position(Vector3d(xc,yc,zc))
     }
   }
 
