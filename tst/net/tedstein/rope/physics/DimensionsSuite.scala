@@ -20,6 +20,19 @@ class DimensionsSuite extends RopeSuite {
     assert(v2 == v6)
   }
 
+  test("Velocity get xyz methods"){
+    val v1 = Velocity(.1,.2,.3)
+    assert(v1.x == 0.1)
+    assert(v1.y == 0.2)
+    assert(v1.z == 0.3)
+  }
+
+  test("Velocity get v method"){
+    val v1 = Velocity(.1,.2,.3)
+    assert(v1.v == Vector3d(.1, .2, .3))
+  }
+  //Note: members of case classes are val, not var
+
   test("zero velocity addition") {
     val v1 = new Velocity(0, 0, 0)
     val v2 = new Velocity(0, 0, 0)
