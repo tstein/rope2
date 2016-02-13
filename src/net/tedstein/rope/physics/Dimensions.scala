@@ -5,6 +5,7 @@ import scala.math.{pow, sqrt}
 
 object Dimensions {
   case class Position(v: Vector3d) {
+    //Preserve compatibility with this.x, etc.
     def x: Double = this.v.x
     def y: Double = this.v.y
     def z: Double = this.v.z
@@ -34,18 +35,12 @@ object Dimensions {
         f(this.z, gamma, dotProduct, boostVel.direction.z, gamma * time * boostVel.z)
       )
     }
-    def dot(pos: Position): Double = {
-      var ans = pos.x * this.x
-      ans += pos.y * this.y
-      ans += pos.z * this.z
-      ans
-    }
+    def dot(pos: Position): Double = v * pos.v
   }
   object Position{
-    def apply(xc: Double, yc: Double, zc: Double): Position = {
-      //Okay, this seems somewhat dumb
-      Position(Vector3d(xc,yc,zc))
-    }
+    //This allows a call like the following without "new":
+    //Position(x,y,z)
+    def apply(xc: Double, yc: Double, zc: Double): Position = Position(Vector3d(xc,yc,zc))
   }
 
   case class Velocity(x: Double, y: Double, z: Double) {
