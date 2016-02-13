@@ -2,10 +2,11 @@ package net.tedstein.rope.physics
 
 import scala.math.{pow, sqrt}
 
-class Vector3d (xc: Double, yc: Double, zc: Double) {
-  var x: Double = xc
-  var y: Double = yc
-  var z: Double = zc
+//class Vector3d (xc: Double, yc: Double, zc: Double) {
+case class Vector3d (x: Double, y: Double, z: Double) {
+//  var x: Double = xc
+//  var y: Double = yc
+//  var z: Double = zc
   //Add
   def + (arg: Vector3d): Vector3d = {
     new Vector3d(x + arg.x, y + arg.y, z + arg.z)
@@ -60,9 +61,9 @@ class Vector3d (xc: Double, yc: Double, zc: Double) {
 
 object Vector3d {
   //Add the apply magic to mimic a case class
-  def apply(xc: Double, yc: Double, zc: Double): Vector3d = {
+//  def apply(xc: Double, yc: Double, zc: Double): Vector3d = {
     //Okay, this seems somewhat dumb
-    new Vector3d(xc,yc,zc)
-  }
+//    new Vector3d(xc,yc,zc)
+//  }
   val Zero = Vector3d(0.0, 0.0, 0.0)
 }
