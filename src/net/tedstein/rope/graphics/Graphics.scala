@@ -57,7 +57,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
  // var texPath = "./lib/earth-large-with-ocean-mask.png"
  // var texPath = "./assets/planet_Quom1200.png"
-  var texPath = "./assets/moontex.png"
+  var texPath = "./assets/moontex.jpg"
   val objPath = "./assets/planet.obj"
 
   var vertexShader = 0
