@@ -6,7 +6,6 @@ import scala.math.{pow, sqrt}
 object Dimensions {
   case class Position(v: Vector3d) {
     //Preserve get compatibility with this.x, etc.
-    //TODO set
     def x: Double = this.v.x
     def y: Double = this.v.y
     def z: Double = this.v.z
@@ -51,7 +50,6 @@ object Dimensions {
 
   case class Velocity(v: Vector3d) {
     //Preserve get compatibility with this.x, etc.
-    //TODO set
     def x: Double = this.v.x
     def y: Double = this.v.y
     def z: Double = this.v.z
@@ -77,7 +75,7 @@ object Dimensions {
         this.v * (this.v * boostVel.v) * (gamma / (1 + gamma))
       Velocity(answer / (1 + this.v * boostVel.v))
     }
-    def dot(vel: Velocity): Double = v * vel.v
+    //def dot(vel: Velocity): Double = v * vel.v
 
     def direction: Position = Position(v.normalize)
     //def toarray: Array[Double] = val Array[this.x, this.y, this.z]
