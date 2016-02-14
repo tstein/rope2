@@ -329,7 +329,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   }
 
   def newLoadTexture(): Int = {
-    val image: BufferedImage = TextureLoader.loadImage(texPath)//The path is inside the jar file
+    val image = TextureLoader.loadImage(texPath)//The path is inside the jar file
     val textureID = TextureLoader.loadTexture(image)
     textureID
   }
