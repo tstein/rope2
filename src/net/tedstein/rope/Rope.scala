@@ -1,6 +1,6 @@
 package net.tedstein.rope
 
-import net.tedstein.rope.graphics.Graphics
+import net.tedstein.rope.graphics.{TextureLoader, Graphics}
 import net.tedstein.rope.physics.Engineer
 
 
@@ -12,7 +12,9 @@ object Rope {
     val engineer = new Engineer(universe)
     engineer.start()
 
-    val graphics = new Graphics(universe)
+    val textureImages = TextureLoader.loadImages(List("moon"))
+
+    val graphics = new Graphics(universe, textureImages)
     // Block on the graphics loop.
     graphics.run()
 

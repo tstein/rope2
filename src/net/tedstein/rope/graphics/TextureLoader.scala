@@ -11,12 +11,13 @@ import java.nio.file.Paths
 import org.lwjgl.opengl.GL11._
 
 object TextureLoader {
-  private val BYTES_PER_PIXEL = 4
+  private val BytesPerPixel = 4
+  private val TextureRoot = "assets"
 
   def loadTexture(image: BufferedImage): Int = {
     val pixels = new Array[Int](image.getWidth * image.getHeight)
     image.getRGB(0, 0, image.getWidth, image.getHeight, pixels, 0, image.getWidth)
-    val buffer = BufferUtils.createByteBuffer(image.getWidth * image.getHeight * BYTES_PER_PIXEL)
+    val buffer = BufferUtils.createByteBuffer(image.getWidth * image.getHeight * BytesPerPixel)
 
     for (y <- 0 until image.getHeight;
          x <- 0 until image.getWidth) {
@@ -38,7 +39,11 @@ object TextureLoader {
     textureID
   }
 
-  def loadImage(loc: String): BufferedImage = {
-      ImageIO.read(Files.newInputStream(Paths.get(loc)))
+  private def loadImage(path: String): BufferedImage = {
+      ImageIO.read(Files.newInputStream(Paths.get(path)))
+  }
+
+  def loadImages(textureNames: Seq[String]): Map[String, BufferedImage] = {
+    textureNames.par.map(name => name -> loadImage(s"$TextureRoot/$name.jpg")).toMap.seq
   }
 }
