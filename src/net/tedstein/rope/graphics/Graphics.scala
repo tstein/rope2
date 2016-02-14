@@ -1,5 +1,6 @@
 package net.tedstein.rope.graphics
 
+import java.awt.image.BufferedImage
 import java.nio.FloatBuffer
 
 import com.typesafe.scalalogging.StrictLogging
@@ -55,7 +56,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var fragmentPath = ShaderRoot + "fragment.shader"
 
  // var texPath = "./lib/earth-large-with-ocean-mask.png"
-  var texPath = "./assets/planet_Quom1200.png"
+ // var texPath = "./assets/planet_Quom1200.png"
+  var texPath = "./assets/moontex.png"
   val objPath = "./assets/planet.obj"
 
   var vertexShader = 0
@@ -99,7 +101,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
      val program = loadShaders()
      graphicsStartup.lap("shaders loaded")
 
-     val texID = loadTexture()
+     //val texID = loadTexture()
+     val texID = newLoadTexture()
      graphicsStartup.lap("textures loaded")
 
      val m = Mesh(objPath)
@@ -323,6 +326,12 @@ class Graphics(val universe: Universe) extends StrictLogging {
     fragmentShader = createShaderObject(GL_FRAGMENT_SHADER, fragmentPath)
     val program = compileShaderProgram(vertexShader, fragmentShader)
     program
+  }
+
+  def newLoadTexture(): Int = {
+    val image: BufferedImage = TextureLoader.loadImage(texPath)//The path is inside the jar file
+    val textureID = TextureLoader.loadTexture(image)
+    textureID
   }
 
   def loadTexture(): Int = {
