@@ -5,6 +5,34 @@ import net.tedstein.rope.physics.Dimensions._
 
 
 class DimensionsSuite extends RopeSuite {
+  test("Velocity constructors") {
+    val v1 = new Velocity(.2, .2, .2)
+    val v2 = Velocity(.2, .2, .2)
+    val v3 = Velocity(Vector3d(.2, .2, .2))
+    val v4 = Velocity(new Vector3d(.2, .2, .2))
+    val v5 = new Velocity(Vector3d(.2, .2, .2))
+    val v6 = new Velocity(new Vector3d(.2, .2, .2))
+    assert(v1 == v2)
+    assert(v1 == v3)
+    assert(v1 == v4)
+    assert(v1 == v5)
+    assert(v1 == v6)
+    assert(v2 == v6)
+  }
+
+  test("Velocity get xyz methods"){
+    val v1 = Velocity(.1,.2,.3)
+    assert(v1.x == 0.1)
+    assert(v1.y == 0.2)
+    assert(v1.z == 0.3)
+  }
+
+  test("Velocity get v method"){
+    val v1 = Velocity(.1,.2,.3)
+    assert(v1.v == Vector3d(.1, .2, .3))
+  }
+  //Note: members of case classes are val, not var
+
   test("zero velocity addition") {
     val v1 = new Velocity(0, 0, 0)
     val v2 = new Velocity(0, 0, 0)
