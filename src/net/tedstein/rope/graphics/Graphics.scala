@@ -1,5 +1,6 @@
 package net.tedstein.rope.graphics
 
+import java.awt.Image
 import java.awt.image.BufferedImage
 import java.nio.FloatBuffer
 
@@ -18,7 +19,7 @@ import org.lwjgl.{BufferUtils, Sys}
 
 import scala.util.Properties
 
-class Graphics(val universe: Universe) extends StrictLogging {
+class Graphics(val universe: Universe, textureImages: Map[String, BufferedImage]) extends StrictLogging {
 
   val errorCallback = new GLFWErrorCallback {
     override def invoke(i: Int, l: Long): Unit = {
@@ -57,7 +58,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
  // var texPath = "./lib/earth-large-with-ocean-mask.png"
  // var texPath = "./assets/planet_Quom1200.png"
-  var texPath = "./assets/moontex.jpg"
   val objPath = "./assets/planet.obj"
 
   var vertexShader = 0
@@ -330,18 +330,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
   }
 
   def newLoadTexture(): Int = {
-    val image = TextureLoader.loadImage(texPath)//The path is inside the jar file
+    val image = textureImages("moon")
     val textureID = TextureLoader.loadTexture(image)
     textureID
-  }
-
-  def loadTexture(): Int = {
-    try {
-      val texture = Texture.loadPNGTexture(texPath, GL13.GL_TEXTURE0)
-      texture
-    } catch {
-      case ex: Exception => throw ex
-    }
   }
 
   def toggleWireframe(): Unit = {
