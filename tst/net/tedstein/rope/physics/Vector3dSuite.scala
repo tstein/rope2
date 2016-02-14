@@ -60,6 +60,13 @@ class Vector3dSuite extends RopeSuite {
   test("Normalizing Vector3d.Zero returns length==1"){
     assertAlmostEquals(Vector3d.Zero.normalize.length, 1, tol)
   }
+  test("lerp"){
+    assertAlmostEquals(a.lerp(b,0), a, tol)
+    assertAlmostEquals(a.lerp(b,1), b, tol)
+    val rand = math.random
+    for(_ <- 1 to 10)
+      assertAlmostEquals(a.lerp(b,rand), b.lerp(a,1-rand), tol)
+  }
   test("Rotation"){
     val angle90 = math.Pi / 2
     val randAngle = math.random * math.Pi * 15

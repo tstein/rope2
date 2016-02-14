@@ -55,8 +55,16 @@ case class Vector3d (x: Double, y: Double, z: Double) {
     else
       this / this.length
   }
-  //Lerp: implement/copy when needed
-  //Tostring: implement/copy when needed
+  //Lerp: linear interpolate
+  def lerp(other: Vector3d, value: Double): Vector3d = {
+    this * (1.0 - value) + (other * value)
+  }
+  //Tostring
+  override def toString: String = {
+    val s = new StringBuilder
+    s.append("(" + this.x + ", " + this.y + ", " + this.z + ")")
+    s.toString()
+  }
   //Rotate: Rotate by angle about an axis
   def rotate(angle: Double, axisInput: Vector3d): Vector3d = {
     //Perhaps better implementation, though substantially less clean:
