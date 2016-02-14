@@ -1,6 +1,6 @@
 package net.tedstein.rope.physics
 
-import scala.math.{pow, sqrt}
+import scala.math.{pow, sqrt, cos, sin}
 
 //class Vector3d (xc: Double, yc: Double, zc: Double) {
 case class Vector3d (x: Double, y: Double, z: Double) {
@@ -57,6 +57,15 @@ case class Vector3d (x: Double, y: Double, z: Double) {
   }
   //Lerp: implement/copy when needed
   //Tostring: implement/copy when needed
+  //Rotate: Rotate by angle about an axis
+  def rotate(angle: Double, axisInput: Vector3d): Vector3d = {
+    //Perhaps better implementation, though substantially less clean:
+    //https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
+    val axis = axisInput.normalize
+    val projection = axis * (axis * this)
+    val perpComponent = axis.cross(this)
+    (this - projection) * cos(angle) + perpComponent * sin(angle) + projection
+  }
 }
 
 object Vector3d {

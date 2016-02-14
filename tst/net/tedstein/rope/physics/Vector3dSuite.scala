@@ -6,6 +6,8 @@ import net.tedstein.rope.RopeSuite
 class Vector3dSuite extends RopeSuite {
   val a = Vector3d(3,4,5)
   val b = Vector3d(5,4,3)
+  val r1 = Vector3d(1-2*math.random, 1-2*math.random, 1-2*math.random)
+  val r2 = Vector3d(1-2*math.random, 1-2*math.random, 1-2*math.random)
   val tol = epsilon(8)
   //Equaltiy / constructor
   test("Equality and constructors"){
@@ -57,5 +59,15 @@ class Vector3dSuite extends RopeSuite {
   }
   test("Normalizing Vector3d.Zero returns length==1"){
     assertAlmostEquals(Vector3d.Zero.normalize.length, 1, tol)
+  }
+  test("Rotation"){
+    val angle90 = math.Pi / 2
+    val randAngle = math.random * math.Pi * 15
+    //90 deg
+    assertAlmostEquals(Vector3d(5,1,1).rotate(angle90, Vector3d(0,0,123)), Vector3d(-1,5,1), tol)
+    //360 deg
+    assertAlmostEquals(a.rotate(angle90*4, b), a, tol)
+    //length better not change
+    assertAlmostEquals(r1.rotate(randAngle, r2).length, r1.length, tol)
   }
 }
