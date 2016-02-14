@@ -77,4 +77,15 @@ class Vector3dSuite extends RopeSuite {
     //length better not change
     assertAlmostEquals(r1.rotate(randAngle, r2).length, r1.length, tol)
   }
+  test("RandomDir"){
+    //Length should be 1
+    assertAlmostEquals(Vector3d.randomDir.length, 1, tol)
+    //Sum of a bunch of these should be close to 0
+    var sum = Vector3d(0,0,0)
+    val size: Int = 1000
+    for(_ <- 1 to size)
+      sum = sum + Vector3d.randomDir
+    //Check that it is within it to something reasonable, say 7 sigma? (7 sigma is 1 in 400 billion or so)
+    assertAlmostEquals(sum, Vector3d(0,0,0), math.sqrt(size) * 7)
+  }
 }

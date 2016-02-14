@@ -83,4 +83,12 @@ object Vector3d {
 //    new Vector3d(xc,yc,zc)
 //  }
   val Zero = Vector3d(0.0, 0.0, 0.0)
+  //Random direction, uniformly distributed on a sphere
+  //By approximating 0.8314*atanh as invErf
+  private def atanh(x: Double): Double = 0.5 * (math.log(x+1+1E-7) - math.log(-x+1+1E-7))
+  def randomDir: Vector3d = Vector3d(
+    0.831406 * atanh(math.random * 2 - 1),
+    0.831406 * atanh(math.random * 2 - 1),
+    0.831406 * atanh(math.random * 2 - 1)
+  ).normalize
 }
