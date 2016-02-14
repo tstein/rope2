@@ -29,4 +29,28 @@ class RelativisticObjectSuite extends RopeSuite {
     assertAlmostEquals(obj.velrss, 0.999956, epsilon(4))
     assertAlmostEquals(obj.gamma, 106.12507, epsilon(4))
   }
+
+  test("Eccentric Anomaly solver") {
+    //Brute force: lets test the whole mapping
+    def M(E: Double, ecc: Double): Double = E - ecc * math.sin(E)
+    //Test an array of values
+    var testE: Double = 0
+    val testElimit: Double = 2 * math.Pi + 0.2
+    var testEcc: Double = 0
+    val testEccLimit: Double = 0.999
+    var testM: Double = 0
+    val tolerance: Double = 1E-6
+    while(testE < testElimit){
+      while(testEcc < testEccLimit){
+        testM = M(testE, testEcc)
+        assertAlmostEquals(testE, Orbiter.solveEccentricAnomaly(testM, testEcc), tolerance)
+        testEcc = testEcc + testEccLimit / 32 - 1E-6
+      }
+      testE = testE + testElimit / 32 - 1E-6
+    }
+    testE = testElimit
+    testEcc = testEccLimit
+    testM = M(testE, testEcc)
+    assertAlmostEquals(testE, Orbiter.solveEccentricAnomaly(testM, testEcc), tolerance)
+  }
 }
