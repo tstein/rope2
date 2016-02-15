@@ -174,7 +174,7 @@ class Orbiter(primary: RelativisticObject,
     theta = Orbiter.solveTrueAnomaly(eccentricAnomaly, eccentricity)
 
     //Compute the relative position (r = a * (1-ecc^2) / (1-ecc*cos(theta), project to coords)
-    val distToPrimary = semiLatusRectum * (1 - eccentricity * math.cos(theta))
+    val distToPrimary = semiMajorAxisLength * (1 - eccentricity * math.cos(theta))
     //Okay, so theta==0 is pointing to periapsis and is off by Pi
     offsetToPrimary = Position(majorAxisDir * (math.cos(theta + math.Pi) * distToPrimary) +
                                minorAxisDir * (math.sin(theta + math.Pi) * distToPrimary) )
@@ -185,7 +185,7 @@ class Orbiter(primary: RelativisticObject,
     val speedPerpToPrimary = specificAngularMomentum / distToPrimary
     //And the radial component
     val radialSpeedToPrimary = speedPerpToPrimary *
-      math.atan(-eccentricity * math.sin(theta) /
+      (eccentricity * math.sin(theta) /
         (1 - eccentricity * math.cos(theta))
       )
     //And plop it into the right coordinates

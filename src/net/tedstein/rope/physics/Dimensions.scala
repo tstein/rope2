@@ -96,5 +96,7 @@ object Dimensions {
   val Epoch = 0.0
   val LightSecond = 1.0
   val AU = 498.94 * LightSecond
+  val meter = 1/(2.9979E8 * LightSecond)
+  val kilometer = 1000/(2.9979E8 * LightSecond)
   def Empty[T] = Set[T]()
 }
