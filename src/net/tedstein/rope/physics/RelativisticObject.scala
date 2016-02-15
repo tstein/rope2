@@ -92,7 +92,7 @@ class SimpleOrbiter(primary: RelativisticObject,
   *                            this becomes the major (longer) axis direction
   */
 class Orbiter(primary: RelativisticObject,
-              semiMajorAxisLength: Double,
+              val semiMajorAxisLength: Double,
               val eccentricity: Double = math.random * 0.8,
               orbitalAxis: Position = Position(Vector3d.randomDir),
               initialPositionDirection: Position = Position(Vector3d.randomDir),
@@ -134,14 +134,15 @@ class Orbiter(primary: RelativisticObject,
   private val primaryGM: Double = primary.mass / 2
   assert(primaryGM>0, "No negative masses!")
 
+  //Specific angular momentum (also l/m)
+  private val specificAngularMomentum: Double =
+    math.sqrt(periapsisLength * primaryGM * (1 + eccentricity))
+
   //Orbital period
   val orbitalPeriod: Double = 2 * math.Pi * math.sqrt(math.pow(semiMajorAxisLength, 3) / primaryGM)
 
   //Semi-latus rectum, also as l https://en.wikipedia.org/wiki/Conic_section#Conic_parameters
   private val semiLatusRectum: Double = semiMajorAxisLength * (1 - eccentricity * eccentricity)
-
-  //Specific angular momentum (also l/m)
-  //private val specificAngularMomentum: Double = math.random
 
   //Initial mean anomaly (M)
   //TODO: use initialPositionDirection to determine this
@@ -149,7 +150,6 @@ class Orbiter(primary: RelativisticObject,
 
   //Initial position/velocity for the orbit
   var theta: Double = 0
-  var distToPrimary: Double = 0
   var offsetToPrimary: Position = Position(0,0,0)
   var velocityToPrimary: Velocity = Velocity(0,0,0)
   updatePositionAndVelocity(time)
@@ -170,23 +170,36 @@ class Orbiter(primary: RelativisticObject,
     //Compute true anomaly (theta)
     theta = Orbiter.solveTrueAnomaly(eccentricAnomaly, eccentricity)
 
-    //Compute the relative position (r = a(1-ecc*cos(theta), project to coords)
-    distToPrimary = semiMajorAxisLength * (1 - eccentricity * math.cos(theta))
+    //Compute the relative position (r = a * (1-ecc^2) / (1-ecc*cos(theta), project to coords)
+    val distToPrimary = semiLatusRectum * (1 - eccentricity * math.cos(theta))
     //Okay, so theta==0 is pointing to periapsis and is off by Pi
     offsetToPrimary = Position(majorAxisDir * (math.cos(theta + math.Pi) * distToPrimary) +
                                minorAxisDir * (math.sin(theta + math.Pi) * distToPrimary) )
 
     //Compute the relative velocity
     //TODO: adjust for relativity
+    //Speed perpendicular to the direction to the primary, based on conservation of angular momentum
+    val speedPerpToPrimary = specificAngularMomentum / distToPrimary
+    //And the radial component
+    val radialSpeedToPrimary = speedPerpToPrimary *
+      math.atan(-eccentricity * math.sin(theta) /
+        (1 - eccentricity * math.cos(theta))
+      )
+    //And plop it into the right coordinates
+    val radialDirection: Vector3d = offsetToPrimary.v.normalize
+    val progradeDirection: Vector3d = orbitalAxisDir.cross(radialDirection)
+    velocityToPrimary = Velocity(progradeDirection * speedPerpToPrimary + radialDirection * radialSpeedToPrimary)
 
+    assert(velocityToPrimary.velrss < 1, "Found invalid orbital speed!")
 
     //Update for absolute position and velocity
     pos = primary.pos.add(offsetToPrimary)
     vel = velocityToPrimary.add(primary.vel)
   }
 
-  def computedPosition: Position = pos
-  def computedVelocity: Velocity = vel
+  //Just call pos and vel?
+  //def computedPosition: Position = pos
+  //def computedVelocity: Velocity = vel
 }
 object Orbiter{
   //Okay, lets get some mass conversions down
