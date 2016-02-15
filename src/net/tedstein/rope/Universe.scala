@@ -24,9 +24,10 @@ object Universe {
         initialTime = Dimensions.Epoch + 100 * random.nextFloat(),
         initialRadius = 0.15,
         initialSatellites = Dimensions.Empty,
-        mass = 0.03) // Sticking to radius / 5 for now (excitingly dense)
+        mass = 0.5) // This is about what is needed to emulate simple orbiter planets
       val planets = for (_ <- 0 to 3) yield {
-        val planet = new SimpleOrbiter(
+        val planet = if(math.random > 0.5)
+        new SimpleOrbiter(
           primary = star,
           orbitalDistance = 0.7 + .7 * random.nextFloat(),
           angularFrequency = 0.5 + .1 * random.nextFloat(),
@@ -36,6 +37,22 @@ object Universe {
           initialRadius = 0.07,
           initialSatellites = Dimensions.Empty,
           mass = 0.07/5)
+        else
+        new Orbiter(
+          //All but primary and semiMajorAxisLength have a default, so commented out all lines that can use it
+          primary = star,
+          semiMajorAxisLength = 0.9 + 0.25 * random.nextFloat(),
+          eccentricity = 0.05 + 0.15 * random.nextFloat(),
+          orbitalAxis = Position(Vector3d.randomDir + Vector3d(0,1.5,-8)), //bias it to -z dir, same as the simple ones
+          //initialPositionDirection = Position(Vector3d.randomDir),
+          //majorAxisSuggestion = Position(Vector3d.randomDir),
+          //initialPos = Dimensions.Origin,
+          //initialVel = Dimensions.Stationary,
+          initialTime = Dimensions.Epoch,
+          initialRadius = 0.07,
+          //initialSatellites = Dimensions.Empty,
+          mass = 0.07/5
+        )
         val moons = for (_ <- 0 to 2) yield {
           if(math.random > 0.3)
           new SimpleOrbiter(
