@@ -110,7 +110,7 @@ class Orbiter(primary: RelativisticObject,
   //Setup our "coordinate axes"
   val orbitalAxisDir: Vector3d = orbitalAxis.v.normalize
   private val majorAxisDir: Vector3d = {
-    majorAxisSuggestion.v - orbitalAxisDir * (majorAxisSuggestion.v * orbitalAxisDir)
+    (majorAxisSuggestion.v - orbitalAxisDir * (majorAxisSuggestion.v * orbitalAxisDir)).normalize
   }
   private val minorAxisDir: Vector3d = orbitalAxisDir.cross(majorAxisDir)
   //Sanity check this setup (debug only)

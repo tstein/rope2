@@ -94,9 +94,9 @@ class RelativisticObjectSuite extends RopeSuite {
       primary = sun,
       semiMajorAxisLength = 1.0 * Dimensions.AU, //499
       eccentricity = 0.017,
-      orbitalAxis = Position(0,0,1),
-      initialPositionDirection = Position(1,0,0),
-      majorAxisSuggestion = Position(-1,0,0),
+      orbitalAxis = Position(0,0,15),
+      initialPositionDirection = Position(35,0,0),
+      majorAxisSuggestion = Position(-0.15,0,0),
       initialTime = time,
       initialRadius = 0.021,
       mass = Orbiter.mass.earth
