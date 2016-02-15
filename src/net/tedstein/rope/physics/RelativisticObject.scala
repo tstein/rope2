@@ -98,13 +98,18 @@ class Orbiter(primary: RelativisticObject,
               orbitalAxis: Position = Position(Vector3d.randomDir),
               initialPositionDirection: Position = Position(Vector3d.randomDir),
               majorAxisSuggestion: Position = Position(Vector3d.randomDir),
-              private val initialPos: Position = Dimensions.Origin,
-              private val initialVel: Velocity = Dimensions.Stationary,
               private val initialTime: Double = 100 + math.random * 10,
               private val initialRadius: Double = 0.021, //Earth-ish as a default
               private val initialSatellites: Set[RelativisticObject] = Dimensions.Empty,
               mass: Double = Orbiter.mass.kiloGram //Small default
-              ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites, mass) {
+          ) extends RelativisticObject(
+              Dimensions.Origin, //Constructor overwrites this anyways
+              Dimensions.Stationary, //Constructor overwrites this anyways
+              initialTime,
+              initialRadius,
+              initialSatellites,
+              mass
+          ) {
 
   //Finish constructing this
   //Setup our "coordinate axes"
