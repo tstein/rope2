@@ -143,10 +143,16 @@ class Orbiter(primary: RelativisticObject,
   //Specific angular momentum (also l/m)
   //private val specificAngularMomentum: Double = math.random
 
-  //Initial true anomaly (theta)
-  val initTheta: Double = 0
   //Initial mean anomaly (M)
-  private val initMeanAnomaly = 0
+  //TODO: use initialPositionDirection to determine this
+  private val initMeanAnomaly = math.Pi * 2 * math.random
+
+  //Initial position/velocity for the orbit
+  var theta: Double = 0
+  var distToPrimary: Double = 0
+  var offsetToPrimary: Position = Position(0,0,0)
+  var velocityToPrimary: Velocity = Velocity(0,0,0)
+  updatePositionAndVelocity(time)
 
   //https://en.wikipedia.org/wiki/Kepler%27s_laws_of_planetary_motion#Position_as_a_function_of_time
   //https://en.wikipedia.org/wiki/Orbit_equation
@@ -160,10 +166,23 @@ class Orbiter(primary: RelativisticObject,
 
     //Compute eccentric anomaly (E) (solve M = E - ecc * sin(E) )
     val eccentricAnomaly: Double = Orbiter.solveEccentricAnomaly(meanAnomaly, eccentricity)
+
     //Compute true anomaly (theta)
-    //Compute the position (r = a(1-ecc*cos(theta), project to coords)
-    //Compute the velocity
+    theta = Orbiter.solveTrueAnomaly(eccentricAnomaly, eccentricity)
+
+    //Compute the relative position (r = a(1-ecc*cos(theta), project to coords)
+    distToPrimary = semiMajorAxisLength * (1 - eccentricity * math.cos(theta))
+    //Okay, so theta==0 is pointing to periapsis and is off by Pi
+    offsetToPrimary = Position(majorAxisDir * (math.cos(theta + math.Pi) * distToPrimary) +
+                               minorAxisDir * (math.sin(theta + math.Pi) * distToPrimary) )
+
+    //Compute the relative velocity
     //TODO: adjust for relativity
+
+
+    //Update for absolute position and velocity
+    pos = primary.pos.add(offsetToPrimary)
+    vel = velocityToPrimary.add(primary.vel)
   }
 
   def computedPosition: Position = pos
@@ -208,5 +227,19 @@ object Orbiter{
         ", iteration = " + i)
     }
     guess
+  }
+  def solveTrueAnomaly(eccentricAnomaly: Double, eccentricity: Double): Double = {
+    assert(eccentricity > -0.99)
+    assert(eccentricity <= 0.999)
+
+    //Solve for theta: a * cos(E) = a * ecc + r * cos(theta), equivalently
+    //cos(E) = (ecc + cos(theta)) / (1 + ecc * cos(theta)), equivalently
+    //(1 - ecc) * tan(theta / 2) ^ 2 = (1 + ecc) * tan(E/2) ^ 2
+    val eTan: Double = math.tan(eccentricAnomaly / 2)
+    val tTan: Double = eTan * sqrt((1 + eccentricity) / (1 - eccentricity))
+    var answer: Double = 2 * math.atan(tTan)
+    if(answer.isNaN)       //Assume we hit an asymptote
+      answer = math.Pi     //the only spot that would solve that
+    answer
   }
 }

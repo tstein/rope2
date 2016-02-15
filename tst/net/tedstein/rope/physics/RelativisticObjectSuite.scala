@@ -53,4 +53,29 @@ class RelativisticObjectSuite extends RopeSuite {
     testM = M(testE, testEcc)
     assertAlmostEquals(testE, Orbiter.solveEccentricAnomaly(testM, testEcc), tolerance)
   }
+
+  test("True Anomaly solver") {
+    //Check that it is strictly ascending for 2 periods modulo 2pi
+    val testEinit: Double = -math.Pi //Yea, start right on the asymptote
+    val testElimit: Double = math.Pi * 3
+    val testEccList = List[Double](0.0, 0.1, 0.8, 0.9, 0.999)
+    val tolerance: Double = 1E-9
+    for(testEcc <- testEccList) {
+      var testE: Double = testEinit
+      var lastTheta = Orbiter.solveTrueAnomaly(testE, testEcc)
+      var thisTheta = lastTheta
+      while(testE < testElimit + 1E-4){
+        lastTheta = thisTheta
+        thisTheta = Orbiter.solveTrueAnomaly(testE, testEcc)
+        //And check these are increasing
+        val increaseTheta = ((thisTheta - lastTheta) + 4 * math.Pi + tolerance) % (2 * math.Pi)
+        if(testEcc <= 0.9)
+          assert( increaseTheta < 1.5 )
+        else
+          assert( increaseTheta < 4 ) //Swings around quickly in these cases
+        assert( increaseTheta >= 0.0 )
+        testE = testE + (testElimit - testEinit) / 64
+      }
+    }
+  }
 }
