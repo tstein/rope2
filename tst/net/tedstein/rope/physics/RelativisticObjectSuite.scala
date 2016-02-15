@@ -1,7 +1,9 @@
 package net.tedstein.rope.physics
 
-import net.tedstein.rope.RopeSuite
+import net.tedstein.rope.{physics, RopeSuite}
 import net.tedstein.rope.physics.Dimensions.{Position, Velocity}
+import net.tedstein.rope.physics.Dimensions
+import net.tedstein.rope.physics.{RelativisticObject, Orbiter, Center}
 
 
 class RelativisticObjectSuite extends RopeSuite {
@@ -78,4 +80,50 @@ class RelativisticObjectSuite extends RopeSuite {
       }
     }
   }
+
+  test("Slow and steady orbiter: Earth around sun") {
+    var time: Double = 0
+    val sun: RelativisticObject = new RelativisticObject(
+      initialPos = Dimensions.Origin,
+      initialVel = Dimensions.Stationary,
+      initialTime = Dimensions.Epoch,
+      initialRadius = 4.643,
+      initialSatellites = Dimensions.Empty,
+      mass = Orbiter.mass.sun)
+    val earth: Orbiter = new Orbiter(
+      primary = sun,
+      semiMajorAxisLength = 499,
+      eccentricity = 0.017,
+      orbitalAxis = Position(0,0,1),
+      initialPositionDirection = Position(1,0,0),
+      majorAxisSuggestion = Position(-1,0,0),
+      initialTime = time,
+      initialRadius = 0.021,
+      mass = Orbiter.mass.earth
+    )
+    //Okay, now check that these things match what real life has
+    assertAlmostEquals(earth.orbitalPeriod / (365.24 * 24 * 60 * 60), 1, 3E-2)
+    assertAlmostEquals(math.sin(earth.theta), 0, 1E-5)
+    assertAlmostEquals(earth.velocityToPrimary.velrss / (2.979E4 / 3E8), 1, 2E-2)
+    assertAlmostEquals(earth.offsetToPrimary.v.length / 491, 1, 5E-3)
+
+    //Wait half a year, and check apoapsis
+    time += 0.5 * 365.24 * 24 * 60 * 60
+    earth.updatePositionAndVelocity(time)
+
+    assertAlmostEquals(math.cos(earth.theta), -1, 1E-3)
+    assertAlmostEquals(math.sin(earth.theta), 0, 2E-2)
+    assertAlmostEquals(earth.velocityToPrimary.velrss / (2.979E4 / 3E8), 1, 2E-2)
+    assertAlmostEquals(earth.offsetToPrimary.v.length / 507, 1, 5E-3)
+
+    //Wait another half year, check periapsis again
+    time += 0.5 * 365.24 * 24 * 60 * 60
+    earth.updatePositionAndVelocity(time)
+
+    assertAlmostEquals(math.sin(earth.theta), 0, 3E-2)
+    assertAlmostEquals(earth.velocityToPrimary.velrss / (2.979E4 / 3E8), 1, 2E-2)
+    assertAlmostEquals(earth.offsetToPrimary.v.length / 491, 1, 5E-3)
+
+  }
+  //test("Slow and elliptical orbiter: Halley's comet around sun")
 }

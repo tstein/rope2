@@ -84,7 +84,7 @@ class SimpleOrbiter(primary: RelativisticObject,
   *                     Function will break if given something outside of [0,1), and probably
   *                     behave poorly for values close to 1.  Refuses to operate past e=0.999
   * @param orbitalAxis Axis of the orbit.  Right hand rule applies to orbit direction.
-  * @param massC Mass of the object, expressed as Schwarzschild radii in light seconds.  Look at
+  * @param mass Mass of the object, expressed as Schwarzschild radii in light seconds.  Look at
   *              some objects in Orbiter.Mass??? for constants.  (C = constructor)
   * @param initialPositionDirection Direction from the primary that the object starts at.  Will
   *                                 auto-fix any length or alignment issues to the axis it has.
@@ -100,10 +100,10 @@ class Orbiter(primary: RelativisticObject,
               private val initialPos: Position = Dimensions.Origin,
               private val initialVel: Velocity = Dimensions.Stationary,
               private val initialTime: Double = 100 + math.random * 10,
-              private val initialRadius: Double = 0.042, //Earth-ish as a default
+              private val initialRadius: Double = 0.021, //Earth-ish as a default
               private val initialSatellites: Set[RelativisticObject] = Dimensions.Empty,
-              val massC: Double = Orbiter.mass.kiloGram //Small default
-              ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites, massC) {
+              mass: Double = Orbiter.mass.kiloGram //Small default
+              ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites, mass) {
 
   //Finish constructing this
   //Setup our "coordinate axes"
@@ -122,8 +122,8 @@ class Orbiter(primary: RelativisticObject,
 
   //Sanity check that the orbit is valid
   assert(semiMajorAxisLength > 0, "Don't give a negative semiMajorAxisLength, you gave " + semiMajorAxisLength)
-  private val periapsisLength: Double = semiMajorAxisLength * (eccentricity + 1)
-  private val apoapsisLength: Double = 2 * semiMajorAxisLength * eccentricity + periapsisLength
+  private val periapsisLength: Double = semiMajorAxisLength * (1 - eccentricity)
+  private val apoapsisLength: Double = semiMajorAxisLength * (1 + eccentricity)
   assert(periapsisLength > primary.mass * 3,
     "This object will fall into its primary, its (periapsis " + periapsisLength +
     " is less than 3 * Schwarzschild radius of its parent (3 * " + primary.mass + ")")
@@ -145,8 +145,11 @@ class Orbiter(primary: RelativisticObject,
   private val semiLatusRectum: Double = semiMajorAxisLength * (1 - eccentricity * eccentricity)
 
   //Initial mean anomaly (M)
-  //TODO: use initialPositionDirection to determine this
-  private val initMeanAnomaly = math.Pi * 2 * math.random
+  //Ideally, true anomaly would be set by this rather than mean.
+  private val initMeanAnomaly = math.atan2(
+    -(minorAxisDir * initialPositionDirection.v),
+    -(majorAxisDir * initialPositionDirection.v)
+  )
 
   //Initial position/velocity for the orbit
   var theta: Double = 0
@@ -205,7 +208,7 @@ object Orbiter{
   //Okay, lets get some mass conversions down
   //all assumes light * second == 1
   object mass {
-    val sun: Double = 9.8E-5
+    val sun: Double = 9.8E-6
     val jupiter: Double = 7.34E-9
     val earth: Double = 8.87E-11
     val moon: Double = 3.67E-13
