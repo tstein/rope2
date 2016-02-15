@@ -54,8 +54,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
 
- // var texPath = "./lib/earth-large-with-ocean-mask.png"
- // var texPath = "./assets/planet_Quom1200.png"
+ // var texPath = "./lib/earth-noocean.png"
+ // var texPath = "./assets/greyplanet.png"
   val objPath = "./assets/planet.obj"
 
   var vertexShader = 0
@@ -101,7 +101,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
      graphicsStartup.lap("shaders loaded")
 
      //val texID = loadTexture()
-     val texID = newLoadTexture()
+     val texID = loadMoonTexture()
      graphicsStartup.lap("textures loaded")
 
      val m = Mesh(objPath)
@@ -327,8 +327,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
     program
   }
 
-  def newLoadTexture(): Int = {
-    val image = TextureLoader.loadImages(List("moon")).get("moon").get
+  def loadMoonTexture(): Int = {
+    val moonTexture = "moon"
+    val textures = TextureLoader.loadImages(List(moonTexture))
+    val image = textures(moonTexture)
     val textureID = TextureLoader.loadTexture(image)
     textureID
   }

@@ -1,8 +1,6 @@
 package net.tedstein.rope
 
-import java.awt.image.BufferedImage
-
-import net.tedstein.rope.graphics.{LoadedImage, Graphics, TextureLoader}
+import net.tedstein.rope.graphics.Graphics
 import net.tedstein.rope.physics.Engineer
 
 
