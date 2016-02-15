@@ -125,9 +125,9 @@ class Orbiter(primary: RelativisticObject,
   assert(semiMajorAxisLength > 0, "Don't give a negative semiMajorAxisLength, you gave " + semiMajorAxisLength)
   private val periapsisLength: Double = semiMajorAxisLength * (1 - eccentricity)
   private val apoapsisLength: Double = semiMajorAxisLength * (1 + eccentricity)
-  assert(periapsisLength > primary.mass * 3,
-    "This object will fall into its primary, its (periapsis " + periapsisLength +
-    " is less than 3 * Schwarzschild radius of its parent (3 * " + primary.mass + ")")
+  //assert(periapsisLength > primary.mass * 3,
+  //  "This object will fall into its primary, its (periapsis " + periapsisLength +
+  //  " is less than 3 * Schwarzschild radius of its parent (3 * " + primary.mass + ")")
   //3r is the innermost stable orbit, use that for now
 
   //Primary body's GM constant (units: speed of light per second, acceleration)
@@ -138,6 +138,7 @@ class Orbiter(primary: RelativisticObject,
   //Specific angular momentum (also l/m)
   private val specificAngularMomentum: Double =
     math.sqrt(periapsisLength * primaryGM * (1 + eccentricity))
+  assert(specificAngularMomentum / periapsisLength < 1, "Newtonian speed at periapsis exceeds c!")
 
   //Orbital period
   val orbitalPeriod: Double = 2 * math.Pi * math.sqrt(math.pow(semiMajorAxisLength, 3) / primaryGM)
