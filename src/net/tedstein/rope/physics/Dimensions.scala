@@ -95,5 +95,6 @@ object Dimensions {
   val Stationary = Velocity(0.0, 0.0, 0.0)
   val Epoch = 0.0
   val LightSecond = 1.0
+  val AU = 498.94 * LightSecond
   def Empty[T] = Set[T]()
 }
