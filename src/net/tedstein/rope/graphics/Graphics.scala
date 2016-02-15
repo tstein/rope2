@@ -1,6 +1,6 @@
 package net.tedstein.rope.graphics
 
-import java.nio.FloatBuffer
+import java.nio.{IntBuffer, FloatBuffer}
 
 import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
@@ -9,7 +9,7 @@ import net.tedstein.rope.util.Stopwatch
 import org.lwjgl.glfw.GLFW._
 import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, _}
 import org.lwjgl.opengl.GL11.{GL_FALSE, GL_FLOAT, GL_TRUE, glClearColor}
-import org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER
+import org.lwjgl.opengl.GL15._
 import org.lwjgl.opengl.GL20.{GL_FRAGMENT_SHADER, GL_VERTEX_SHADER, glUseProgram}
 import org.lwjgl.opengl._
 import org.lwjgl.system.MemoryUtil
@@ -67,6 +67,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var gVBO = 0
   var gEBO = 0
   val FLOATSIZE = 4
+  val VERTEXSIZE = 3
+  val TEXSIZE = 2
 
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
@@ -105,6 +107,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
      val m = Mesh(objPath)
      gVAO = m.setupMesh()
+     //loadPyramid()
      graphicsStartup.lap("mesh setup")
 
      logger.info(graphicsStartup.toString)
@@ -192,7 +195,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
         GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndices.length , GL11.GL_UNSIGNED_INT,  0)
-
+      //  GL11.glDrawElements(GL11.GL_TRIANGLES, 12, GL11.GL_UNSIGNED_INT, 0)
       }
 
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
@@ -237,6 +240,54 @@ class Graphics(val universe: Universe) extends StrictLogging {
     if(keys(GLFW_KEY_DOWN)) {
       gCamera.processKeyboard(Down, deltaTime)
     }
+  }
+
+  def loadPyramid(): Unit = {
+    //make and bind the Vertex Array Object (object that tells the OpenGL what type of data the VBO holds)
+    gVAO = GL30.glGenVertexArrays()
+    GL30.glBindVertexArray(gVAO)
+
+    //create Vertex Buffer Object that will hold information about vertices
+    //here it holds the position and color of each vertex
+    gVBO = GL15.glGenBuffers()
+    GL15.glBindBuffer(GL_ARRAY_BUFFER, gVBO)
+
+    val verts: FloatBuffer = BufferUtils.createFloatBuffer(VERTEXSIZE * 4 + TEXSIZE * 4)
+    val v = Array( // bottom
+      -1.0f, -1.0f, 0.5773f,   0.0f, 0.0f,
+      0.0f, -1.0f, -1.15475f,   1.0f, 0.0f,
+      1.0f,-1.0f, 0.5773f,   0.0f, 1.0f,
+      0.0f, 1.0f, 0.0f,   1.0f, 0.0f)
+
+    verts.put(v)
+    verts.flip()
+    GL15.glBufferData(GL_ARRAY_BUFFER, verts, GL15.GL_STATIC_DRAW)
+    // connect the xyz to the "vert" attribute of the vertex shader
+
+    gEBO = glGenBuffers()
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gEBO)
+
+    val indices: IntBuffer = BufferUtils.createIntBuffer(12)
+    val i = Array( 0, 3, 1,
+                    1, 3, 2,
+                    2, 3, 0,
+                    0, 1, 2)
+    indices.put(i)
+    indices.flip()
+    GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW)
+
+    val posAttrib = 0
+    GL20.glEnableVertexAttribArray(posAttrib)
+    GL20.glVertexAttribPointer(posAttrib, 3, GL_FLOAT, false, 5 * 4, 0)
+
+
+    val texAttrib = 1
+    // connect the uv coords to the "vertTexCoord" attribute of the vertex shader
+    GL20.glEnableVertexAttribArray(texAttrib)
+    GL20.glVertexAttribPointer(texAttrib, 2, GL_FLOAT, true,  5 * 4, 3 * 4)
+
+    // unbind the VAO
+    GL30.glBindVertexArray(0)
   }
 
   def loadCube(): Unit = {
@@ -327,7 +378,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   }
 
   def newLoadTexture(): Int = {
-    val image = TextureLoader.loadImages(List("moon")).get("moon").get
+  //  val image = TextureLoader.loadImages(List("moon")).get("moon").get
+    val image = TextureLoader.loadImage("./assets/uvmap.tga")
     val textureID = TextureLoader.loadTexture(image)
     textureID
   }

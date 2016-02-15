@@ -24,7 +24,7 @@ object TextureLoader {
     textureID
   }
 
-  private def loadImage(path: String): LoadedImage = {
+  def loadImage(path: String): LoadedImage = {
     val width = BufferUtils.createIntBuffer(1)
     val height = BufferUtils.createIntBuffer(1)
     val numPixels = BufferUtils.createIntBuffer(1)
