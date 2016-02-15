@@ -91,12 +91,6 @@ class DimensionsSuite extends RopeSuite {
     val v1 = new Velocity(.52, .604, .6039)  // magnitude 0.999956
     assert(v1.add(v2).velrss < 1)
   }*/
-  test("Position.Dotproduct") {
-    //Just some random dot products
-    assertAlmostEquals(Position(1,5,2).dot(Position(1,3,5)), 1+15+10, epsilon(4))
-    assertAlmostEquals(Position(1,-5,2).dot(Position(1,3,5)), 1-15+10, epsilon(4))
-    assertAlmostEquals(Position(1,5,2).dot(Position(1,-3,-5)), 1-15-10, epsilon(4))
-  }
   test("Velocity.Direction"){
     assertAlmostEquals(Velocity(.1,0,0).direction, Position(1,0,0), epsilon(4))
     //assertAlmostEquals(Velocity(0,0,0).direction.length, 1, epsilon(4)) //Arbitrary, but make sure length is still 1
