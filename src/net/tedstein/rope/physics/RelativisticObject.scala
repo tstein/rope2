@@ -56,8 +56,9 @@ class SimpleOrbiter(primary: RelativisticObject,
                     private val initialVel: Velocity,
                     private val initialTime: Double,
                     private val initialRadius: Double,
-                    private val initialSatellites: Set[RelativisticObject]
-                   ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites) {
+                    private val initialSatellites: Set[RelativisticObject],
+                    mass: Double = Orbiter.mass.kiloGram //Small default
+                   ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites, mass) {
   def cosineOrbit(phaseOffset: Double, center: Double, amplitude: Double): Double = {
     center + amplitude * math.cos(phaseOffset)
   }
