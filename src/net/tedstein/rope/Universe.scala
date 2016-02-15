@@ -41,7 +41,7 @@ object Universe {
         new Orbiter(
           //All but primary and semiMajorAxisLength have a default, so commented out all lines that can use it
           primary = star,
-          semiMajorAxisLength = 0.9 + 0.25 * random.nextFloat(),
+          semiMajorAxisLengthSuggestion = 0.9 + 0.25 * random.nextFloat(),
           eccentricity = 0.05 + 0.15 * random.nextFloat(),
           orbitalAxis = Position(Vector3d.randomDir + Vector3d(0,1.5,-8)), //bias it to -z dir, same as the simple ones
           //initialPositionDirection = Position(Vector3d.randomDir),
@@ -69,7 +69,7 @@ object Universe {
           new Orbiter(
             //All but primary and semiMajorAxisLength have a default, so commented out all lines that can use it
             primary = planet,
-            semiMajorAxisLength = 0.15 + 0.1 * random.nextFloat(),
+            semiMajorAxisLengthSuggestion = 0.15 + 0.1 * random.nextFloat(),
             eccentricity = 0.1 + 0.23 * random.nextFloat(),
             orbitalAxis = Position(Vector3d.randomDir + Vector3d(0,0,-1)), //bias it to -z dir, same as the simple ones
             initialPositionDirection = Dimensions.Origin, //why not, start pointing at the star

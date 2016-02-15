@@ -79,7 +79,9 @@ class SimpleOrbiter(primary: RelativisticObject,
   * another <code>RelativisticObject</code>.
   *
   * @param primary The object that this <code>RelativisticObject</code> is orbiting.
-  * @param semiMajorAxisLength The "radius" of the elliptical orbit in its longer direction
+  * @param semiMajorAxisLengthSuggestion The "radius" of the elliptical orbit in its longer direction.
+  *                            Defaults to 0, which will have the function auto-calculate an
+  *                            interesting (max speed = 0.99) orbit.
   * @param eccentricity How round vs elongated the orbit is.
   *                     0 == circle, [0,1) == ellipse, 1 == parabola, (1,inf) = hyperbola
   *                     Function will break if given something outside of [0,1), and probably
@@ -93,7 +95,7 @@ class SimpleOrbiter(primary: RelativisticObject,
   *                            this becomes the major (longer) axis direction
   */
 class Orbiter(primary: RelativisticObject,
-              val semiMajorAxisLength: Double,
+              var semiMajorAxisLengthSuggestion: Double = 0,
               val eccentricity: Double = math.random * 0.8,
               orbitalAxis: Position = Position(Vector3d.randomDir),
               initialPositionDirection: Position = Position(Vector3d.randomDir),
@@ -123,22 +125,31 @@ class Orbiter(primary: RelativisticObject,
   assert(math.abs(minorAxisDir.length - 1) < 1E-4)
 
   //Sanity check eccentricity
-  assert(eccentricity < 0.999, "Bad eccentricity value of " + eccentricity + " given")
+  assert(eccentricity <= 0.999, "Bad eccentricity value of " + eccentricity + " given")
   assert(eccentricity >= 0, "Bad eccentricity value of " + eccentricity + " given")
-
-  //Sanity check that the orbit is valid
-  assert(semiMajorAxisLength > 0, "Don't give a negative semiMajorAxisLength, you gave " + semiMajorAxisLength)
-  private val periapsisLength: Double = semiMajorAxisLength * (1 - eccentricity)
-  private val apoapsisLength: Double = semiMajorAxisLength * (1 + eccentricity)
-  //assert(periapsisLength > primary.mass * 3,
-  //  "This object will fall into its primary, its (periapsis " + periapsisLength +
-  //  " is less than 3 * Schwarzschild radius of its parent (3 * " + primary.mass + ")")
-  //3r is the innermost stable orbit, use that for now
 
   //Primary body's GM constant (units: speed of light per second, acceleration)
   //Also represented as mu, or the standard gravitational parameter
   private val primaryGM: Double = primary.mass / 2
   assert(primaryGM>0, "No negative masses!")
+
+  //Sanity check that the orbit is valid
+  if(semiMajorAxisLengthSuggestion <= 0){
+    //Start making up something interesting
+    val vmax: Double = 0.99
+    semiMajorAxisLengthSuggestion = (primaryGM * (1 + eccentricity)) /
+                                    (vmax * vmax * (1 - eccentricity))
+  }
+  val semiMajorAxisLength = semiMajorAxisLengthSuggestion
+  assert(semiMajorAxisLength > 0)
+  private val periapsisLength: Double = semiMajorAxisLength * (1 - eccentricity)
+  private val apoapsisLength: Double = semiMajorAxisLength * (1 + eccentricity)
+  //Allow initial newtonian cases to violate this, to hit near c they have to...
+  //assert(periapsisLength > primary.mass, "Periapsis inside event horzion")
+  //assert(periapsisLength > primary.mass * 3,
+  //  "This object will fall into its primary, its (periapsis " + periapsisLength +
+  //  " is less than 3 * Schwarzschild radius of its parent (3 * " + primary.mass + ")")
+  //3r is the innermost stable orbit, use that for now
 
   //Specific angular momentum (also l/m)
   private val specificAngularMomentum: Double =

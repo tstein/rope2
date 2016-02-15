@@ -92,7 +92,7 @@ class RelativisticObjectSuite extends RopeSuite {
       mass = Orbiter.mass.sun)
     val earth: Orbiter = new Orbiter(
       primary = sun,
-      semiMajorAxisLength = 1.0 * Dimensions.AU, //499
+      semiMajorAxisLengthSuggestion = 1.0 * Dimensions.AU, //499
       eccentricity = 0.017,
       orbitalAxis = Position(0,0,15),
       initialPositionDirection = Position(35,0,0),
@@ -125,6 +125,7 @@ class RelativisticObjectSuite extends RopeSuite {
     assertAlmostEquals(earth.offsetToPrimary.v.length / 491, 1, 5E-3)
 
   }
+
   test("Slow and elliptical orbiter: Halley's comet around sun") {
     var time: Double = 0
     val sun: RelativisticObject = new RelativisticObject(
@@ -137,7 +138,7 @@ class RelativisticObjectSuite extends RopeSuite {
     //https://en.wikipedia.org/wiki/Halley%27s_Comet
     val halleysComet: Orbiter = new Orbiter(
       primary = sun,
-      semiMajorAxisLength = 17.8 * Dimensions.AU,
+      semiMajorAxisLengthSuggestion = 17.8 * Dimensions.AU,
       eccentricity = 0.967,
       orbitalAxis = Position(0,0,1),
       initialPositionDirection = Position(1,0,0),
@@ -170,5 +171,33 @@ class RelativisticObjectSuite extends RopeSuite {
     //assert(halleysComet.offsetToPrimary.v.length < 1.5  * Dimensions.AU)
     //assert(halleysComet.offsetToPrimary.v.length > 0.85 * Dimensions.AU)
 
+  }
+
+  test("Orbiter: Neat constructor things that should be legal") {
+    var time: Double = 0
+    val blackHole: RelativisticObject = new RelativisticObject(
+      initialPos = Dimensions.Origin,
+      initialVel = Dimensions.Stationary,
+      initialTime = Dimensions.Epoch,
+      initialRadius = 1,
+      initialSatellites = Dimensions.Empty,
+      mass = 1)
+    val defaulter: Orbiter = new Orbiter(
+      primary = blackHole
+    )
+    val diver: Orbiter = new Orbiter(
+      primary = blackHole,
+      //semiMajorAxisLengthSuggestion = 1.0 * Dimensions.AU, //499
+      eccentricity = 0.999,
+      orbitalAxis = Position(0,0,15),
+      initialPositionDirection = Position(35,0,0),
+      majorAxisSuggestion = Position(-0.15,0,0),
+      initialTime = time
+      //initialRadius = 0.021,
+      //mass = Orbiter.mass.earth
+    )
+    assert(defaulter.semiMajorAxisLength > 0)
+    assert(diver.semiMajorAxisLength > 0)
+    assert(diver.velocityToPrimary.velrss > 0.5)
   }
 }
