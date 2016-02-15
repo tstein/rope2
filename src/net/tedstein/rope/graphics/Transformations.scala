@@ -63,17 +63,17 @@ object Transformations {
     val rotation = Matrix4f()
     rotation.matrix(0)(0) = x * x * (1f - rcos) + rcos
     rotation.matrix(0)(1) = y * x * (1f - rcos) + z * rsin
-    rotation.matrix(0)(2) = -y * rsin + z * x * (1 - rcos)
+    rotation.matrix(0)(2) = x * z * (1f - rcos) - y * rsin
     rotation.matrix(0)(3) = 0.0f
 
-    rotation.matrix(1)(0) = -z * rsin + x * y * (1 - rcos)
-    rotation.matrix(1)(1) = rcos + y * y * (1 - rcos)
-    rotation.matrix(1)(2) = -y * rsin + z * x * (1 - rcos)
+    rotation.matrix(1)(0) = x * y * (1f - rcos) - z * rsin
+    rotation.matrix(1)(1) = y * y * (1f - rcos) + rcos
+    rotation.matrix(1)(2) = y * z * (1f - rcos) + x * rsin
     rotation.matrix(1)(3) = 0.0f
 
-    rotation.matrix(2)(0) = y * rsin + x * z * (1 - rcos)
-    rotation.matrix(2)(1) = -x * rsin + y * z * (1 - rcos)
-    rotation.matrix(2)(2) = rcos + z * z * (1 - rcos)
+    rotation.matrix(2)(0) = x * z * (1f - rcos) + y * rsin
+    rotation.matrix(2)(1) = y * z * (1f - rcos) - x * rsin
+    rotation.matrix(2)(2) = z * z * (1f - rcos) + rcos
     rotation.matrix(2)(3) = 0.0f
 
     rotation.matrix(3)(0) = 0.0f
@@ -81,9 +81,9 @@ object Transformations {
     rotation.matrix(3)(2) = 0.0f
     rotation.matrix(3)(3) = 1.0f
 
-    Matrix4f.multiply(transform, rotation)
 
-  //  rotation
+    Matrix4f.multiply(rotation, transform)
+
   }
 
   def rotate(angleX: Float, angleY: Float, angleZ: Float): Matrix4f = {
