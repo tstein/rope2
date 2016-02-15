@@ -61,6 +61,8 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
         orbiter.time += elapsed
         orbiter.pos = orbiter.computedPosition
         orbiter.vel = orbiter.computedVelocity
+      case orbiter2: Orbiter =>
+        orbiter2.updatePositionAndVelocity(orbiter2.time + elapsed)
     }
   }
 
