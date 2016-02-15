@@ -1,7 +1,5 @@
 package net.tedstein.rope.graphics
 
-import java.awt.Image
-import java.awt.image.BufferedImage
 import java.nio.FloatBuffer
 
 import com.typesafe.scalalogging.StrictLogging
@@ -19,7 +17,7 @@ import org.lwjgl.{BufferUtils, Sys}
 
 import scala.util.Properties
 
-class Graphics(val universe: Universe, textureImages: Map[String, BufferedImage]) extends StrictLogging {
+class Graphics(val universe: Universe) extends StrictLogging {
 
   val errorCallback = new GLFWErrorCallback {
     override def invoke(i: Int, l: Long): Unit = {
@@ -330,7 +328,7 @@ class Graphics(val universe: Universe, textureImages: Map[String, BufferedImage]
   }
 
   def newLoadTexture(): Int = {
-    val image = textureImages("moon")
+    val image = TextureLoader.loadImages(List("moon")).get("moon").get
     val textureID = TextureLoader.loadTexture(image)
     textureID
   }
