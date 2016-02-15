@@ -12,8 +12,11 @@ object Dimensions {
     def this(xc: Double, yc: Double, zc: Double) = this(Vector3d(xc, yc, zc))
 
     def add(pos: Position): Position = Position(pos.v + v)
+    def +(pos: Position): Position = this.add(pos)
+    def subtract(pos: Position): Position = Position(v - pos.v)
+    def -(pos: Position): Position = this.subtract(pos)
 
-    def add(vel: Velocity, elapsed: Double): Position = this.add(Position(vel.v * elapsed))
+    def drift(vel: Velocity, elapsed: Double): Position = this.add(Position(vel.v * elapsed))
 
     //Lorentz Transform
     //https://en.wikipedia.org/wiki/Lorentz_transformation#Vector_transformations
@@ -32,7 +35,7 @@ object Dimensions {
       )
     }*/
     //Vector definition
-    def lorentzBoost(boostVel: Velocity, time: Double): Position = {
+    def boost(boostVel: Velocity, time: Double): Position = {
       val gamma = boostVel.gamma
       Position(
         this.v +
@@ -40,7 +43,6 @@ object Dimensions {
           boostVel.v * gamma * time
       )
     }
-    def dot(pos: Position): Double = v * pos.v
   }
   object Position{
     //This allows a call like the following without "new":
@@ -69,7 +71,7 @@ object Dimensions {
       //Ideally, check that this velrss is less than 1 unless we are tacheoning
     }*/
     //Vector definition
-    def add(boostVel: Velocity): Velocity = {
+    def boost(boostVel: Velocity): Velocity = {
       val gamma = this.gamma
       val answer = this.v + boostVel.v / gamma +
         this.v * (this.v * boostVel.v) * (gamma / (1 + gamma))

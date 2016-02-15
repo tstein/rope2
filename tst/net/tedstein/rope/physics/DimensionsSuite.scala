@@ -36,22 +36,22 @@ class DimensionsSuite extends RopeSuite {
   test("zero velocity addition") {
     val v1 = new Velocity(0, 0, 0)
     val v2 = new Velocity(0, 0, 0)
-    assert(v1.add(v2) == Dimensions.Stationary)
+    assert(v1.boost(v2) == Dimensions.Stationary)
     assert(v1 == v2)
-    assert(v1.add(v2).velrss < 1)
+    assert(v1.boost(v2).velrss < 1)
   }
 
   test("velocity addition does not exceed c") {
     val v1 = new Velocity(.9, 0, 0)
     val v2 = new Velocity(.999, 0, 0)
-    assert(v1.add(v2).velrss < 1)
+    assert(v1.boost(v2).velrss < 1)
   }
 
   test("velocity addition commutability 1D parallel") {
     val v1 = new Velocity(.4, 0, 0)
     val v2 = new Velocity(.7, 0, 0)
-    assertAlmostEquals(v1.add(v2).velrss, v2.add(v1).velrss, epsilon(4))
-    assert(v1.add(v2).velrss < 1)
+    assertAlmostEquals(v1.boost(v2).velrss, v2.boost(v1).velrss, epsilon(4))
+    assert(v1.boost(v2).velrss < 1)
   }
 
   //Note: it is not 100% commutative.  Direction will not commute.
@@ -71,8 +71,8 @@ class DimensionsSuite extends RopeSuite {
     val v = .6
     val v1 = new Velocity(u, 0, 0)
     val v2 = new Velocity(v, 0, 0)
-    assertAlmostEquals(v1.add(v2).velrss, (v+u)/(1+u*v), epsilon(4))
-    assert(v1.add(v2).velrss < 1)
+    assertAlmostEquals(v1.boost(v2).velrss, (v+u)/(1+u*v), epsilon(4))
+    assert(v1.boost(v2).velrss < 1)
   }
 
   /*test("velocity addition in three dimensions, colinear") {
@@ -125,8 +125,8 @@ class DimensionsSuite extends RopeSuite {
   test("Lorentz transform"){
     //Do some 1D tests
     var v = Velocity(.5,0,0)
-    assertAlmostEquals(Position(1,1,1).lorentzBoost(v,0), Position(1*v.gamma,1,1), epsilon(4))
-    assertAlmostEquals(Position(1,1,1).lorentzBoost(v,10), Position((1-10*0.5)*v.gamma,1,1), epsilon(4))
+    assertAlmostEquals(Position(1,1,1).boost(v,0), Position(1*v.gamma,1,1), epsilon(4))
+    assertAlmostEquals(Position(1,1,1).boost(v,10), Position((1-10*0.5)*v.gamma,1,1), epsilon(4))
 
   }
 }

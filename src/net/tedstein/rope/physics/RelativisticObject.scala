@@ -204,7 +204,7 @@ class Orbiter(primary: RelativisticObject,
 
     //Update for absolute position and velocity
     pos = primary.pos.add(offsetToPrimary)
-    vel = velocityToPrimary.add(primary.vel)
+    vel = velocityToPrimary.boost(primary.vel)
   }
 
   //Just call pos and vel?
