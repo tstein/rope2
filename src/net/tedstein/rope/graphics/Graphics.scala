@@ -54,9 +54,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
 
- // var texPath = "./lib/earth-noocean.png"
- // var texPath = "./assets/greyplanet.png"
-  val objPath = "./assets/planet.obj"
+  val objPath = "./assets/orientedplanet.obj"
 
   var vertexShader = 0
   var fragmentShader = 0
@@ -157,7 +155,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
     glfwSetKeyCallback(window, keyCallback)
 
-    val scale = 0.0f
     //set uniform values
     val texLocation = GL20.glGetUniformLocation(program, "tex")
     val modelLocation = GL20.glGetUniformLocation(program, "model")
@@ -191,12 +188,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
       for (i <- universe.bodies) {
         var model = Matrix4f()
         model = Transformations.translate(model, i.pos.x.toFloat, i.pos.y.toFloat, i.pos.z.toFloat)
-        model = Transformations.rotate(model, 90, 1.0f, 0.0f, 0.0f)
         model = Transformations.scale(model, i.radius.toFloat, i.radius.toFloat, i.radius.toFloat)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
         GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndices.length , GL11.GL_UNSIGNED_INT,  0)
-      //  GL11.glDrawElements(GL11.GL_TRIANGLES, 12, GL11.GL_UNSIGNED_INT, 0)
       }
 
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
