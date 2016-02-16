@@ -99,13 +99,11 @@ class Graphics(val universe: Universe) extends StrictLogging {
      val program = loadShaders()
      graphicsStartup.lap("shaders loaded")
 
-     //val texID = loadTexture()
-     val texID = newLoadTexture()
+     val texID = loadTexture()
      graphicsStartup.lap("textures loaded")
 
      val m = Mesh(objPath)
      gVAO = m.setupMesh()
-     //loadPyramid()
      graphicsStartup.lap("mesh setup")
 
      logger.info(graphicsStartup.toString)
@@ -285,86 +283,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
     GL30.glBindVertexArray(0)
   }
 
-  def loadCube(): Unit = {
-    //make and bind the Vertex Array Object (object that tells the OpenGL what type of data the VBO holds)
-    gVAO = GL30.glGenVertexArrays()
-    GL30.glBindVertexArray(gVAO)
-
-    //create Vertex Buffer Object that will hold information about vertices
-    //here it holds the position and color of each vertex
-    gVBO = GL15.glGenBuffers()
-    GL15.glBindBuffer(GL_ARRAY_BUFFER, gVBO)
-
-    val verts: FloatBuffer = BufferUtils.createFloatBuffer(30 * 6)
-    val v = Array( // bottom
-      -1.0f,-1.0f,-1.0f,   0.0f, 0.0f,
-      1.0f,-1.0f,-1.0f,   1.0f, 0.0f,
-      -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
-      1.0f,-1.0f,-1.0f,   1.0f, 0.0f,
-      1.0f,-1.0f, 1.0f,   1.0f, 1.0f,
-      -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
-
-
-      // top
-      -1.0f, 1.0f,-1.0f,   0.0f, 0.0f,
-      -1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
-      1.0f, 1.0f,-1.0f,   1.0f, 0.0f,
-      1.0f, 1.0f,-1.0f,   1.0f, 0.0f,
-      -1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
-      1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
-
-      // front
-      -1.0f,-1.0f, 1.0f,   1.0f, 0.0f,
-      1.0f,-1.0f, 1.0f,   0.0f, 0.0f,
-      -1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
-      1.0f,-1.0f, 1.0f,   0.0f, 0.0f,
-      1.0f, 1.0f, 1.0f,   0.0f, 1.0f,
-      -1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
-
-      // back
-      -1.0f,-1.0f,-1.0f,   0.0f, 0.0f,
-      -1.0f, 1.0f,-1.0f,   0.0f, 1.0f,
-      1.0f,-1.0f,-1.0f,   1.0f, 0.0f,
-      1.0f,-1.0f,-1.0f,   1.0f, 0.0f,
-      -1.0f, 1.0f,-1.0f,   0.0f, 1.0f,
-      1.0f, 1.0f,-1.0f,   1.0f, 1.0f,
-
-      // left
-      -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
-      -1.0f, 1.0f,-1.0f,   1.0f, 0.0f,
-      -1.0f,-1.0f,-1.0f,   0.0f, 0.0f,
-      -1.0f,-1.0f, 1.0f,   0.0f, 1.0f,
-      -1.0f, 1.0f, 1.0f,   1.0f, 1.0f,
-      -1.0f, 1.0f,-1.0f,   1.0f, 0.0f,
-
-      // right
-      1.0f,-1.0f, 1.0f,   1.0f, 1.0f,
-      1.0f,-1.0f,-1.0f,   1.0f, 0.0f,
-      1.0f, 1.0f,-1.0f,   0.0f, 0.0f,
-      1.0f,-1.0f, 1.0f,   1.0f, 1.0f,
-      1.0f, 1.0f,-1.0f,   0.0f, 0.0f,
-      1.0f, 1.0f, 1.0f,   0.0f, 1.0f
-    )
-
-    verts.put(v)
-    verts.flip()
-    GL15.glBufferData(GL_ARRAY_BUFFER, verts, GL15.GL_STATIC_DRAW)
-    // connect the xyz to the "vert" attribute of the vertex shader
-
-    val posAttrib = 0
-    GL20.glEnableVertexAttribArray(posAttrib)
-    GL20.glVertexAttribPointer(posAttrib, 3, GL_FLOAT, false, 5 * 4, 0)
-
-
-    val texAttrib = 1
-    // connect the uv coords to the "vertTexCoord" attribute of the vertex shader
-    GL20.glEnableVertexAttribArray(texAttrib)
-    GL20.glVertexAttribPointer(texAttrib, 2, GL_FLOAT, true,  5 * 4, 3 * 4)
-
-    // unbind the VAO
-    GL30.glBindVertexArray(0)
-  }
-
   def loadShaders(): Int = {
     vertexShader = createShaderObject(GL_VERTEX_SHADER, vertexPath)
     fragmentShader = createShaderObject(GL_FRAGMENT_SHADER, fragmentPath)
@@ -372,7 +290,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     program
   }
 
-  def newLoadTexture(): Int = {
+  def loadTexture(): Int = {
     val image = TextureLoader.loadImages(List("moon")).get("moon").get
     val textureID = TextureLoader.loadTexture(image)
     textureID
