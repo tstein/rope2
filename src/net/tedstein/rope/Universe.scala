@@ -37,7 +37,7 @@ object Universe {
           initialRadius = 0.07,
           initialSatellites = Dimensions.Empty,
           mass = 0.07/5)
-        else
+        else if(math.random > 0.5)
         new Orbiter(
           //All but primary and semiMajorAxisLength have a default, so commented out all lines that can use it
           primary = star,
@@ -51,6 +51,13 @@ object Universe {
           initialTime = Dimensions.Epoch,
           initialRadius = 0.07,
           //initialSatellites = Dimensions.Empty,
+          mass = 0.07/5
+        )
+        else
+        new Orbiter( //Rare stardiver
+          primary = star,
+          eccentricity = 0.9,
+          initialRadius = 0.07,
           mass = 0.07/5
         )
         val moons = for (_ <- 0 to 2) yield {
