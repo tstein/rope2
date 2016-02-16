@@ -167,10 +167,103 @@ class RelativisticObjectSuite extends RopeSuite {
         (halleysComet.velocityToPrimary.velrss * halleysComet.offsetToPrimary.v.length)
     )
     //Distance should be within 0.85 to 1.5 AU
-    //TODO: don't know why this doesn't match up, don't care for now
-    //assert(halleysComet.offsetToPrimary.v.length < 1.5  * Dimensions.AU)
-    //assert(halleysComet.offsetToPrimary.v.length > 0.85 * Dimensions.AU)
+    assert(halleysComet.offsetToPrimary.v.length < 1.5  * Dimensions.AU)
+    assert(halleysComet.offsetToPrimary.v.length > 0.85 * Dimensions.AU)
 
+  }
+
+  test("Orbiter: Conservation of specific orbital energy (VERY MUCH NEWTONIAN) and integration sanity") {
+    val sun: RelativisticObject = new RelativisticObject(
+      initialPos = Position(0,0,0),
+      initialVel = Velocity(0,0,0),
+      initialTime = Dimensions.Epoch,
+      initialRadius = 4.643,
+      initialSatellites = Dimensions.Empty,
+      mass = Orbiter.mass.sun)
+    val earth: Orbiter = new Orbiter(
+      primary = sun,
+      semiMajorAxisLengthSuggestion = 1.0 * Dimensions.AU, //499
+      eccentricity = 0.017,
+      orbitalAxis = Position(0,0,15),
+      initialPositionDirection = Position(35,0,0),
+      majorAxisSuggestion = Position(-0.15,0,0),
+      initialTime = 0,
+      initialRadius = 0.021,
+      mass = Orbiter.mass.earth
+    )
+    val eccentricEarth: Orbiter = new Orbiter(
+      primary = sun,
+      semiMajorAxisLengthSuggestion = 1.0 * Dimensions.AU, //499
+      eccentricity = 0.417,
+      orbitalAxis = Position(0,0,15),
+      initialPositionDirection = Position(35,0,0),
+      majorAxisSuggestion = Position(-0.15,0,0),
+      initialTime = 0,
+      initialRadius = 0.021,
+      mass = Orbiter.mass.earth
+    )
+    //https://en.wikipedia.org/wiki/Halley%27s_Comet
+    val halleysComet: Orbiter = new Orbiter(
+      primary = sun,
+      semiMajorAxisLengthSuggestion = 17.8 * Dimensions.AU,
+      eccentricity = 0.967,
+      orbitalAxis = Position(0,0,1),
+      initialPositionDirection = Position(1,0,0),
+      majorAxisSuggestion = Position(-1,0,0),
+      initialTime = 0,
+      initialRadius = 11 * Dimensions.kilometer,
+      mass = 2.2E14 * Orbiter.mass.kiloGram
+    )
+    val halleysCometRandDir: Orbiter = new Orbiter(
+      primary = sun,
+      semiMajorAxisLengthSuggestion = 17.8 * Dimensions.AU,
+      eccentricity = 0.967,
+      initialTime = 0
+    )
+    val defaulter: Orbiter = new Orbiter(
+      primary = sun
+    )
+    def tester(subject: Orbiter) = {
+      val mu: Double = sun.mass * 0.5
+      val specificOrbitalEnergy: Double = - mu / (2 * subject.semiMajorAxisLength)
+      var time: Double = 0
+      subject.updatePositionAndVelocity(time)
+      var lastPosition = subject.offsetToPrimary
+      var lastVelocity = subject.velocityToPrimary
+      val resolution: Double = 1.0/128 //Will take about 2 * PI * 1/this steps to complete a revolution
+      while(time < subject.orbitalPeriod * 1.1){
+        lastPosition = subject.offsetToPrimary
+        lastVelocity = subject.velocityToPrimary
+        val timeToCenterIfAimedThatWay: Double = lastPosition.v.length / lastVelocity.velrss
+        val timeStep = timeToCenterIfAimedThatWay * resolution
+        time += timeStep
+        subject.updatePositionAndVelocity(time)
+        val avgVelocity = Velocity((lastVelocity.v + subject.velocityToPrimary.v) * 0.5)
+        val tolerance = lastPosition.v.length * resolution * 0.1
+        val impliedVelocity = Velocity((subject.offsetToPrimary.v - lastPosition.v) / timeStep)
+
+        //Check: does the velocity follow the position path?
+        assertAlmostEquals(subject.offsetToPrimary,
+                          lastPosition.drift(avgVelocity, timeStep),
+                          tolerance)
+        assertAlmostEquals(impliedVelocity, avgVelocity, avgVelocity.velrss * resolution * 0.1)
+
+        //Check: does energy add up?
+        //https://en.wikipedia.org/wiki/Elliptic_orbit#Energy
+        //TODO: Only valid for Newtonian!
+        assertAlmostEquals(
+          (math.pow(subject.velocityToPrimary.velrss, 2) * 0.5 -  mu / subject.offsetToPrimary.v.length) /
+                                           specificOrbitalEnergy,
+          1,
+          resolution * 0.1
+        )
+      }
+    }
+    tester(earth)
+    tester(eccentricEarth)
+    tester(halleysComet)
+    tester(halleysCometRandDir)
+    tester(defaulter)
   }
 
   test("Orbiter: Neat constructor things that should be legal") {
