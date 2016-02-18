@@ -27,7 +27,7 @@ object TextureLoader extends StrictLogging {
     textureID
   }
 
-  private def loadImage(textureName: String): Option[LoadedImage] = {
+  def loadImage(textureName: String): Option[LoadedImage] = {
     val path = ValidExtensions.filter(ext => Files.exists(TextureRoot.resolve(s"$textureName.$ext"))) match {
       case Nil =>
         logger.error(s"Couldn't find a texture with name $textureName and extension in $ValidExtensions!")

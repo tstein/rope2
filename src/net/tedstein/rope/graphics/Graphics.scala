@@ -1,7 +1,5 @@
 package net.tedstein.rope.graphics
-
 import java.nio.{IntBuffer, FloatBuffer}
-
 import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
 import net.tedstein.rope.graphics.Shader.{compileShaderProgram, createShaderObject}
@@ -16,6 +14,11 @@ import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
 
 import scala.util.Properties
+//Texture sources:
+//neptune: http://nasa3d.arc.nasa.gov
+//sun: http://www.nasa.gov/
+//moon: http://moon.nasa.gov/
+
 
 class Graphics(val universe: Universe) extends StrictLogging {
 
@@ -54,7 +57,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
 
-  val objPath = "./assets/orientedplanet.obj"
+  val objPath = "./assets/fixedplanet.obj"
 
   var vertexShader = 0
   var fragmentShader = 0
@@ -67,6 +70,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val FLOATSIZE = 4
   val VERTEXSIZE = 3
   val TEXSIZE = 2
+  var texID0 = 0
+  var texID1 = 0
+  var texID2 = 0
 
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
@@ -100,7 +106,13 @@ class Graphics(val universe: Universe) extends StrictLogging {
      val program = loadShaders()
      graphicsStartup.lap("shaders loaded")
 
-     val texID = loadMoonTexture()
+     val moonTexID = loadTexture("nasamoon")
+     val sunTexID = loadTexture("texsun")
+     val planetTexID = loadTexture("niceearth")
+     texID0 = sunTexID
+     texID1 = planetTexID
+     texID2 = moonTexID
+
      graphicsStartup.lap("textures loaded")
 
      val m = Mesh(objPath)
@@ -108,7 +120,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
      graphicsStartup.lap("mesh setup")
 
      logger.info(graphicsStartup.toString)
-     renderScene(window, texID, program, m)
+     renderScene(window, moonTexID, program, m)
     } finally {
       glfwTerminate()
       errorCallback.release()
@@ -172,7 +184,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       lastFrame = currentFrame
 
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
-      GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID)
+      GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID1)
       GL30.glBindVertexArray(gVAO)
 
       val persp = Transformations.projectionTransformation(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
@@ -291,10 +303,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
     program
   }
 
-  def loadMoonTexture(): Int = {
-    val moonTexture = "moon"
-    val textures = TextureLoader.loadImages(List(moonTexture))
-    val image = textures(moonTexture)
+  def loadTexture(name: String): Int = {
+    val image = TextureLoader.loadImage(name).get
     val textureID = TextureLoader.loadTexture(image)
     textureID
   }
