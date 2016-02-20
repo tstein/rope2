@@ -2,6 +2,8 @@ package net.tedstein.rope.graphics
 
 import com.typesafe.scalalogging.StrictLogging
 
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 object OBJLoader extends StrictLogging {
@@ -41,8 +43,8 @@ object OBJLoader extends StrictLogging {
   }
 
   def pack(verts: List[Float], texes: List[Float], vIndices: List[Int], tIndices: List[Int]): (List[Float], List[Int]) = {
-    var packed = List[Array[Float]]()
-    var newIndices = List[Int]()
+    val packed = mutable.LinkedHashSet[Array[Float]]()
+    val newIndices = ArrayBuffer[Int]()
     for (i <- vIndices.indices) {
       val squashed = new Array[Float](5)
       squashed.update(0, verts(3 * vIndices(i)))
@@ -51,13 +53,13 @@ object OBJLoader extends StrictLogging {
       squashed.update(3, texes(2 * tIndices(i)))
       squashed.update(4, texes((2 * tIndices(i)) + 1))
       if (packed.contains(squashed)) {
-        newIndices ++= List(i)
+        newIndices.append(i)
       } else {
-        packed ++= List(squashed)
-        newIndices ++= List(i)
+        packed.add(squashed)
+        newIndices.append(i)
       }
     }
-    (packed.flatten, newIndices)
+    (packed.toList.flatten, newIndices.toList)
   }
 
   def normalizeTextures(texes: List[Float]): List[Float] = {
