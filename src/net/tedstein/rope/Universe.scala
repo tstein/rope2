@@ -1,5 +1,6 @@
 package net.tedstein.rope
 
+import net.tedstein.rope.graphics.Texture
 import net.tedstein.rope.physics.{Center, SimpleOrbiter, Orbiter, RelativisticObject, Dimensions}
 import Dimensions.{Velocity, Position}
 import net.tedstein.rope.physics.Vector3d
@@ -11,7 +12,54 @@ import scala.util.Random
 class Universe(val player: RelativisticObject, val bodies: Set[RelativisticObject])
 
 object Universe {
-  def demo: Universe = {
+  def demo = solarSystem
+
+  private def solarSystem: Universe = {
+    val random = new Random()
+    val player = Center
+
+    val sun = new SimpleOrbiter(
+      primary = Center,
+      orbitalDistance = 0.0,
+      angularFrequency = 0.6,
+      initialPos = Dimensions.Origin,
+      initialVel = Dimensions.Stationary,
+      initialTime = Dimensions.Epoch + 100 * random.nextFloat(),
+      initialRadius = .232,
+      initialSatellites = Dimensions.Empty,
+      mass = 0.5)
+    sun.texture = Texture.Sun
+
+    val earth = new SimpleOrbiter(
+      primary = sun,
+      orbitalDistance = 0.8,
+      angularFrequency = 0.1,
+      initialPos = sun.pos.add(Position(0.8, 0, 0)),
+      initialVel = Dimensions.Stationary,
+      initialTime = Dimensions.Epoch,
+      initialRadius = .02,
+      initialSatellites = Dimensions.Empty)
+    earth.texture = Texture.Earth
+
+    val moon = new SimpleOrbiter(
+      primary = earth,
+      orbitalDistance = .15,
+      angularFrequency = 0.2,
+      initialPos = earth.pos.add(Position(0.3, 0, 0)),
+      initialVel = Dimensions.Stationary,
+      initialTime = Dimensions.Epoch,
+      initialRadius = .005,
+      initialSatellites = Dimensions.Empty)
+    moon.texture = Texture.Moon
+
+    earth.satellites = Set(moon)
+    sun.satellites = Set(earth)
+
+    val bodies = Set[RelativisticObject](sun, earth, moon)
+    new Universe(player, bodies)
+  }
+
+  private def lotsOfStuff: Universe = {
     val random = new Random()
     val player = Center
     val bodies = (for (_ <- 0 to 0) yield {

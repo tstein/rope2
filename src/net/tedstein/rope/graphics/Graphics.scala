@@ -70,9 +70,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val FLOATSIZE = 4
   val VERTEXSIZE = 3
   val TEXSIZE = 2
-  var texID0 = 0
-  var texID1 = 0
-  var texID2 = 0
+  var textures = Map[Texture, Int]()
 
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
@@ -90,37 +88,40 @@ class Graphics(val universe: Universe) extends StrictLogging {
     logger.info("LWJGL Version: " + org.lwjgl.Sys.getVersion)
 
     try {
-     val window = createOpenglWindow()
-     logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
-     graphicsStartup.lap("system surveyed")
+      val window = createOpenglWindow()
+      logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
+      graphicsStartup.lap("system surveyed")
 
-     GL11.glEnable(GL11.GL_DEPTH_TEST)
-     GL11.glDepthFunc(GL11.GL_LESS)
-     GL11.glEnable(GL11.GL_BLEND)
-     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
-     GL11.glEnable(GL11.GL_TEXTURE_2D)
-     GL11.glCullFace(GL11.GL_BACK)
-     GL11.glEnable(GL11.GL_CULL_FACE)
-     graphicsStartup.lap("OpenGL ready")
+      GL11.glEnable(GL11.GL_DEPTH_TEST)
+      GL11.glDepthFunc(GL11.GL_LESS)
+      GL11.glEnable(GL11.GL_BLEND)
+      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+      GL11.glEnable(GL11.GL_TEXTURE_2D)
+      GL11.glCullFace(GL11.GL_BACK)
+      GL11.glEnable(GL11.GL_CULL_FACE)
+      graphicsStartup.lap("OpenGL ready")
 
-     val program = loadShaders()
-     graphicsStartup.lap("shaders loaded")
+      val program = loadShaders()
+      graphicsStartup.lap("shaders loaded")
 
-     val sunTexID = loadTexture("sun")
-     val planetTexID = loadTexture("earth")
-     val moonTexID = loadTexture("moon")
-     texID0 = sunTexID
-     texID1 = planetTexID
-     texID2 = moonTexID
+      val images = Texture.AllTextures.map(tex => tex -> TextureLoader.loadImage(tex.name)).toMap
+      textures = images.flatMap { case (tex, img) =>
+        img match {
+          case Some(_) =>
+            Some(tex, TextureLoader.loadTexture(img.get))
+          case None =>
+            logger.error(s"${tex.name} was in AllTextures, but we couldn't load it!")
+            None
+        }
+      }
+      graphicsStartup.lap("textures loaded")
 
-     graphicsStartup.lap("textures loaded")
+      val m = Mesh(objPath)
+      gVAO = m.setupMesh()
+      graphicsStartup.lap("mesh setup")
 
-     val m = Mesh(objPath)
-     gVAO = m.setupMesh()
-     graphicsStartup.lap("mesh setup")
-
-     logger.info(graphicsStartup.toString)
-     renderScene(window, moonTexID, program, m)
+      logger.info(graphicsStartup.toString)
+      renderScene(window, program, m)
     } finally {
       glfwTerminate()
       errorCallback.release()
@@ -161,7 +162,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     window
   }
 
-  def renderScene(window: Long, texID: Int, program: Int,  m: Mesh): Unit = {
+  def renderScene(window: Long, program: Int,  m: Mesh): Unit = {
 
     glfwSetKeyCallback(window, keyCallback)
 
@@ -184,8 +185,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
       lastFrame = currentFrame
 
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
-      GL11.glBindTexture(GL11.GL_TEXTURE_2D, texID1)
-      GL30.glBindVertexArray(gVAO)
 
       val persp = Transformations.projectionTransformation(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
       val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
@@ -195,11 +194,14 @@ class Graphics(val universe: Universe) extends StrictLogging {
       val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
-      for (i <- universe.bodies) {
+      for (body <- universe.bodies) {
         var model = Matrix4f()
-        model = Transformations.translate(model, i.pos.x.toFloat, i.pos.y.toFloat, i.pos.z.toFloat)
-        model = Transformations.scale(model, i.radius.toFloat, i.radius.toFloat, i.radius.toFloat)
+        model = Transformations.translate(model, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
+        model = Transformations.scale(model, body.radius.toFloat, body.radius.toFloat, body.radius.toFloat)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures(body.texture))
+        GL30.glBindVertexArray(gVAO)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
         GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndices.length , GL11.GL_UNSIGNED_INT,  0)
       }
