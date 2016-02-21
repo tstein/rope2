@@ -106,9 +106,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
      val program = loadShaders()
      graphicsStartup.lap("shaders loaded")
 
-     val moonTexID = loadTexture("nasamoon")
-     val sunTexID = loadTexture("texsun")
-     val planetTexID = loadTexture("niceearth")
+     val sunTexID = loadTexture("sun")
+     val planetTexID = loadTexture("earth")
+     val moonTexID = loadTexture("moon")
      texID0 = sunTexID
      texID1 = planetTexID
      texID2 = moonTexID
