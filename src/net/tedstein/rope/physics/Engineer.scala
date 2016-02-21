@@ -53,6 +53,7 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
 
   private def update(elapsed: Double): Unit = {
     universe.bodies.par.foreach(updateObject(_, universe.player, elapsed))
+    //universe.bodies.par.foreach(updateObjectRelativistic(_, universe.player, elapsed))
   }
 
   private def updateObject(something: RelativisticObject, player: RelativisticObject, elapsed: Double): Unit = {
@@ -63,6 +64,25 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
         orbiter.vel = orbiter.computedVelocity
       case orbiter2: Orbiter =>
         orbiter2.updatePositionAndVelocity(orbiter2.time + elapsed)
+    }
+  }
+  private def updateObjectRelativistic(something: RelativisticObject, player: RelativisticObject, elapsed: Double): Unit = {
+    //TODO: Good test for this function
+    //Clumsy (possibly have the wrong v, no approximation error correction) Newton's method.
+    //Upgrade to Range-Kutta?  Should be more stable and accurate, though it does the calculation 4 times.
+    //Upgrade to correct for absolute time drift?
+
+    //Get Vob - Vpl component in the direction away from the player
+    val velrssFromPlayer = something.vel.boost(player.vel).v * (something.pos.v - player.pos.v).normalize
+    val timeAdd = elapsed / (1 + velrssFromPlayer)
+
+    something match {
+      case orbiter: SimpleOrbiter =>
+        orbiter.time += timeAdd
+        orbiter.pos = orbiter.computedPosition
+        orbiter.vel = orbiter.computedVelocity
+      case orbiter2: Orbiter =>
+        orbiter2.updatePositionAndVelocity(orbiter2.time + timeAdd)
     }
   }
 
