@@ -123,9 +123,10 @@ object OBJLoader extends StrictLogging {
   def extractTexCoords(line: String): List[Float] = {
     //line looks like this:
     //#vt 0.999896 0.983649
-    val x = line.split(" ")(1).toFloat
-    val y = line.split(" ")(2).toFloat
-    List(x, y)
+    // Blender appears to emit objs with incorrect texture coordinates. u = 1 - u corrects for this.
+    val u = 1f - line.split(" ")(1).toFloat
+    val v = line.split(" ")(2).toFloat
+    List(u, v)
   }
 
   def extractVertexIndecies(line: String): Array[Int] = {
