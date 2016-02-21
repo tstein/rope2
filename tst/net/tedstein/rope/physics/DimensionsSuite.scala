@@ -36,32 +36,44 @@ class DimensionsSuite extends RopeSuite {
   test("zero velocity addition") {
     val v1 = new Velocity(0, 0, 0)
     val v2 = new Velocity(0, 0, 0)
-    assert(v1.boost(v2) == Dimensions.Stationary)
+    assert(v1.velAdd(v2) == Dimensions.Stationary)
     assert(v1 == v2)
-    assert(v1.boost(v2).velrss < 1)
+    assert(v1.velAdd(v2).velrss < 1)
   }
 
   test("velocity addition does not exceed c") {
     val v1 = new Velocity(.9, 0, 0)
     val v2 = new Velocity(.999, 0, 0)
-    assert(v1.boost(v2).velrss < 1)
+    assert(v1.velAdd(v2).velrss < 1)
   }
 
   test("velocity addition commutability 1D parallel") {
     val v1 = new Velocity(.4, 0, 0)
     val v2 = new Velocity(.7, 0, 0)
-    assertAlmostEquals(v1.boost(v2).velrss, v2.boost(v1).velrss, epsilon(4))
-    assert(v1.boost(v2).velrss < 1)
+    assertAlmostEquals(v1.velAdd(v2).velrss, v2.velAdd(v1).velrss, epsilon(4))
+    assert(v1.velAdd(v2).velrss < 1)
   }
 
-  //Note: it is not 100% commutative.  Direction will not commute.
-  //https://en.wikipedia.org/wiki/Thomas_precession
-  /*test("velocity addition commutability 3D") {
-    val v1 = new Velocity(.1, 0, 0)
-    val v2 = new Velocity(0, 0, 0)
-    //assertAlmostEquals(v1.add(v2), v2.add(v1), epsilon
-    assert(v1.add(v2).velrss < 1)
-  }*/
+  test("Boost and unBoost undo each other, 1D") {
+    val v1 = new Velocity(.4, 0, 0)
+    val v2 = new Velocity(.7, 0, 0)
+    assertAlmostEquals(v2, v2.boost(v1).unBoost(v1), epsilon(4))
+  }
+
+  test("Boost and unBoost undo each other, 2D") {
+    val v1 = new Velocity(0 ,.8, 0)
+    val v2 = new Velocity(.9, 0, 0)
+    assertAlmostEquals(v2, v2.boost(v1).unBoost(v1), epsilon(4))
+  }
+
+  test("Boost and unBoost undo each other, 100x random 3D") {
+    for(_<-1 to 100) {
+      val v1 = new Velocity(Vector3d.randomDir * math.random * 0.9999)
+      val v2 = new Velocity(Vector3d.randomDir * math.random * 0.9999)
+      assertAlmostEquals(v2.velrss, v2.boost(v1).unBoost(v1).velrss, epsilon(4))
+      assertAlmostEquals(v2, v2.boost(v1).unBoost(v1), epsilon(4))
+    }
+  }
 
   test("velocity addition in one dimension") {
     //Should match:
@@ -71,26 +83,18 @@ class DimensionsSuite extends RopeSuite {
     val v = .6
     val v1 = new Velocity(u, 0, 0)
     val v2 = new Velocity(v, 0, 0)
-    assertAlmostEquals(v1.boost(v2).velrss, (v+u)/(1+u*v), epsilon(4))
-    assert(v1.boost(v2).velrss < 1)
+    assertAlmostEquals(v1.velAdd(v2).velrss, (v+u)/(1+u*v), epsilon(4))
+    assert(v1.velAdd(v2).velrss < 1)
   }
 
-  /*test("velocity addition in three dimensions, colinear") {
+  test("velocity addition in three dimensions, colinear") {
     val v1 = new Velocity(.3, .4, .5) //mag = .70711
     val v2 = new Velocity(.3, .4, .5) //mag = .70711
-    assert(v1.add(v2).velrss < 1)
+    assert(v1.velAdd(v2).velrss > v1.velrss)
+    assert(v1.velAdd(v2).velrss < v1.velrss * 2)
+    assertAlmostEquals(v1.direction, v1.velAdd(v2).direction, epsilon(4))
   }
 
-  test("velocity addition in three dimensions, general") {
-    val v1 = new Velocity(.3, .4, .5) //mag = .70711
-    val v2 = new Velocity(.3, .4, .5) //mag = .70711
-    assert(v1.add(v2).velrss < 1)
-  }
-
-  test("velocity addition hauling ass") {
-    val v1 = new Velocity(.52, .604, .6039)  // magnitude 0.999956
-    assert(v1.add(v2).velrss < 1)
-  }*/
   test("Velocity.Direction"){
     assertAlmostEquals(Velocity(.1,0,0).direction, Position(1,0,0), epsilon(4))
     //assertAlmostEquals(Velocity(0,0,0).direction.length, 1, epsilon(4)) //Arbitrary, but make sure length is still 1
@@ -116,6 +120,7 @@ class DimensionsSuite extends RopeSuite {
     assertAlmostEquals(Velocity(0.0732225169964744, -0.0772141885718619, -0.068424472083661).direction,
       Position(0.578775784483816, -0.610327320025238, -0.54085039865563), epsilon(4))
   }
+
   test("Lorentz transform"){
     //Do some 1D tests
     var v = Velocity(.5,0,0)
@@ -123,4 +128,16 @@ class DimensionsSuite extends RopeSuite {
     assertAlmostEquals(Position(1,1,1).boost(v,10), Position((1-10*0.5)*v.gamma,1,1), epsilon(4))
 
   }
+
+  /*
+  //Need to have 4-vectors to adequately describe this!
+  test("Lorentz transform reversible"){
+    for(_<-0 to 100){
+      val v1 = Velocity(Vector3d.randomDir * math.random * 0.99)
+      val p1 = Position(Vector3d.randomDir * math.random * 10)
+      val time = (math.random - 0.5 ) * 100
+      assertAlmostEquals(p1.boost(v1,time).unBoost(v1,time), p1, epsilon(4))
+    }
+  }
+  */
 }

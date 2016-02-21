@@ -43,6 +43,9 @@ object Dimensions {
           boostVel.v * gamma * time
       )
     }
+    def unBoost(boostVel: Velocity, time: Double): Position = {
+      this.boost(Velocity(-boostVel.v), time)
+    }
   }
   object Position{
     //This allows a call like the following without "new":
@@ -71,11 +74,21 @@ object Dimensions {
       //Ideally, check that this velrss is less than 1 unless we are tacheoning
     }*/
     //Vector definition
+
     def boost(boostVel: Velocity): Velocity = {
-      val gamma = this.gamma
-      val answer = this.v + boostVel.v / gamma +
-        this.v * (this.v * boostVel.v) * (gamma / (1 + gamma))
-      Velocity(answer / (1 + this.v * boostVel.v))
+      val gamma = boostVel.gamma
+      val answer = this.v / gamma - boostVel.v +
+        boostVel.v * (this.v * boostVel.v) * (gamma / (1 + gamma))
+      Velocity(answer / (1 - this.v * boostVel.v))
+    }
+    def unBoost(boostVel: Velocity): Velocity = {
+      this.boost(Velocity(-boostVel.v))
+    }
+    def velAdd(vel: Velocity): Velocity = {
+      this.unBoost(vel)
+    }
+    def velSubtract(vel: Velocity): Velocity = {
+      this.boost(vel)
     }
     //def dot(vel: Velocity): Double = v * vel.v
 
