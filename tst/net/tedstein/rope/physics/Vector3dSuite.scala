@@ -88,4 +88,17 @@ class Vector3dSuite extends RopeSuite {
     //Check that it is within it to something reasonable, say 7 sigma? (7 sigma is 1 in 400 billion or so)
     assertAlmostEquals(sum, Vector3d(0,0,0), math.sqrt(size) * 7)
   }
+  test("Projection"){
+    assertAlmostEquals(a.proj(Vector3d(0,77,0)), Vector3d(0,4,0), tol)
+    assertAlmostEquals(a.proj(Vector3d(-10,0,0)), Vector3d(3,0,0), tol)
+    assertAlmostEquals(a.proj(Vector3d(0,0,.1)), Vector3d(0,0,5), tol)
+    assertAlmostEquals(a.proj(b) * b, a * b, tol)
+    assertAlmostEquals(a.proj(b).cross(b), Vector3d.Zero, tol)
+  }
+  test("Perpendicular"){
+    assertAlmostEquals(a.perp(Vector3d(0,77,0)), Vector3d(3,0,5), tol)
+    assertAlmostEquals(a.perp(Vector3d(-10,0,0)), Vector3d(0,4,5), tol)
+    assertAlmostEquals(a.perp(Vector3d(0,0,.1)), Vector3d(3,4,0), tol)
+    assertAlmostEquals(a.perp(b) * b, 0, tol)
+  }
 }

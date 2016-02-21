@@ -74,6 +74,15 @@ case class Vector3d (x: Double, y: Double, z: Double) {
     val perpComponent = axis.cross(this)
     (this - projection) * cos(angle) + perpComponent * sin(angle) + projection
   }
+  //proj: Projection of this onto the argument
+  def proj(directionVector: Vector3d): Vector3d = {
+    val directionLength = directionVector.length
+    directionVector * (directionVector * this) / (directionLength * directionLength)
+  }
+  //perp: Returns the component of the vector perpendicular to the direction vector
+  def perp(directionVector: Vector3d): Vector3d = {
+    this - this.proj(directionVector)
+  }
 }
 
 object Vector3d {
