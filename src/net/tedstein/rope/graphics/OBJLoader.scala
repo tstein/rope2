@@ -1,6 +1,7 @@
 package net.tedstein.rope.graphics
 
 import com.typesafe.scalalogging.StrictLogging
+import net.tedstein.rope.util.Stopwatch
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -15,6 +16,8 @@ object OBJLoader extends StrictLogging {
   var minz = 0.0f
 
   def parseObjFile(filename: String, model: Mesh): Unit = {
+    val parsing = new Stopwatch("parseObjFile")
+
     var unorderedVertices = List[Float]()
     var unorderedTexes = List[Float]()
     for (line <- Source.fromFile(filename).getLines()) {
@@ -29,6 +32,7 @@ object OBJLoader extends StrictLogging {
         model.texIndices ++= extractTexCoordIndecies(line)
       }
     }
+    parsing.lap("extraction complete")
 
     val avgx = (maxx + minx) / 2
     val avgy = (maxy + miny) / 2
@@ -36,10 +40,15 @@ object OBJLoader extends StrictLogging {
 
     model.vertices ++= normalizeValues(unorderedVertices, avgx, avgy, avgz)
     model.texCoords ++= unorderedTexes
+    parsing.lap("values normalized")
 
     val (packedverts, indices) = pack(model.vertices, model.texCoords, model.vertIndices, model.texIndices)
+    parsing.lap("vertices packed")
+
     model.packedverts ++= packedverts
     model.eboIndices ++= indices
+    parsing.lap("parsing done")
+    logger.info(parsing.toString)
   }
 
   def pack(verts: List[Float], texes: List[Float], vIndices: List[Int], tIndices: List[Int]): (List[Float], List[Int]) = {

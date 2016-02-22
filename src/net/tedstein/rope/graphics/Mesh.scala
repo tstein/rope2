@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL30._
 import org.lwjgl.opengl.{GL11, GL15}
 
 case class Mesh(modelPath: String) {
-  var eboIndices = List[Int]()
+  var eboIndices = Array[Int]()
   var packedverts = Array[Float]()
 
   var vertices =  List[Float]()
