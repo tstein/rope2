@@ -37,7 +37,7 @@ object Center extends RelativisticObject(Dimensions.Origin,
   Dimensions.Epoch,
   Dimensions.LightSecond,
   Dimensions.Empty,
-  Orbiter.mass.kiloGram
+  0
 )
 
 
