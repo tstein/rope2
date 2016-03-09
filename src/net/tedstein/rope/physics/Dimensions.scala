@@ -111,7 +111,19 @@ object Dimensions {
   val Epoch = 0.0
   val LightSecond = 1.0
   val AU = 498.94 * LightSecond
-  val meter = 1/(2.9979E8 * LightSecond)
-  val kilometer = 1000/(2.9979E8 * LightSecond)
+  val Meter = 1/(2.9979E8 * LightSecond)
+  val Kilometer = 1000 * Meter
+  //Okay, lets get some mass conversions down
+  //all assumes light * second == 1
+  object Mass {
+    val Kilogram = 4.94E-36
+    val Sun = 1.989E30 * Kilogram       //9.8E-6
+    val Jupiter = 1.898E27 * Kilogram   //7.34E-9
+    val Earth = 5.97E24 * Kilogram      //8.87E-11
+    val Moon = 7.35E22 * Kilogram       //3.67E-13
+    //May want to think about this in terms of interesting orbital periods
+    //Near black holes: http://casa.colorado.edu/~ajsh/orbit.html
+    //(tl;dr: 8000*sun is a second, and proportional to time for the r=2Rs case)
+  }
   def Empty[T] = Set[T]()
 }

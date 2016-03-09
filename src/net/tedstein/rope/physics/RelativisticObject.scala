@@ -1,7 +1,7 @@
 package net.tedstein.rope.physics
 
 import net.tedstein.rope.graphics.Texture
-import net.tedstein.rope.physics.Dimensions.{Position, Velocity}
+import net.tedstein.rope.physics.Dimensions.{Mass, Position, Velocity}
 
 import scala.math.sqrt
 
@@ -17,7 +17,7 @@ sealed class RelativisticObject(private val initialPos: Position,
                                 private val initialRadius: Double,
                                 private val initialSatellites: Set[RelativisticObject],
                                 //Mass, in units of light seconds as Schwarzschild Radius
-                                val mass: Double = Orbiter.mass.kiloGram) {
+                                val mass: Double = Mass.Kilogram) {
   var pos = initialPos
   var vel = initialVel
   var time = initialTime
@@ -32,7 +32,8 @@ sealed class RelativisticObject(private val initialPos: Position,
 /**
   * The center of the Universe. Probably, like, a black hole.
   */
-object Center extends RelativisticObject(Dimensions.Origin,
+object Center extends RelativisticObject(
+  Dimensions.Origin,
   Dimensions.Stationary,
   Dimensions.Epoch,
   Dimensions.LightSecond,
@@ -59,7 +60,7 @@ class SimpleOrbiter(primary: RelativisticObject,
                     private val initialTime: Double,
                     private val initialRadius: Double,
                     private val initialSatellites: Set[RelativisticObject],
-                    mass: Double = Orbiter.mass.kiloGram //Small default
+                    mass: Double = Mass.Kilogram //Small default
                    ) extends RelativisticObject(initialPos, initialVel, initialTime, initialRadius, initialSatellites, mass) {
   def cosineOrbit(phaseOffset: Double, center: Double, amplitude: Double): Double = {
     center + amplitude * math.cos(phaseOffset)
@@ -105,7 +106,7 @@ class Orbiter(primary: RelativisticObject,
               private val initialTime: Double = 100 + math.random * 10,
               private val initialRadius: Double = 0.021, //Earth-ish as a default
               private val initialSatellites: Set[RelativisticObject] = Dimensions.Empty,
-              mass: Double = Orbiter.mass.kiloGram //Small default
+              mass: Double = Mass.Kilogram //Small default
           ) extends RelativisticObject(
               Dimensions.Origin, //Constructor overwrites this anyways
               Dimensions.Stationary, //Constructor overwrites this anyways
@@ -225,18 +226,7 @@ class Orbiter(primary: RelativisticObject,
   //def computedVelocity: Velocity = vel
 }
 object Orbiter{
-  //Okay, lets get some mass conversions down
-  //all assumes light * second == 1
-  object mass {
-    val kiloGram: Double = 4.94E-36
-    val sun: Double = 1.989E30 * kiloGram       //9.8E-6
-    val jupiter: Double = 1.898E27 * kiloGram   //7.34E-9
-    val earth: Double = 5.97E24 * kiloGram      //8.87E-11
-    val moon: Double = 7.35E22 * kiloGram       //3.67E-13
-    //May want to think about this in terms of interesting orbital periods
-    //Near black holes: http://casa.colorado.edu/~ajsh/orbit.html
-    //(tl;dr: 8000*sun is a second, and proportional to time for the r=2Rs case)
-  }
+
   def solveEccentricAnomaly(meanAnomaly: Double, eccentricity: Double): Double = {
     //Compute eccentric anomaly (solve for E, given M & ecc:  M = E - ecc * sin(E) )
     //Don't feed me bullshit

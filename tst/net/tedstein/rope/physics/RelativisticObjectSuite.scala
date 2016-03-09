@@ -1,9 +1,7 @@
 package net.tedstein.rope.physics
 
-import net.tedstein.rope.{physics, RopeSuite}
-import net.tedstein.rope.physics.Dimensions.{Position, Velocity}
-import net.tedstein.rope.physics.Dimensions
-import net.tedstein.rope.physics.{RelativisticObject, Orbiter, Center}
+import net.tedstein.rope.RopeSuite
+import net.tedstein.rope.physics.Dimensions.{Mass, Position, Velocity}
 
 
 class RelativisticObjectSuite extends RopeSuite {
@@ -89,7 +87,7 @@ class RelativisticObjectSuite extends RopeSuite {
       initialTime = Dimensions.Epoch,
       initialRadius = 4.643,
       initialSatellites = Dimensions.Empty,
-      mass = Orbiter.mass.sun)
+      mass = Mass.Sun)
     val earth: Orbiter = new Orbiter(
       primary = sun,
       semiMajorAxisLengthSuggestion = 1.0 * Dimensions.AU, //499
@@ -99,7 +97,7 @@ class RelativisticObjectSuite extends RopeSuite {
       majorAxisSuggestion = Position(-0.15,0,0),
       initialTime = time,
       initialRadius = 0.021,
-      mass = Orbiter.mass.earth
+      mass = Mass.Earth
     )
     //Okay, now check that these things match what real life has
     assertAlmostEquals(earth.orbitalPeriod / (365.24 * 24 * 60 * 60), 1, 3E-2)
@@ -134,7 +132,7 @@ class RelativisticObjectSuite extends RopeSuite {
       initialTime = Dimensions.Epoch,
       initialRadius = 4.643,
       initialSatellites = Dimensions.Empty,
-      mass = Orbiter.mass.sun)
+      mass = Mass.Sun)
     //https://en.wikipedia.org/wiki/Halley%27s_Comet
     val halleysComet: Orbiter = new Orbiter(
       primary = sun,
@@ -144,8 +142,8 @@ class RelativisticObjectSuite extends RopeSuite {
       initialPositionDirection = Position(1,0,0),
       majorAxisSuggestion = Position(-1,0,0),
       initialTime = time,
-      initialRadius = 11 * Dimensions.kilometer,
-      mass = 2.2E14 * Orbiter.mass.kiloGram
+      initialRadius = 11 * Dimensions.Kilometer,
+      mass = 2.2E14 * Mass.Kilogram
     )
     //Okay, now check that these things match what real life has
     assertAlmostEquals(halleysComet.orbitalPeriod / (75.3 * 365.24 * 24 * 60 * 60), 1, 9E-2)
@@ -179,7 +177,7 @@ class RelativisticObjectSuite extends RopeSuite {
       initialTime = Dimensions.Epoch,
       initialRadius = 4.643,
       initialSatellites = Dimensions.Empty,
-      mass = Orbiter.mass.sun)
+      mass = Mass.Sun)
     val earth: Orbiter = new Orbiter(
       primary = sun,
       semiMajorAxisLengthSuggestion = 1.0 * Dimensions.AU, //499
@@ -189,7 +187,7 @@ class RelativisticObjectSuite extends RopeSuite {
       majorAxisSuggestion = Position(-0.15,0,0),
       initialTime = 0,
       initialRadius = 0.021,
-      mass = Orbiter.mass.earth
+      mass = Mass.Earth
     )
     val eccentricEarth: Orbiter = new Orbiter(
       primary = sun,
@@ -200,7 +198,7 @@ class RelativisticObjectSuite extends RopeSuite {
       majorAxisSuggestion = Position(-0.15,0,0),
       initialTime = 0,
       initialRadius = 0.021,
-      mass = Orbiter.mass.earth
+      mass = Mass.Earth
     )
     //https://en.wikipedia.org/wiki/Halley%27s_Comet
     val halleysComet: Orbiter = new Orbiter(
@@ -211,8 +209,8 @@ class RelativisticObjectSuite extends RopeSuite {
       initialPositionDirection = Position(1,0,0),
       majorAxisSuggestion = Position(-1,0,0),
       initialTime = 0,
-      initialRadius = 11 * Dimensions.kilometer,
-      mass = 2.2E14 * Orbiter.mass.kiloGram
+      initialRadius = 11 * Dimensions.Kilometer,
+      mass = 2.2E14 * Mass.Kilogram
     )
     val halleysCometRandDir: Orbiter = new Orbiter(
       primary = sun,
@@ -287,7 +285,7 @@ class RelativisticObjectSuite extends RopeSuite {
       majorAxisSuggestion = Position(-0.15,0,0),
       initialTime = time
       //initialRadius = 0.021,
-      //mass = Orbiter.mass.earth
+      //mass = Mass.earth
     )
     assert(defaulter.semiMajorAxisLength > 0)
     assert(diver.semiMajorAxisLength > 0)
