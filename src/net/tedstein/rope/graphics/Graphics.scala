@@ -20,6 +20,7 @@ import scala.util.Properties
 //moon: http://moon.nasa.gov/
 
 
+
 class Graphics(val universe: Universe) extends StrictLogging {
 
   val errorCallback = new GLFWErrorCallback {
@@ -37,6 +38,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
         case (GLFW_KEY_X, GLFW_PRESS) =>
           wireframe = !wireframe
           toggleWireframe()
+        case (GLFW_KEY_Z, GLFW_PRESS) =>
+          antialiasing = !antialiasing
+          toggleAntialiasing()
         case (_, GLFW_PRESS) =>
           keys(key) = true
         case (_, GLFW_RELEASE) =>
@@ -56,8 +60,13 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val ShaderRoot = "./src/net/tedstein/rope/graphics/shaders/"
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
-
+  var antialiasingPath = ShaderRoot + "antialiasing.fs"
   val objPath = "./assets/sphere.obj"
+  //val objPath = "./assets/cube.obj"
+
+  if (!OBJProcessor.makeByteFiles(objPath)) {
+    logger.error("something went wrong with making obj byte files")
+  }
 
   var vertexShader = 0
   var fragmentShader = 0
@@ -76,6 +85,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var deltaTime = 0.0f
   var lastFrame = 0.0f
   var wireframe = false
+  var antialiasing = false
+  var antialiasProgram = 0
+  var regularProgram = 0
+  var program = 0
 
   def run(): Unit = {
     Thread.currentThread.setName("graphics")
@@ -88,10 +101,14 @@ class Graphics(val universe: Universe) extends StrictLogging {
     logger.info("LWJGL Version: " + org.lwjgl.Sys.getVersion)
 
     try {
+
       val window = createOpenglWindow()
       logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
       graphicsStartup.lap("system surveyed")
-
+      val width: IntBuffer = BufferUtils.createIntBuffer(1)
+      val height: IntBuffer = BufferUtils.createIntBuffer(1)
+      //GL11.glViewport(0, 0, 800, 600)
+      GL11.glEnable(GL13.GL_MULTISAMPLE)
       GL11.glEnable(GL11.GL_DEPTH_TEST)
       GL11.glDepthFunc(GL11.GL_LESS)
       GL11.glEnable(GL11.GL_BLEND)
@@ -101,7 +118,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
       GL11.glEnable(GL11.GL_CULL_FACE)
       graphicsStartup.lap("OpenGL ready")
 
-      val program = loadShaders()
+      regularProgram = loadShaders(vertexPath, fragmentPath)
+      antialiasProgram = loadShaders(vertexPath, antialiasingPath)
+      program = antialiasProgram
       graphicsStartup.lap("shaders loaded")
 
       val images = Texture.AllTextures.map(tex => tex -> TextureLoader.loadImage(tex.name)).toMap
@@ -138,6 +157,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE)
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE)
+    glfwWindowHint(GLFW_SAMPLES, 16)
 
     val window: Long = glfwCreateWindow(WIDTH, HEIGHT, "Rope", MemoryUtil.NULL, MemoryUtil.NULL)
 
@@ -175,7 +195,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     glUseProgram(program)
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
-    GL20.glUniform1i(texLocation, 0)
+
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
@@ -186,7 +206,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
 
-      val persp = Transformations.projectionTransformation(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
+      val persp = Transformations.perspective(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
       val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
       GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
 
@@ -197,6 +217,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       for (body <- universe.bodies) {
         var model = Matrix4f()
         model = Transformations.translate(model, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
+        model = Transformations.rotate(model, 45.0f, 0.0f, 1.0f, 0.0f)
         model = Transformations.scale(model, body.radius.toFloat, body.radius.toFloat, body.radius.toFloat)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
 
@@ -298,7 +319,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     GL30.glBindVertexArray(0)
   }
 
-  def loadShaders(): Int = {
+  def loadShaders(vertexPath: String, fragmentPath: String): Int = {
     vertexShader = createShaderObject(GL_VERTEX_SHADER, vertexPath)
     fragmentShader = createShaderObject(GL_FRAGMENT_SHADER, fragmentPath)
     val program = compileShaderProgram(vertexShader, fragmentShader)
@@ -319,4 +340,12 @@ class Graphics(val universe: Universe) extends StrictLogging {
     }
   }
 
+  def toggleAntialiasing(): Unit = {
+    if (antialiasing) {
+      program = antialiasProgram
+    } else {
+      program = regularProgram
+    }
+    glUseProgram(program)
+  }
 }

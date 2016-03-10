@@ -126,7 +126,7 @@ object Transformations {
     transform
   }
 
-  def projectionTransformation(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
+  def perspective(fovy: Float, width: Float, height: Float, zNear: Float, zFar: Float): Matrix4f = {
     val ar = width / height
     val h = (Math.tan(Math.toRadians(fovy) * 0.5f) * zNear).toFloat
     val w = h * ar.toFloat
@@ -135,6 +135,20 @@ object Transformations {
                       0.0f, 0.0f,  -(zFar + zNear) / (zFar - zNear), -1.0f,
                       0.0f, 0.0f, -2.0f * zFar * zNear / (zFar - zNear), 0.0f)
 
+  }
+
+  def ortho(left: Float, right: Float, bottom: Float, top: Float, zNear: Float, zFar: Float): Matrix4f = {
+    val m00: Float = 2f / (right - left)
+    val m11: Float = 2f / (top - bottom)
+    val m22: Float = -2f / (zFar - zNear)
+    val m30: Float = - (right + left) / (right - left)
+    val m31: Float = - (top + bottom) / (top - bottom)
+    val m32: Float = - (zFar + zNear) / (zFar - zNear)
+
+    Matrix4f(m00, 0.0f, 0.0f, 0.0f,
+      0.0f, m11, 0.0f, 0.0f,
+      0.0f, 0.0f, m22, 0.0f,
+      m30, m31, m32, 1.0f)
   }
 
   def getViewTransformation(eye: Vector3f, center: Vector3f, up: Vector3f): Matrix4f = {
