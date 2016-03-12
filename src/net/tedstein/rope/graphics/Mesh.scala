@@ -1,15 +1,20 @@
 package net.tedstein.rope.graphics
 
-import java.nio.{FloatBuffer, IntBuffer}
+import java.io.{DataInputStream, FileInputStream, File}
+import java.nio.file.{Paths, Files}
+import java.nio.{ByteOrder, ByteBuffer, FloatBuffer, IntBuffer}
 
+import com.typesafe.scalalogging.StrictLogging
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL15._
 import org.lwjgl.opengl.GL20._
 import org.lwjgl.opengl.GL30._
-import org.lwjgl.opengl.{GL11, GL15}
+import org.lwjgl.opengl._
 
-case class Mesh(modelPath: String) {
-  var eboIndices = Array[Int]()
+
+case class Mesh(modelPath: String) extends StrictLogging {
+  var eboIndices = List[Int]()
+  var eboIndicesLength = 0
   var packedverts = Array[Float]()
 
   var vertices =  List[Float]()
@@ -27,7 +32,26 @@ case class Mesh(modelPath: String) {
 
 
   def setupMesh(): Int = {
-    OBJLoader.parseObjFile(modelPath, this)
+     // OBJLoader.parseObjFile(modelPath, this)
+    if (!OBJProcessor.makeByteFiles(modelPath)) {
+      logger.error("something went wrong with making obj byte files")
+    }
+
+    val modelBytesFile = new File("verts.bin")
+    println(modelPath)
+    val vSize = modelBytesFile.length()
+    println("vSize: " + vSize)
+
+
+    val indicesByteFile = new File("indices.bin")
+    val iSize = indicesByteFile.length()
+    println("iSize: " + iSize)
+
+    val currPath = Paths.get("")
+    val s = currPath.toAbsolutePath.toString
+    System.out.println("Current relative path is: " + s)
+
+    println("")
     VAO = glGenVertexArrays()
     glBindVertexArray(VAO)
 
@@ -37,19 +61,33 @@ case class Mesh(modelPath: String) {
     EBO = glGenBuffers()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
 
-    val indexBuffer = makeIntBuffer(eboIndices.toArray)
-    GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW)
+    GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, iSize, GL_STATIC_DRAW)
+    println("error after buffering data: " + GL11.glGetError())
+    val mappedIBuffer = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_WRITE).asIntBuffer()
+    println("error after mapping buffer: " + GL11.glGetError())
+    val indexFileBytes = Files.readAllBytes(Paths.get("indices.bin"))
+    val tmpBuffer = ByteBuffer.wrap(indexFileBytes)
+    while (tmpBuffer.hasRemaining) {
+      val intval = tmpBuffer.getInt()
+      eboIndicesLength = eboIndicesLength + 1
+      mappedIBuffer.put(intval)
+    }
+    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER)
 
-    var vertBuffer = BufferUtils.createFloatBuffer(vertices.length)
-    vertBuffer = makeFloatBuffer(packedverts)
-    glBindBuffer(GL_ARRAY_BUFFER, VBO)
-    GL15.glBufferData(GL_ARRAY_BUFFER, vertBuffer, GL15.GL_STATIC_DRAW)
-
+    GL15.glBufferData(GL_ARRAY_BUFFER, vSize, GL_STATIC_DRAW)
     glEnableVertexAttribArray(0)
     glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE, 0)
-
     glEnableVertexAttribArray(1)
     glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE,  3 * FLOATSIZE)
+
+    val mappedVBuffer = glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE).asFloatBuffer()
+    val vertFileBytes = Files.readAllBytes(Paths.get("verts.bin"))
+    val tmpByteBuffer = ByteBuffer.wrap(vertFileBytes)
+    while (tmpByteBuffer.hasRemaining) {
+      val floatval = tmpByteBuffer.getFloat
+      mappedVBuffer.put(floatval)
+    }
+    glUnmapBuffer(GL_ARRAY_BUFFER)
 
     glBindBuffer(GL_ARRAY_BUFFER, 0)
     glBindVertexArray(0)
