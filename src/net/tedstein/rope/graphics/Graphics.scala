@@ -38,9 +38,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
         case (GLFW_KEY_X, GLFW_PRESS) =>
           wireframe = !wireframe
           toggleWireframe()
-        case (GLFW_KEY_Z, GLFW_PRESS) =>
-          antialiasing = !antialiasing
-          toggleAntialiasing()
         case (_, GLFW_PRESS) =>
           keys(key) = true
         case (_, GLFW_RELEASE) =>
@@ -61,12 +58,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
   var antialiasingPath = ShaderRoot + "antialiasing.fs"
-  val objPath = "./assets/sphere.obj"
-  //val objPath = "./assets/cube.obj"
-
-  if (!OBJProcessor.makeByteFiles(objPath)) {
-    logger.error("something went wrong with making obj byte files")
-  }
+  val objPath = "./assets/models/sphere.obj"
+  //val objPath = "./assets/models/cube.obj"
 
   var vertexShader = 0
   var fragmentShader = 0
@@ -85,10 +78,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var deltaTime = 0.0f
   var lastFrame = 0.0f
   var wireframe = false
-  var antialiasing = false
-  var antialiasProgram = 0
-  var regularProgram = 0
-  var program = 0
 
   def run(): Unit = {
     Thread.currentThread.setName("graphics")
@@ -99,15 +88,10 @@ class Graphics(val universe: Universe) extends StrictLogging {
     logger.info("Scala version: " + Properties.scalaPropOrElse("version.number", "unknown"))
     logger.info("Java version: " + System.getProperty("java.version"))
     logger.info("LWJGL Version: " + org.lwjgl.Sys.getVersion)
-
     try {
-
       val window = createOpenglWindow()
       logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
       graphicsStartup.lap("system surveyed")
-      val width: IntBuffer = BufferUtils.createIntBuffer(1)
-      val height: IntBuffer = BufferUtils.createIntBuffer(1)
-      //GL11.glViewport(0, 0, 800, 600)
       GL11.glEnable(GL13.GL_MULTISAMPLE)
       GL11.glEnable(GL11.GL_DEPTH_TEST)
       GL11.glDepthFunc(GL11.GL_LESS)
@@ -118,9 +102,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       GL11.glEnable(GL11.GL_CULL_FACE)
       graphicsStartup.lap("OpenGL ready")
 
-      regularProgram = loadShaders(vertexPath, fragmentPath)
-      antialiasProgram = loadShaders(vertexPath, antialiasingPath)
-      program = antialiasProgram
+      val program = loadShaders(vertexPath, fragmentPath)
       graphicsStartup.lap("shaders loaded")
 
       val images = Texture.AllTextures.map(tex => tex -> TextureLoader.loadImage(tex.name)).toMap
@@ -157,7 +139,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE)
     glfwWindowHint(GLFW_VISIBLE, GL_FALSE)
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE)
-    glfwWindowHint(GLFW_SAMPLES, 16)
+    glfwWindowHint(GLFW_SAMPLES, 4)
 
     val window: Long = glfwCreateWindow(WIDTH, HEIGHT, "Rope", MemoryUtil.NULL, MemoryUtil.NULL)
 
@@ -224,7 +206,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures(body.texture))
         GL30.glBindVertexArray(gVAO)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
-        GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndices.length , GL11.GL_UNSIGNED_INT,  0)
+
+        GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndicesLength , GL11.GL_UNSIGNED_INT,  0)
       }
 
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
@@ -340,12 +323,4 @@ class Graphics(val universe: Universe) extends StrictLogging {
     }
   }
 
-  def toggleAntialiasing(): Unit = {
-    if (antialiasing) {
-      program = antialiasProgram
-    } else {
-      program = regularProgram
-    }
-    glUseProgram(program)
-  }
 }

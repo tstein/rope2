@@ -17,7 +17,8 @@ object OBJProcessor {
 
   def makeByteFiles(path: String): Boolean = {
   //  val file = new File(path)
-    if (Files.exists(Paths.get(path + "modelbytes")) && Files.exists(Paths.get(path + "indexBytes"))) {
+
+    if (Files.exists(Paths.get("verts.bin")) && Files.exists(Paths.get("indices.bin"))) {
       //print something that says file exists already
       return true
     }
@@ -47,9 +48,17 @@ object OBJProcessor {
     vertices ++= normalizeValues(unorderedVertices, avgx, avgy, avgz)
 
     val (packedVertsArray, indices) = pack(vertices, unorderedTexes, vertIndices, texIndices)
-    val packedVertsFile = "modelbytes"
-    val indicesFile = "indexbytes"
-
+    val packedVertsFile = "verts.bin"
+    val indicesFile = "indices.bin"
+    println("packedVertsFile: " + packedVertsFile + "\n")
+    println("indicesFile: " + indicesFile + "\n")
+    val vFos = new FileOutputStream(packedVertsFile)
+    val iFos = new FileOutputStream(indicesFile)
+    vFos.write(packedVertsArray)
+    iFos.write(indices)
+    vFos.close()
+    iFos.close()
+/*
     val bosVert = new BufferedOutputStream(new FileOutputStream(packedVertsFile))
     Stream.continually(bosVert.write(packedVertsArray))
     bosVert.close()
@@ -57,8 +66,8 @@ object OBJProcessor {
     val bosIndices = new BufferedOutputStream(new FileOutputStream(indicesFile))
     Stream.continually(bosIndices.write(indices))
     bosIndices.close()
-
-    Files.exists(Paths.get(path + "modelbytes")) && Files.exists(Paths.get(path + "modelbytes"))
+*/
+    Files.exists(Paths.get("verts.bin")) && Files.exists(Paths.get("indices.bin"))
 
   }
 
