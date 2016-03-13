@@ -11,19 +11,8 @@ import org.lwjgl.opengl.GL20._
 import org.lwjgl.opengl.GL30._
 import org.lwjgl.opengl._
 
-
 case class Mesh(modelPath: String) extends StrictLogging {
-  var eboIndices = List[Int]()
   var eboIndicesLength = 0
-  var packedverts = Array[Float]()
-
-  var vertices =  List[Float]()
-  var vertIndices = List[Int]()
-  var normals = List[Float]()
-  var normalIndices = List[Int]()
-  var texCoords = List[Float]()
-  var texIndices = List[Int]()
-
 
   var VAO = 0
   var VBO = 0
@@ -32,26 +21,21 @@ case class Mesh(modelPath: String) extends StrictLogging {
 
 
   def setupMesh(): Int = {
-     // OBJLoader.parseObjFile(modelPath, this)
     if (!OBJProcessor.makeByteFiles(modelPath)) {
       logger.error("something went wrong with making obj byte files")
     }
 
-    val modelBytesFile = new File("verts.bin")
-    println(modelPath)
-    val vSize = modelBytesFile.length()
-    println("vSize: " + vSize)
+    val (bakedVertsString, bakedIndicesPathString) = OBJProcessor.assembleBakedPaths(modelPath)
 
+    val bakedVertsFile = new File(bakedVertsString)
+    val bakedVertsPath = Paths.get(bakedVertsString)
 
-    val indicesByteFile = new File("indices.bin")
-    val iSize = indicesByteFile.length()
-    println("iSize: " + iSize)
+    val bakedIndicesFile = new File(bakedIndicesPathString)
+    val bakedIndicesPath = Paths.get(bakedIndicesPathString)
 
-    val currPath = Paths.get("")
-    val s = currPath.toAbsolutePath.toString
-    System.out.println("Current relative path is: " + s)
+    val vSize = bakedVertsFile.length()
+    val iSize = bakedIndicesFile.length()
 
-    println("")
     VAO = glGenVertexArrays()
     glBindVertexArray(VAO)
 
@@ -62,17 +46,16 @@ case class Mesh(modelPath: String) extends StrictLogging {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO)
 
     GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, iSize, GL_STATIC_DRAW)
-    println("error after buffering data: " + GL11.glGetError())
     val mappedIBuffer = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_WRITE).asIntBuffer()
-    println("error after mapping buffer: " + GL11.glGetError())
-    val indexFileBytes = Files.readAllBytes(Paths.get("indices.bin"))
-    val tmpBuffer = ByteBuffer.wrap(indexFileBytes)
+    val indexBytesArray = Files.readAllBytes(bakedIndicesPath)
+    val tmpBuffer = ByteBuffer.wrap(indexBytesArray)
     while (tmpBuffer.hasRemaining) {
       val intval = tmpBuffer.getInt()
       eboIndicesLength = eboIndicesLength + 1
       mappedIBuffer.put(intval)
     }
     glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER)
+
 
     GL15.glBufferData(GL_ARRAY_BUFFER, vSize, GL_STATIC_DRAW)
     glEnableVertexAttribArray(0)
@@ -81,8 +64,8 @@ case class Mesh(modelPath: String) extends StrictLogging {
     glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE,  3 * FLOATSIZE)
 
     val mappedVBuffer = glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE).asFloatBuffer()
-    val vertFileBytes = Files.readAllBytes(Paths.get("verts.bin"))
-    val tmpByteBuffer = ByteBuffer.wrap(vertFileBytes)
+    val vertBytesArray = Files.readAllBytes(bakedVertsPath)
+    val tmpByteBuffer = ByteBuffer.wrap(vertBytesArray)
     while (tmpByteBuffer.hasRemaining) {
       val floatval = tmpByteBuffer.getFloat
       mappedVBuffer.put(floatval)
@@ -108,7 +91,4 @@ case class Mesh(modelPath: String) extends StrictLogging {
     buff
   }
 
-  def hasNormals: Boolean = {
-   normals.nonEmpty
-  }
 }

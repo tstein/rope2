@@ -198,7 +198,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
       for (body <- universe.bodies) {
         var model = Matrix4f()
         model = Transformations.translate(model, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
-        model = Transformations.rotate(model, 45.0f, 0.0f, 1.0f, 0.0f)
         model = Transformations.scale(model, body.radius.toFloat, body.radius.toFloat, body.radius.toFloat)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
 
