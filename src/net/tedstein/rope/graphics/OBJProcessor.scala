@@ -3,11 +3,13 @@ import java.io._
 import java.nio.ByteBuffer
 import java.nio.file.{Paths, Files}
 
+import com.typesafe.scalalogging.StrictLogging
+
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
-object OBJProcessor {
+object OBJProcessor extends StrictLogging {
   var maxx = 0.0f
   var maxy = 0.0f
   var maxz = 0.0f
@@ -16,10 +18,9 @@ object OBJProcessor {
   var minz = 0.0f
 
   def makeByteFiles(path: String): Boolean = {
-  //  val file = new File(path)
-
-    if (Files.exists(Paths.get("verts.bin")) && Files.exists(Paths.get("indices.bin"))) {
-      //print something that says file exists already
+    val (bakedVerts, bakedIndices) = assembleBakedPaths(path)
+    if (Files.exists(Paths.get(bakedVerts)) && Files.exists(Paths.get(bakedIndices))) {
+      logger.info("baked model files exist")
       return true
     }
 
@@ -48,12 +49,8 @@ object OBJProcessor {
     vertices ++= normalizeValues(unorderedVertices, avgx, avgy, avgz)
 
     val (packedVertsArray, indices) = pack(vertices, unorderedTexes, vertIndices, texIndices)
-    val packedVertsFile = "verts.bin"
-    val indicesFile = "indices.bin"
-    println("packedVertsFile: " + packedVertsFile + "\n")
-    println("indicesFile: " + indicesFile + "\n")
-    val vFos = new FileOutputStream(packedVertsFile)
-    val iFos = new FileOutputStream(indicesFile)
+    val vFos = new FileOutputStream(bakedVerts)
+    val iFos = new FileOutputStream(bakedIndices)
     vFos.write(packedVertsArray)
     iFos.write(indices)
     vFos.close()
@@ -67,8 +64,17 @@ object OBJProcessor {
     Stream.continually(bosIndices.write(indices))
     bosIndices.close()
 */
-    Files.exists(Paths.get("verts.bin")) && Files.exists(Paths.get("indices.bin"))
+    Files.exists(Paths.get(bakedVerts)) && Files.exists(Paths.get(bakedIndices))
 
+  }
+
+  def assembleBakedPaths(modelPath: String): (String, String) = {
+    val dirPath = "./assets/models/baked/"
+    val parts = modelPath.split("/")
+    val objFile = parts(parts.length - 1)
+    val bakedVertsPath = dirPath + objFile + ".verts.bin"
+    val bakedIndexPath = dirPath + objFile + ".index.bin"
+    (bakedVertsPath, bakedIndexPath)
   }
 
   def pack(verts: List[Float], texes: List[Float], vIndices: List[Int], tIndices: List[Int]): (Array[Byte], Array[Byte]) = {
