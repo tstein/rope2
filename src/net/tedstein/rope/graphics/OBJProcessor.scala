@@ -20,7 +20,7 @@ object OBJProcessor extends StrictLogging {
   def makeByteFiles(path: String): Boolean = {
     val (bakedVerts, bakedIndices) = assembleBakedPaths(path)
     if (Files.exists(Paths.get(bakedVerts)) && Files.exists(Paths.get(bakedIndices))) {
-      logger.info("baked model files exist")
+      //logger.info("baked model files exist")
       return true
     }
 
