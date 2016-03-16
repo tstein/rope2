@@ -58,8 +58,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexPath = ShaderRoot + "vertex.shader"
   var fragmentPath = ShaderRoot + "fragment.shader"
   var antialiasingPath = ShaderRoot + "antialiasing.fs"
-  val objPath = "./assets/models/sphere.obj"
-  //val objPath = "./assets/models/cube.obj"
 
   var vertexShader = 0
   var fragmentShader = 0
@@ -117,12 +115,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
       }
       graphicsStartup.lap("textures loaded")
 
-      val m = Mesh(objPath)
-      gVAO = m.setupMesh()
-      graphicsStartup.lap("mesh setup")
 
       logger.info(graphicsStartup.toString)
-      renderScene(window, program, m)
+      renderScene(window, program)
     } finally {
       glfwTerminate()
       errorCallback.release()
@@ -164,7 +159,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     window
   }
 
-  def renderScene(window: Long, program: Int,  m: Mesh): Unit = {
+  def renderScene(window: Long, program: Int): Unit = {
 
     glfwSetKeyCallback(window, keyCallback)
 
@@ -178,7 +173,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
 
-
+    var loadedModels = Set[Mesh]()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == GL_FALSE) {
@@ -197,16 +192,19 @@ class Graphics(val universe: Universe) extends StrictLogging {
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
       for (body <- universe.bodies) {
-        var model = Matrix4f()
-        model = Transformations.translate(model, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
-        model = Transformations.scale(model, body.radius.toFloat, body.radius.toFloat, body.radius.toFloat)
-        val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(model)
+        gVAO = body.mesh.setupMesh()
+        loadedModels = loadedModels.+(body.mesh)
+
+        var modelMat = Matrix4f()
+        modelMat = Transformations.translate(modelMat, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
+        modelMat = Transformations.scale(modelMat, body.radius.toFloat, body.radius.toFloat, body.radius.toFloat)
+        val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(modelMat)
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures(body.texture))
         GL30.glBindVertexArray(gVAO)
         GL20.glUniformMatrix4fv(modelLocation, false, worldBuffer)
 
-        GL11.glDrawElements(GL11.GL_TRIANGLES, m.eboIndicesLength , GL11.GL_UNSIGNED_INT,  0)
+        GL11.glDrawElements(GL11.GL_TRIANGLES, body.mesh.eboIndicesLength , GL11.GL_UNSIGNED_INT,  0)
       }
 
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)

@@ -13,12 +13,10 @@ import org.lwjgl.opengl._
 
 case class Mesh(modelPath: String) extends StrictLogging {
   var eboIndicesLength = 0
-
   var VAO = 0
   var VBO = 0
   var EBO = 0
   val FLOATSIZE = 4
-
 
   def setupMesh(): Int = {
     if (!OBJProcessor.makeByteFiles(modelPath)) {
@@ -56,12 +54,11 @@ case class Mesh(modelPath: String) extends StrictLogging {
     }
     glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER)
 
-
     GL15.glBufferData(GL_ARRAY_BUFFER, vSize, GL_STATIC_DRAW)
     glEnableVertexAttribArray(0)
     glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE, 0)
     glEnableVertexAttribArray(1)
-    glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE,  3 * FLOATSIZE)
+    glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 3 * FLOATSIZE + 2 * FLOATSIZE, 3 * FLOATSIZE)
 
     val mappedVBuffer = glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE).asFloatBuffer()
     val vertBytesArray = Files.readAllBytes(bakedVertsPath)
@@ -76,19 +73,11 @@ case class Mesh(modelPath: String) extends StrictLogging {
     glBindVertexArray(0)
     VAO
   }
+}
 
-  def makeIntBuffer(in: Array[Int]): IntBuffer = {
-    val buff = BufferUtils.createIntBuffer(in.length)
-    buff.put(in)
-    buff.flip()
-    buff
-  }
-
-  def makeFloatBuffer(in: Array[Float]): FloatBuffer = {
-    val buff = BufferUtils.createFloatBuffer(in.length)
-    buff.put(in)
-    buff.flip()
-    buff
-  }
+object Mesh {
+  //Add any new model here لو سمحتم
+  val Sphere = Mesh("./assets/models/sphere.obj")
+  val Cube = Mesh("./assets/models/cube.obj")
 
 }

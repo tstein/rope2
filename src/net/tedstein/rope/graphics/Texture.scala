@@ -1,10 +1,6 @@
 package net.tedstein.rope.graphics
 
 import java.io.{FileInputStream, InputStream}
-import java.nio.ByteBuffer
-
-import de.matthiasmann.twl.utils.PNGDecoder
-import org.lwjgl.opengl._
 
 case class Texture(name: String)
 

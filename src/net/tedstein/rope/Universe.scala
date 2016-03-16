@@ -1,6 +1,6 @@
 package net.tedstein.rope
 
-import net.tedstein.rope.graphics.Texture
+import net.tedstein.rope.graphics.{Texture, Mesh}
 import net.tedstein.rope.physics.{Center, SimpleOrbiter, Orbiter, RelativisticObject, Dimensions}
 import Dimensions.{Velocity, Position}
 import net.tedstein.rope.physics.Vector3d
@@ -29,6 +29,8 @@ object Universe {
       initialSatellites = Dimensions.Empty,
       mass = 0.5)
     sun.texture = Texture.Sun
+    sun.mesh = Mesh.Sphere
+
 
     val earth = new SimpleOrbiter(
       primary = sun,
@@ -40,6 +42,7 @@ object Universe {
       initialRadius = .02,
       initialSatellites = Dimensions.Empty)
     earth.texture = Texture.Earth
+    earth.mesh = Mesh.Cube
 
     val moon = new SimpleOrbiter(
       primary = earth,
@@ -51,6 +54,7 @@ object Universe {
       initialRadius = .005,
       initialSatellites = Dimensions.Empty)
     moon.texture = Texture.Moon
+    moon.mesh = Mesh.Cube
 
     earth.satellites = Set(moon)
     sun.satellites = Set(earth)

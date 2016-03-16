@@ -1,6 +1,7 @@
 package net.tedstein.rope.physics
 
 import net.tedstein.rope.graphics.Texture
+import net.tedstein.rope.graphics.Mesh
 import net.tedstein.rope.physics.Dimensions.{Position, Velocity}
 
 import scala.math.sqrt
@@ -24,7 +25,7 @@ sealed class RelativisticObject(private val initialPos: Position,
   val radius = initialRadius
   var satellites = initialSatellites
   var texture = Texture.Moon
-
+  var mesh = Mesh.Sphere
   def velrss: Double = vel.velrss
   def gamma: Double = vel.gamma
 }
