@@ -1,4 +1,4 @@
-assets/models/baked/
+assets/models/baked/*.bin
 out/
 *.DS_Store
 .idea/tasks.xml
