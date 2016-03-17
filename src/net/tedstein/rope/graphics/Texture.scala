@@ -1,7 +1,5 @@
 package net.tedstein.rope.graphics
 
-import java.io.{FileInputStream, InputStream}
-
 case class Texture(name: String)
 
 object Texture {

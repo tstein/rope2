@@ -13,6 +13,7 @@ import org.lwjgl.opengl._
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.{BufferUtils, Sys}
 
+import scala.collection.mutable
 import scala.util.Properties
 //Texture sources:
 //neptune: http://nasa3d.arc.nasa.gov
@@ -173,7 +174,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
 
-    var loadedModels = Set[Mesh]()
+    val loadedModels = mutable.Map[Mesh, Int]()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
 
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == GL_FALSE) {
@@ -192,8 +193,13 @@ class Graphics(val universe: Universe) extends StrictLogging {
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
       for (body <- universe.bodies) {
-        gVAO = body.mesh.setupMesh()
-        loadedModels = loadedModels.+(body.mesh)
+        gVAO = loadedModels.get(body.mesh) match {
+          case Some(vao) => vao
+          case None =>
+            val vao = body.mesh.setupMesh()
+            loadedModels.put(body.mesh, vao)
+            vao
+        }
 
         var modelMat = Matrix4f()
         modelMat = Transformations.translate(modelMat, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
