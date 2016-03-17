@@ -1,0 +1,2 @@
+Pre-processed models, ready to be copied into VRAM for faster startup. This file
+is necessary because git won't track empty directories.
