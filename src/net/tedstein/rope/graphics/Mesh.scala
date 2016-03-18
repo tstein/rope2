@@ -18,7 +18,7 @@ case class Mesh(modelPath: String) extends StrictLogging {
   var EBO = 0
   val FLOATSIZE = 4
 
-  def setupMesh(): Int = {
+  def loadMesh(): Int = {
     if (!OBJProcessor.makeByteFiles(modelPath)) {
       logger.error("something went wrong with making obj byte files")
     }
@@ -34,6 +34,7 @@ case class Mesh(modelPath: String) extends StrictLogging {
     val vSize = bakedVertsFile.length()
     val iSize = bakedIndicesFile.length()
 
+    logger.info("loading mesh..")
     VAO = glGenVertexArrays()
     glBindVertexArray(VAO)
 
@@ -71,6 +72,7 @@ case class Mesh(modelPath: String) extends StrictLogging {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0)
     glBindVertexArray(0)
+    logger.info("mesh loaded")
     VAO
   }
 }
