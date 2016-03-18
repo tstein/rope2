@@ -20,10 +20,10 @@ object OBJProcessor extends StrictLogging {
   def makeByteFiles(path: String): Boolean = {
     val (bakedVerts, bakedIndices) = assembleBakedPaths(path)
     if (Files.exists(Paths.get(bakedVerts)) && Files.exists(Paths.get(bakedIndices))) {
-      //logger.info("baked model files exist")
+      logger.info("baked model files exist")
       return true
     }
-
+    logger.info("creating byte files")
     var unorderedVertices = List[Float]()
     var unorderedTexes = List[Float]()
     var vertIndices = List[Int]()
@@ -64,6 +64,7 @@ object OBJProcessor extends StrictLogging {
     Stream.continually(bosIndices.write(indices))
     bosIndices.close()
 */
+    logger.info("baked files created")
     Files.exists(Paths.get(bakedVerts)) && Files.exists(Paths.get(bakedIndices))
 
   }

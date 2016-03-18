@@ -196,7 +196,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
         gVAO = loadedModels.get(body.mesh) match {
           case Some(vao) => vao
           case None =>
-            val vao = body.mesh.setupMesh()
+            val vao = body.mesh.loadMesh()
             loadedModels.put(body.mesh, vao)
             vao
         }
