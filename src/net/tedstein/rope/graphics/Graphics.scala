@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL15._
 import org.lwjgl.opengl.GL20.{GL_FRAGMENT_SHADER, GL_VERTEX_SHADER, glUseProgram}
 import org.lwjgl.opengl._
 import org.lwjgl.system.MemoryUtil
-import org.lwjgl.{BufferUtils, Sys}
+import org.lwjgl.{BufferUtils, Version}
 
 import scala.collection.mutable
 import scala.util.Properties
@@ -23,12 +23,14 @@ import scala.util.Properties
 
 
 class Graphics(val universe: Universe) extends StrictLogging {
-
+ // glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
   val errorCallback = new GLFWErrorCallback {
-    override def invoke(i: Int, l: Long): Unit = {
-      logger.error(l.toString)
-    }
-  }
+   override def invoke(i: Int, l: Long): Unit = {
+     logger.error(l.toString)}
+ }
+
+  glfwSetErrorCallback(errorCallback)
+
   val keyCallback = new GLFWKeyCallback {
     override def invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int): Unit = {
       if (!(0 to 1024).contains(key)) { return }
@@ -63,6 +65,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexShader = 0
   var fragmentShader = 0
 
+  val fontString = "./assets/OpenSans-Bold.ttf"
+  var fontTex = 0
+
   var WIDTH = 800
   var HEIGHT = 600
   var gVAO = 0
@@ -81,13 +86,14 @@ class Graphics(val universe: Universe) extends StrictLogging {
   def run(): Unit = {
     Thread.currentThread.setName("graphics")
     val graphicsStartup = new Stopwatch("graphics setup")
-    logger.info("Hello LWJGL " + Sys.getVersion + "!")
+    logger.info("Hello LWJGL " + Version.getVersion + "!")
     logger.info("OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version"))
     logger.info("Scala version: " + Properties.scalaPropOrElse("version.number", "unknown"))
     logger.info("Java version: " + System.getProperty("java.version"))
-    logger.info("LWJGL Version: " + org.lwjgl.Sys.getVersion)
+    logger.info("LWJGL Version: " + org.lwjgl.Version.getVersion)
     try {
       val window = createOpenglWindow()
+
       logger.info("OpenGL Version: " + GL11.glGetString(GL11.GL_VERSION))
       graphicsStartup.lap("system surveyed")
       GL11.glEnable(GL13.GL_MULTISAMPLE)
@@ -99,6 +105,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       GL11.glCullFace(GL11.GL_BACK)
       GL11.glEnable(GL11.GL_CULL_FACE)
       graphicsStartup.lap("OpenGL ready")
+
 
       val program = loadShaders(vertexPath, fragmentPath)
       graphicsStartup.lap("shaders loaded")
@@ -113,6 +120,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
             None
         }
       }
+
+    //  fontTex = TextRenderer.InitFont(fontString)
+
       graphicsStartup.lap("textures loaded")
 
 
@@ -146,16 +156,18 @@ class Graphics(val universe: Universe) extends StrictLogging {
     val vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor())
     glfwSetWindowPos(
       window,
-      (GLFWvidmode.width(vidmode) - WIDTH) / 2,
-      (GLFWvidmode.height(vidmode) - HEIGHT) / 2
+      (vidmode.width() - WIDTH) / 2,
+      (vidmode.height() - HEIGHT) / 2
     )
 
-    GLContext.createFromCurrent()
+    glfwMakeContextCurrent(window)
     glfwSetErrorCallback(errorCallback)
     glfwSetKeyCallback(window, keyCallback)
     glfwSetWindowSizeCallback(window, resizeCallback)
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL)
     glfwShowWindow(window)
+    GL.createCapabilities()
+
     window
   }
 
@@ -164,7 +176,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
     glfwSetKeyCallback(window, keyCallback)
 
     //set uniform values
-    val texLocation = GL20.glGetUniformLocation(program, "tex")
     val modelLocation = GL20.glGetUniformLocation(program, "model")
     val camLocation = GL20.glGetUniformLocation(program, "camera")
     val projLocation = GL20.glGetUniformLocation(program, "projection")
