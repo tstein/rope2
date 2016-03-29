@@ -4,7 +4,9 @@
       <root url="jar://$PROJECT_DIR$/lib/lwjgl.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/disruptor.jar!/" />
     </CLASSES>
-    <JAVADOC />
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/lwjgl-javadoc.zip!/" />
+    </JAVADOC>
     <SOURCES />
   </library>
 </component>
