@@ -67,9 +67,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
   var vertexShader = 0
   var fragmentShader = 0
 
-  val fontString = "./assets/fira-sans.regular.ttf"
-  var fontTex = 0
-
   var WIDTH = 800
   var HEIGHT = 600
   var gVAO = 0
@@ -80,7 +77,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val TEXSIZE = 2
   var textures = Map[Texture, Int]()
 
-  val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 100.0f))
+  val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
   var lastFrame = 0.0f
   var wireframe = false
@@ -123,13 +120,12 @@ class Graphics(val universe: Universe) extends StrictLogging {
         }
       }
 
-      //fontTex = TextRenderer.InitFont(fontString)
 
       graphicsStartup.lap("textures loaded")
 
 
       logger.info(graphicsStartup.toString)
-      renderScene(window)
+      renderScene(window, program)
     } finally {
       glfwTerminate()
       errorCallback.release()
@@ -173,10 +169,12 @@ class Graphics(val universe: Universe) extends StrictLogging {
     window
   }
 
-  def renderScene(window: Long): Unit = {
-    var program = 0
+  def renderScene(window: Long, program: Int): Unit = {
     glfwSetKeyCallback(window, keyCallback)
-
+    val modelLocation = GL20.glGetUniformLocation(program, "model")
+    val camLocation = GL20.glGetUniformLocation(program, "camera")
+    val projLocation = GL20.glGetUniformLocation(program, "projection")
+    glUseProgram(program)
     //set uniform values
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
@@ -193,38 +191,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
 
 
-      val textProgram = loadShaders(textVS, textFS)
-      glUseProgram(textProgram)
-      GL20.glUniform3f(GL20.glGetUniformLocation(textProgram, "textColor"), 1.0f, 0.0f, 0.0f)
-      //val ortho = Transformations.ortho(0.0f, WIDTH, 0.0f, HEIGHT, 0.1f, 100.0f)
-      val ortho = Transformations.ortho(-600f, WIDTH, -500.0f, HEIGHT, -100000.0f, 10.0f)
-      val orthoBuffer = Matrix4f.getFloatBuffer(ortho)
-      val orthoLocation = GL20.glGetUniformLocation(program, "projection")
-      GL20.glUniformMatrix4fv(orthoLocation, false, orthoBuffer)
 
-
-      fontTex = TextRenderer.InitFont(fontString)
-
-      val text = TextRenderer.printText("Text", 200, 400, 20f, fontTex)
-
-
-
-      //use text shaders
-      //call textrenderer print function
-
-
-      GL20.glDeleteProgram(textProgram)
-      GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0)
-
-/*
-
-      program = loadShaders(vertexPath, fragmentPath)
-      glUseProgram(program)
-      val modelLocation = GL20.glGetUniformLocation(program, "model")
-      val camLocation = GL20.glGetUniformLocation(program, "camera")
-      val projLocation = GL20.glGetUniformLocation(program, "projection")
-
-    //  val persp = Transformations.ortho(-600f, WIDTH, -500.0f, HEIGHT, -100.0f, 1000.0f)
       val persp = Transformations.perspective(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
       val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
       GL20.glUniformMatrix4fv(projLocation, false, perspBuffer)
@@ -244,7 +211,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
         var modelMat = Matrix4f()
         modelMat = Transformations.translate(modelMat, body.pos.x.toFloat, body.pos.y.toFloat, body.pos.z.toFloat)
-        modelMat = Transformations.scale(modelMat, body.radius.toFloat * 500, body.radius.toFloat * 500, body.radius.toFloat * 500)
+        modelMat = Transformations.scale(modelMat, body.radius.toFloat, body.radius.toFloat, body.radius.toFloat)
         val worldBuffer: FloatBuffer = Matrix4f.getFloatBuffer(modelMat)
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures(body.texture))
@@ -253,7 +220,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
         GL11.glDrawElements(GL11.GL_TRIANGLES, body.mesh.eboIndicesLength , GL11.GL_UNSIGNED_INT,  0)
         GL20.glDeleteProgram(program)
-      }*/
+      }
 
       GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
       GL30.glBindVertexArray(0)
