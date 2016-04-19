@@ -146,9 +146,11 @@ object Transformations {
     val m32: Float = - (zFar + zNear) / (zFar - zNear)
 
     Matrix4f(m00, 0.0f, 0.0f, 0.0f,
-      0.0f, m11, 0.0f, 0.0f,
-      0.0f, 0.0f, m22, 0.0f,
-      m30, m31, m32, 1.0f)
+            0.0f, m11, 0.0f, 0.0f,
+            0.0f, 0.0f, m22, 0.0f,
+            m30, m31, m32, 1.0f)
+
+
   }
 
   def getViewTransformation(eye: Vector3f, center: Vector3f, up: Vector3f): Matrix4f = {

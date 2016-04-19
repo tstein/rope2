@@ -11,6 +11,7 @@ uniform mat4 model;
 
 void main()
 {
+    gl_Position = projection * vec4(position, 1.0);
    gl_Position = projection * camera * model * vec4(position, 1.0);
    //fragUV = vec2(vertexUV.x, 1.0 - vertexUV.y);
    fragUV = vertexUV;
