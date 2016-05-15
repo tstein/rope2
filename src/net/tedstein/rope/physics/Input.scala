@@ -5,12 +5,15 @@ object Input {
   var strafeLeft, strafeRight = false
   var yawLeft, yawRight = false
   var rise, fall = false
+  // This means that the player should slow and eventually stop.
+  var slowDown = false
 
   def update(
               forward: Boolean, backward: Boolean,
               strafeLeft: Boolean, strafeRight: Boolean,
               yawLeft: Boolean, yawRight: Boolean,
-              rise: Boolean, fall: Boolean): Unit = {
+              rise: Boolean, fall: Boolean,
+              slowDown: Boolean): Unit = {
     Input.synchronized {
       this.forward = forward
       this.backward = backward
@@ -20,6 +23,7 @@ object Input {
       this.yawRight = yawRight
       this.rise = rise
       this.fall = fall
+      this.slowDown = slowDown
     }
   }
 }

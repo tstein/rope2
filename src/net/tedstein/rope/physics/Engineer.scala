@@ -65,6 +65,7 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
     var strafeLeft, strafeRight = false
     var yawLeft, yawRight = false
     var rise, fall = false
+    var slowDown = false
 
     Input.synchronized {
       forward = Input.forward
@@ -75,8 +76,9 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
       yawRight = Input.yawRight
       rise = Input.rise
       fall = Input.fall
+      slowDown = Input.slowDown
     }
-    //println(s"forward = $forward, backward = $backward, strafeLeft = $strafeLeft, strafeRight = $strafeRight, yawLeft = $yawLeft, yawRight = $yawRight, rise = $rise, fall = $fall")
+//    println(s"forward = $forward, backward = $backward, strafeLeft = $strafeLeft, strafeRight = $strafeRight, yawLeft = $yawLeft, yawRight = $yawRight, rise = $rise, fall = $fall, slowDown = $slowDown")
   }
 
   private def updateObject(something: RelativisticObject, player: RelativisticObject, elapsed: Double): Unit = {

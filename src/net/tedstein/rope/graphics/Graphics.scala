@@ -276,7 +276,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
       yawLeft = keys(GLFW_KEY_Q),
       yawRight = keys(GLFW_KEY_E),
       rise = keys(GLFW_KEY_UP),
-      fall = keys(GLFW_KEY_DOWN)
+      fall = keys(GLFW_KEY_DOWN),
+      slowDown = keys(GLFW_KEY_SPACE)
     )
   }
 
