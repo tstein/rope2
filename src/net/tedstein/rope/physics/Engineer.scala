@@ -23,20 +23,22 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
     shouldRun = true
     lastFrameNanos = System.nanoTime
 
-    var targetNanos = lastFrameNanos + FrameBudgetNanos
+    var nextFrameNanos = lastFrameNanos + FrameBudgetNanos
     while (shouldRun) {
       val currentNanos = System.nanoTime
-      if (lastFrameNanos + currentNanos > targetNanos) {
-        val elapsed = (currentNanos - lastFrameNanos).toDouble / Billion
-        update(elapsed)
+      if (lastFrameNanos + currentNanos > nextFrameNanos) {
 
+
+        val elapsed = (currentNanos - lastFrameNanos).toDouble / Billion
+        updateEverything(elapsed)
         val nanosSpent = System.nanoTime - currentNanos
         Metrics.addValue(Metrics.EngineerNanosSpent, nanosSpent)
 
-        targetNanos = currentNanos + FrameBudgetNanos
-        lastFrameNanos = currentNanos
-        framesEngineered += 1
 
+        nextFrameNanos = currentNanos + FrameBudgetNanos
+        lastFrameNanos = currentNanos
+
+        framesEngineered += 1
         if (framesEngineered > 0 && framesEngineered % 3600 == 0) {
           val headroom = (1.0 - (Metrics.simpleAverage(Metrics.EngineerNanosSpent) / FrameBudgetNanos)) * 100
           logger.debug(f"physics headroom: $headroom%.1f%%")
@@ -51,9 +53,30 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
 
   def shutdown(): Unit = shouldRun = false
 
-  private def update(elapsed: Double): Unit = {
+  private def updateEverything(elapsed: Double): Unit = {
+    updatePlayer(universe.player, elapsed)
     universe.bodies.par.foreach(updateObject(_, universe.player, elapsed))
     //universe.bodies.par.foreach(updateObjectRelativistic(_, universe.player, elapsed))
+  }
+
+  private def updatePlayer(player: RelativisticObject, elapsed: Double): Unit = {
+    // Flags indicating which input keys are currently pressed.
+    var forward, backward = false
+    var strafeLeft, strafeRight = false
+    var yawLeft, yawRight = false
+    var rise, fall = false
+
+    Input.synchronized {
+      forward = Input.forward
+      backward = Input.backward
+      strafeLeft = Input.strafeLeft
+      strafeRight = Input.strafeRight
+      yawLeft = Input.yawLeft
+      yawRight = Input.yawRight
+      rise = Input.rise
+      fall = Input.fall
+    }
+    //println(s"forward = $forward, backward = $backward, strafeLeft = $strafeLeft, strafeRight = $strafeRight, yawLeft = $yawLeft, yawRight = $yawRight, rise = $rise, fall = $fall")
   }
 
   private def updateObject(something: RelativisticObject, player: RelativisticObject, elapsed: Double): Unit = {

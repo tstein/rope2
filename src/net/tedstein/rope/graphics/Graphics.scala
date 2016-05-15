@@ -1,8 +1,10 @@
 package net.tedstein.rope.graphics
-import java.nio.{IntBuffer, FloatBuffer}
+import java.nio.{FloatBuffer, IntBuffer}
+
 import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
 import net.tedstein.rope.graphics.Shader.{compileShaderProgram, createShaderObject}
+import net.tedstein.rope.physics.Input
 import net.tedstein.rope.util.Stopwatch
 import org.lwjgl.glfw.GLFW._
 import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, _}
@@ -241,7 +243,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
 
   def captureKeys(): Unit = {
     // Camera controls
-    if(keys(GLFW.GLFW_KEY_W)) {
+    if(keys(GLFW_KEY_W)) {
       gCamera.processKeyboard(Forward, deltaTime)
     }
     if(keys(GLFW_KEY_S)) {
@@ -265,6 +267,17 @@ class Graphics(val universe: Universe) extends StrictLogging {
     if(keys(GLFW_KEY_DOWN)) {
       gCamera.processKeyboard(Down, deltaTime)
     }
+
+    Input.update(
+      forward = keys(GLFW_KEY_W),
+      backward = keys(GLFW_KEY_S),
+      strafeLeft = keys(GLFW_KEY_LEFT) || keys(GLFW_KEY_A),
+      strafeRight = keys(GLFW_KEY_RIGHT) || keys(GLFW_KEY_D),
+      yawLeft = keys(GLFW_KEY_Q),
+      yawRight = keys(GLFW_KEY_E),
+      rise = keys(GLFW_KEY_UP),
+      fall = keys(GLFW_KEY_DOWN)
+    )
   }
 
   def loadPyramid(): Unit = {
