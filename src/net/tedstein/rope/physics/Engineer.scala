@@ -2,6 +2,7 @@ package net.tedstein.rope.physics
 
 import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope.Universe
+import net.tedstein.rope.physics.Dimensions.Velocity
 import net.tedstein.rope.util.Metrics
 
 class Engineer(universe: Universe) extends Thread("engineering") with StrictLogging {
@@ -17,6 +18,8 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
   var shouldRun = false
   var lastFrameNanos = 0L
   var framesEngineered = 0L
+  val playerAcceleration = 0.25 // c per second.  1 will be absurd, maybe go with this
+  val playerTurnRate = 0.3 // rad/s
 
   override def run(): Unit = {
     logger.info(s"clocking in at ${System.nanoTime}")
@@ -78,7 +81,42 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
       fall = Input.fall
       slowDown = Input.slowDown
     }
-//    println(s"forward = $forward, backward = $backward, strafeLeft = $strafeLeft, strafeRight = $strafeRight, yawLeft = $yawLeft, yawRight = $yawRight, rise = $rise, fall = $fall, slowDown = $slowDown")
+    //println(s"forward = $forward, backward = $backward, strafeLeft = $strafeLeft, strafeRight = $strafeRight, yawLeft = $yawLeft, yawRight = $yawRight, rise = $rise, fall = $fall, slowDown = $slowDown")
+
+    //Quick hack
+    //Direction first
+    if(yawLeft)
+      player.front.rotate(-playerTurnRate * elapsed, player.up)
+    if(yawRight)
+      player.front.rotate(playerTurnRate * elapsed, player.up)
+    //TODO: pitch, roll
+
+    player.front = player.front.normalize
+    player.up = player.up.normalize
+    val right = player.front.cross(player.up)
+
+    //Velocity changes
+
+    if(forward)
+      player.vel = player.vel.unBoost(Velocity(player.front * playerAcceleration * elapsed))
+    if(backward)
+      player.vel = player.vel.unBoost(Velocity(player.front * playerAcceleration * elapsed * (-1)))
+
+    if(yawLeft)
+      player.vel = player.vel.unBoost(Velocity(right * playerAcceleration * elapsed * (-1)))
+    if(yawRight)
+      player.vel = player.vel.unBoost(Velocity(right * playerAcceleration * elapsed))
+    if(rise)
+      player.vel = player.vel.unBoost(Velocity(player.up * playerAcceleration * elapsed))
+    if(fall)
+      player.vel = player.vel.unBoost(Velocity(player.up * playerAcceleration * elapsed * (-1)))
+    if(slowDown)
+      player.vel = Dimensions.Stationary
+
+    //Position changes
+
+    player.pos = player.pos.drift(player.vel, elapsed)
+
   }
 
   private def updateObject(something: RelativisticObject, player: RelativisticObject, elapsed: Double): Unit = {
