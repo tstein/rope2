@@ -85,10 +85,12 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
 
     //Quick hack
     //Direction first
-    if(yawLeft)
+    if (yawLeft) {
       player.front.rotate(-playerTurnRate * elapsed, player.up)
-    if(yawRight)
+    }
+    if (yawRight) {
       player.front.rotate(playerTurnRate * elapsed, player.up)
+    }
     //TODO: pitch, roll
 
     player.front = player.front.normalize
@@ -97,21 +99,28 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
 
     //Velocity changes
 
-    if(forward)
+    if (forward) {
       player.vel = player.vel.unBoost(Velocity(player.front * playerAcceleration * elapsed))
-    if(backward)
+    }
+    if (backward) {
       player.vel = player.vel.unBoost(Velocity(player.front * playerAcceleration * elapsed * (-1)))
+    }
 
-    if(yawLeft)
+    if (yawLeft) {
       player.vel = player.vel.unBoost(Velocity(right * playerAcceleration * elapsed * (-1)))
-    if(yawRight)
+    }
+    if (yawRight) {
       player.vel = player.vel.unBoost(Velocity(right * playerAcceleration * elapsed))
-    if(rise)
+    }
+    if (rise) {
       player.vel = player.vel.unBoost(Velocity(player.up * playerAcceleration * elapsed))
-    if(fall)
+    }
+    if (fall) {
       player.vel = player.vel.unBoost(Velocity(player.up * playerAcceleration * elapsed * (-1)))
-    if(slowDown)
+    }
+    if (slowDown) {
       player.vel = Dimensions.Stationary
+    }
 
     //Position changes
 
