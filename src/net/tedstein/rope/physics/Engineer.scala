@@ -18,7 +18,7 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
   var shouldRun = false
   var lastFrameNanos = 0L
   var framesEngineered = 0L
-  val playerAcceleration = 0.25 // c per second.  1 will be absurd, maybe go with this
+  val playerAcceleration = 0.5 // c per second.  1 will be absurd, maybe go with this
   val playerTurnRate = 0.3 // rad/s
 
   override def run(): Unit = {
@@ -58,8 +58,8 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
 
   private def updateEverything(elapsed: Double): Unit = {
     updatePlayer(universe.player, elapsed)
-    universe.bodies.par.foreach(updateObject(_, universe.player, elapsed))
-    //universe.bodies.par.foreach(updateObjectRelativistic(_, universe.player, elapsed))
+    //universe.bodies.par.foreach(updateObject(_, universe.player, elapsed))
+    universe.bodies.par.foreach(updateObjectRelativistic(_, universe.player, elapsed))
   }
 
   private def updatePlayer(player: RelativisticObject, elapsed: Double): Unit = {
