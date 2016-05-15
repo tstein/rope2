@@ -28,6 +28,9 @@ sealed class RelativisticObject(private val initialPos: Position,
   var mesh = Mesh.Sphere
   def velrss: Double = vel.velrss
   def gamma: Double = vel.gamma
+
+  var front = Vector3d(0,0,-1)
+  var up = Vector3d(0,1,0)
 }
 
 /**
