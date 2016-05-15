@@ -1,5 +1,7 @@
 package net.tedstein.rope.graphics
 
+import net.tedstein.rope.physics.RelativisticObject
+
 case class Camera() {
   var position = Vector3f(0.0f, 0.0f, 3.0f)
   var worldUp = Vector3f(0.0f, 1.0f, 0.0f)
@@ -25,51 +27,12 @@ case class Camera() {
              -s.dot(eye), -u.dot(eye), f.dot(eye), 1.0f)
   }
 
+  def updateCameraVectors(player: RelativisticObject): Unit = {
+    this.position = player.pos.v
+    this.cameraFront = player.front.normalize
 
-  def processKeyboard(direction: CameraMovement, deltaTime: Float) {
-    val velocity = this.movementSpeed * deltaTime
-    if (direction == Forward) {
-      this.position = this.position.add(this.cameraFront.scale(velocity))
-    }
-    if (direction == Backward) {
-      this.position = this.position.subtract(this.cameraFront.scale(velocity))
-    }
-    if (direction == Left) {
-      this.position = this.position.subtract(this.right.scale(velocity))
-    }
-    if (direction == Right) {
-      this.position = this.position.add(this.right.scale(velocity))
-    }
-    if (direction == RightYaw){
-      //for now: 30 is a magic number
-      this.yaw = this.yaw + 30 * deltaTime
-      updateCameraVectors()
-    }
-    if (direction == LeftYaw){
-      this.yaw = this.yaw - 30 * deltaTime
-      updateCameraVectors()
-    }
-    if (direction == Up){
-      this.position = this.position.add(this.cameraUp.scale(velocity))
-      updateCameraVectors()
-    }
-    if (direction == Down){
-      this.position = this.position.subtract(this.cameraUp.scale(velocity))
-      updateCameraVectors()
-    }
-  }
-
-  def updateCameraVectors(): Unit = {
-    // Calculate the new Front vector
-    val frontx = (Math.cos(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch))).toFloat
-    val fronty = Math.sin(Math.toRadians(this.pitch)).toFloat
-    val frontz = (Math.sin(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch))).toFloat
-    this.cameraFront = Vector3f(frontx, fronty, frontz)
-    this.cameraFront.normalize
-
-    // Also re-calculate the Right and Up vector
     this.right = this.cameraFront.cross(this.worldUp).normalize  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    this.cameraUp = this.right.cross(this.cameraFront).normalize
+    this.cameraUp = player.up.normalize
   }
 
   def lookAt(): Matrix4f = {
@@ -92,7 +55,6 @@ object Camera {
     camera.worldUp = worldUp
     camera.yaw = yaw
     camera.pitch = pitch
-    camera.updateCameraVectors()
 
     camera
   }
@@ -104,7 +66,6 @@ object Camera {
     camera.worldUp = Vector3f(upX, upY, upZ)
     camera.yaw = yaw
     camera.pitch = pitch
-    camera.updateCameraVectors()
 
     camera
   }

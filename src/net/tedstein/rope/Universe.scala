@@ -16,7 +16,14 @@ object Universe {
 
   private def solarSystem: Universe = {
     val random = new Random()
-    val player = Center
+    val player = new RelativisticObject(
+      Position(0, 0, 3),
+      Dimensions.Stationary,
+      Dimensions.Epoch,
+      Dimensions.LightSecond,
+      Dimensions.Empty,
+      0
+    )
 
     val sun = new SimpleOrbiter(
       primary = Center,

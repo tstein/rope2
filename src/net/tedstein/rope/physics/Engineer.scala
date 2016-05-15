@@ -86,10 +86,10 @@ class Engineer(universe: Universe) extends Thread("engineering") with StrictLogg
     //Quick hack
     //Direction first
     if (yawLeft) {
-      player.front = player.front.rotate(-playerTurnRate * elapsed, player.up)
+      player.front = player.front.rotate(playerTurnRate * elapsed, player.up)
     }
     if (yawRight) {
-      player.front = player.front.rotate(playerTurnRate * elapsed, player.up)
+      player.front = player.front.rotate(-playerTurnRate * elapsed, player.up)
     }
     //TODO: pitch, roll
 

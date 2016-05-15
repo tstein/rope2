@@ -1,6 +1,8 @@
 package net.tedstein.rope.physics
 
-import scala.math.{pow, sqrt, cos, sin}
+import net.tedstein.rope.graphics.Vector3f
+
+import scala.math.{cos, pow, sin, sqrt}
 
 //class Vector3d (xc: Double, yc: Double, zc: Double) {
 case class Vector3d (x: Double, y: Double, z: Double) {
@@ -100,4 +102,8 @@ object Vector3d {
     0.831406 * atanh(math.random * 2 - 1),
     0.831406 * atanh(math.random * 2 - 1)
   ).normalize
+
+  implicit def toFloat(vector: Vector3d): Vector3f = {
+    new Vector3f(vector.x.toFloat, vector.y.toFloat, vector.z.toFloat)
+  }
 }

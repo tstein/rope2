@@ -204,6 +204,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       val camBuffer: FloatBuffer = Matrix4f.getFloatBuffer(camera)
       GL20.glUniformMatrix4fv(camLocation, false, camBuffer)
 
+      gCamera.updateCameraVectors(universe.player)
       for (body <- universe.bodies) {
         gVAO = loadedModels.get(body.mesh) match {
           case Some(vao) => vao
@@ -242,32 +243,6 @@ class Graphics(val universe: Universe) extends StrictLogging {
   }
 
   def captureKeys(): Unit = {
-    // Camera controls
-    if(keys(GLFW_KEY_W)) {
-      gCamera.processKeyboard(Forward, deltaTime)
-    }
-    if(keys(GLFW_KEY_S)) {
-      gCamera.processKeyboard(Backward, deltaTime)
-    }
-    if(keys(GLFW_KEY_LEFT) || keys(GLFW_KEY_A)) {
-     gCamera.processKeyboard(Left, deltaTime)
-    }
-    if(keys(GLFW_KEY_RIGHT) || keys(GLFW_KEY_D)) {
-      gCamera.processKeyboard(Right, deltaTime)
-    }
-    if(keys(GLFW_KEY_E)) {
-      gCamera.processKeyboard(RightYaw, deltaTime)
-    }
-    if(keys(GLFW_KEY_Q)) {
-      gCamera.processKeyboard(LeftYaw, deltaTime)
-    }
-    if(keys(GLFW_KEY_UP)) {
-      gCamera.processKeyboard(Up, deltaTime)
-    }
-    if(keys(GLFW_KEY_DOWN)) {
-      gCamera.processKeyboard(Down, deltaTime)
-    }
-
     Input.update(
       forward = keys(GLFW_KEY_W),
       backward = keys(GLFW_KEY_S),
