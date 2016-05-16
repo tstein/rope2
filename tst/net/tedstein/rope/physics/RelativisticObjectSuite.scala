@@ -30,6 +30,30 @@ class RelativisticObjectSuite extends RopeSuite {
     assertAlmostEquals(obj.gamma, 106.12507, epsilon(4))
   }
 
+  test("Redshift") {
+    val obj = new RelativisticObject(Position(0, 0, 0), Velocity(0, 0, 0), 0, 0, Dimensions.Empty)
+    val observer = new RelativisticObject(Position(0, 0, 0), Velocity(0, 0, 0), 0, 0, Dimensions.Empty)
+    val speedList = List(-.99, -.8, -.2, 0, .2, .5, .8, .9, .99, .995)
+
+    //Stationary cases, should be 0
+    assertAlmostEquals(obj.getRedshift(observer), 0, epsilon(4))
+    observer.pos = Position(1, 0, 0)
+    assertAlmostEquals(obj.getRedshift(observer), 0, epsilon(4))
+    //Colinear cases: should be -1 + sqrt((1+v)/(1-v))
+    for (v: Double <- speedList)
+    {
+      observer.vel = Velocity(v,0,0)
+      assertAlmostEquals(-1 + math.sqrt((1+v)/(1-v)), obj.getRedshift(observer), epsilon(4))
+    }
+
+    //Perp. cases: should be -1 + gamma
+    for (v: Double <- speedList)
+    {
+      observer.vel = Velocity(0,v,0)
+      assertAlmostEquals(-1 + 1/math.sqrt(1 - v * v), obj.getRedshift(observer), epsilon(4))
+    }
+  }
+
   test("Eccentric Anomaly solver") {
     //Brute force: lets test the whole mapping
     def M(E: Double, ecc: Double): Double = E - ecc * math.sin(E)

@@ -31,6 +31,17 @@ sealed class RelativisticObject(private val initialPos: Position,
 
   var front = Vector3d(0,0,-1)
   var up = Vector3d(0,1,0)
+
+  /**
+    * See https://en.wikipedia.org/wiki/Redshift</link>
+    *
+    * @return Returns redshift z = increase in wavelength / emitted wavelength.  Range of -1 to +inf.
+    */
+  def getRedshift(observer: RelativisticObject): Double = {
+    val veldiff = vel.boost(observer.vel)
+    val velproj = veldiff.v * (pos.v - observer.pos.v).normalize
+    -1 + veldiff.gamma * (1 + velproj)
+  }
 }
 
 /**
