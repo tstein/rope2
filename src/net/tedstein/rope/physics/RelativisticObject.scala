@@ -33,7 +33,7 @@ sealed class RelativisticObject(private val initialPos: Position,
   var up = Vector3d(0,1,0)
 
   /**
-    * See https://en.wikipedia.org/wiki/Redshift</link>
+    * See https://en.wikipedia.org/wiki/Redshift
     *
     * @return Returns redshift z = increase in wavelength / emitted wavelength.  Range of -1 to +inf.
     */
