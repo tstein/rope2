@@ -43,6 +43,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
         case (GLFW_KEY_X, GLFW_PRESS) =>
           wireframe = !wireframe
           toggleWireframe()
+        case (GLFW_KEY_R, GLFW_PRESS) =>
+          increaseRedHue()
         case (_, GLFW_PRESS) =>
           keys(key) = true
         case (_, GLFW_RELEASE) =>
@@ -79,6 +81,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
   val VERTEXSIZE = 3
   val TEXSIZE = 2
   var textures = Map[Texture, Int]()
+  var redHue = 0.0f
 
   val gCamera = Camera(position = Vector3f(0.0f, 0.0f, 3.0f))
   var deltaTime = 0.0f
@@ -182,6 +185,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
     val camLocation = GL20.glGetUniformLocation(program, "camera")
     val projLocation = GL20.glGetUniformLocation(program, "projection")
 
+
     glUseProgram(program)
 
     GL13.glActiveTexture(GL13.GL_TEXTURE0)
@@ -195,6 +199,9 @@ class Graphics(val universe: Universe) extends StrictLogging {
       lastFrame = currentFrame
 
       GL11.glClear(GL11.GL_COLOR_BUFFER_BIT |  GL11.GL_DEPTH_BUFFER_BIT)
+
+      val redHueLoc = GL20.glGetUniformLocation(program, "red")
+      GL20.glUniform1f(redHueLoc, redHue)
 
       val persp = Transformations.perspective(45.0f, WIDTH, HEIGHT, 0.1f, 100.0f)
       val perspBuffer: FloatBuffer = Matrix4f.getFloatBuffer(persp)
@@ -252,7 +259,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
       yawRight = keys(GLFW_KEY_E),
       rise = keys(GLFW_KEY_UP),
       fall = keys(GLFW_KEY_DOWN),
-      slowDown = keys(GLFW_KEY_SPACE)
+      slowDown = keys(GLFW_KEY_SPACE),
+      color = keys(GLFW_KEY_R)
     )
   }
 
@@ -325,4 +333,8 @@ class Graphics(val universe: Universe) extends StrictLogging {
     }
   }
 
+  def increaseRedHue(): Unit = {
+    println("red?!")
+    redHue = redHue + 0.1f
+  }
 }
