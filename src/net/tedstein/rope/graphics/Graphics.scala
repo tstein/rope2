@@ -23,7 +23,6 @@ import scala.util.Properties
 //moon: http://moon.nasa.gov/
 
 
-
 class Graphics(val universe: Universe) extends StrictLogging {
  // glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
   val errorCallback = new GLFWErrorCallback {
@@ -259,8 +258,7 @@ class Graphics(val universe: Universe) extends StrictLogging {
       yawRight = keys(GLFW_KEY_E),
       rise = keys(GLFW_KEY_UP),
       fall = keys(GLFW_KEY_DOWN),
-      slowDown = keys(GLFW_KEY_SPACE),
-      color = keys(GLFW_KEY_R)
+      slowDown = keys(GLFW_KEY_SPACE)
     )
   }
 
