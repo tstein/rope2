@@ -2,6 +2,7 @@ package net.tedstein.rope
 
 import net.tedstein.rope.graphics.Graphics
 import net.tedstein.rope.physics.Engineer
+import net.tedstein.rope.universe.Universe
 
 
 object Rope {

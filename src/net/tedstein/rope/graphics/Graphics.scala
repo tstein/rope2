@@ -5,6 +5,7 @@ import com.typesafe.scalalogging.StrictLogging
 import net.tedstein.rope._
 import net.tedstein.rope.graphics.Shader.{compileShaderProgram, createShaderObject}
 import net.tedstein.rope.physics.Input
+import net.tedstein.rope.universe.Universe
 import net.tedstein.rope.util.Stopwatch
 import org.lwjgl.glfw.GLFW._
 import org.lwjgl.glfw.{GLFWErrorCallback, GLFWKeyCallback, _}

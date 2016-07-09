@@ -7,6 +7,7 @@ object Texture {
   val Sun = Texture("sun")
   val Earth = Texture("earth")
   val Moon = Texture("moon")
+  val Mars = Texture("mars")
 
-  val AllTextures = Set(Sun, Earth, Moon)
+  val AllTextures = Set(Sun, Earth, Moon, Mars)
 }

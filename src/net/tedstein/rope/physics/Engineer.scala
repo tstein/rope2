@@ -1,8 +1,8 @@
 package net.tedstein.rope.physics
 
 import com.typesafe.scalalogging.StrictLogging
-import net.tedstein.rope.Universe
 import net.tedstein.rope.physics.Dimensions.Velocity
+import net.tedstein.rope.universe.Universe
 import net.tedstein.rope.util.Metrics
 
 class Engineer(universe: Universe) extends Thread("engineering") with StrictLogging {

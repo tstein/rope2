@@ -1,74 +1,16 @@
-package net.tedstein.rope
+package net.tedstein.rope.universe
 
-import net.tedstein.rope.graphics.{Texture, Mesh}
-import net.tedstein.rope.physics.{Center, SimpleOrbiter, Orbiter, RelativisticObject, Dimensions}
-import Dimensions.{Velocity, Position}
-import net.tedstein.rope.physics.Vector3d
+import net.tedstein.rope.graphics.{Mesh, Texture}
+import net.tedstein.rope.physics.Dimensions.Position
+import net.tedstein.rope.physics._
 
-import scala.collection.immutable.Stream.Empty
 import scala.util.Random
 
 
 class Universe(val player: RelativisticObject, val bodies: Set[RelativisticObject])
 
 object Universe {
-  def demo = solarSystem
-
-  private def solarSystem: Universe = {
-    val random = new Random()
-    val player = new RelativisticObject(
-      Position(0, 0, 3),
-      Dimensions.Stationary,
-      Dimensions.Epoch,
-      Dimensions.LightSecond,
-      Dimensions.Empty,
-      0
-    )
-
-    val sun = new SimpleOrbiter(
-      primary = Center,
-      orbitalDistance = 0.0,
-      angularFrequency = 0.6,
-      initialPos = Dimensions.Origin,
-      initialVel = Dimensions.Stationary,
-      initialTime = Dimensions.Epoch + 100 * random.nextFloat(),
-      initialRadius = .232,
-      initialSatellites = Dimensions.Empty,
-      mass = 0.5)
-    sun.texture = Texture.Sun
-    sun.mesh = Mesh.Sphere
-
-
-    val earth = new SimpleOrbiter(
-      primary = sun,
-      orbitalDistance = 0.8,
-      angularFrequency = 0.1,
-      initialPos = sun.pos.add(Position(0.8, 0, 0)),
-      initialVel = Dimensions.Stationary,
-      initialTime = Dimensions.Epoch,
-      initialRadius = .02,
-      initialSatellites = Dimensions.Empty)
-    earth.texture = Texture.Earth
-    earth.mesh = Mesh.Cube
-
-    val moon = new SimpleOrbiter(
-      primary = earth,
-      orbitalDistance = .15,
-      angularFrequency = 0.2,
-      initialPos = earth.pos.add(Position(0.3, 0, 0)),
-      initialVel = Dimensions.Stationary,
-      initialTime = Dimensions.Epoch,
-      initialRadius = .005,
-      initialSatellites = Dimensions.Empty)
-    moon.texture = Texture.Moon
-    moon.mesh = Mesh.Cube
-
-    earth.satellites = Set(moon)
-    sun.satellites = Set(earth)
-
-    val bodies = Set[RelativisticObject](sun, earth, moon)
-    new Universe(player, bodies)
-  }
+  def demo = SolarSystem.create
 
   private def lotsOfStuff: Universe = {
     val random = new Random()
