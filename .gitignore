@@ -1,11 +1,9 @@
 assets/models/baked/*.bin
-out/
+build/*
 *.DS_Store
+.gradle/*
+.idea/*
 .idea/tasks.xml
 .idea/workspace.xml
 *.log
-build/*
-.gradle/*
-.idea/*
-gradle/*
-gradlew*
+out/
