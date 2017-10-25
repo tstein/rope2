@@ -1,0 +1,54 @@
+group 'net.tedstein'
+version = '0'
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'scala'
+apply plugin: 'cpp'
+apply plugin: 'application'
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.11.8'
+    compile 'com.typesafe.scala-logging:scala-logging_2.11:3.7.2'
+    compile 'org.slf4j:slf4j-simple:1.7.9'
+    testCompile 'org.scalatest:scalatest_2.11:3.0.0'
+    testCompile 'junit:junit:4.12'
+}
+
+def cxxflags() {
+    def args = []
+    def javaHome = System.properties["java.home"]
+    args << "-I$javaHome/../include"
+    args << "-I$javaHome/../include/linux"
+    return args
+}
+project.ext.cxxflags = cxxflags()
+
+model {
+    components {
+        rope(NativeLibrarySpec) {
+            sources {
+                cpp {
+                    source {
+                        srcDir 'src/main/jni'
+                        include "**/*.cpp"
+                    }
+                }
+            }
+            buildTypes {
+                debug
+            }
+            binaries.all {
+                project.ext.cxxflags.each { cppCompiler.args << it }
+            }
+        }
+    }
+}
+
+mainClassName = 'net.tedstein.rope.Rope'
+
+run {
+    environment LD_LIBRARY_PATH: "$projectDir/build/libs/rope/shared"
+}

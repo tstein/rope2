@@ -4,3 +4,8 @@ out/
 .idea/tasks.xml
 .idea/workspace.xml
 *.log
+build/*
+.gradle/*
+.idea/*
+gradle/*
+gradlew*
